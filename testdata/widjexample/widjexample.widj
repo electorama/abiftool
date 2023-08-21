@@ -1,0 +1,45 @@
+{
+  "version":"0.1",
+  "candidates":
+  {
+    "candA":
+    {
+      "display_name":"Candidate A"
+    },
+    "candB":
+    {
+      "display_name":"Candidate B"
+    },
+    "candC":
+    {
+      "display_name":"Candidate C"
+    }
+  },
+  "description":"Generic election to parse with electowidget",
+  "display_parameters": true,
+  "display_results": true,
+  "display_ballots": true,
+  "allow_voting": false,
+  "ballot_type": null,
+  "max_rating": 6,
+  "min_rating": 0,
+  "count_subpage_ballots": false,
+  "count_inline_ballots": true,
+  "election_methods":
+  [
+    {
+      "type":"copeland"
+    },
+    {
+      "type":"plurality"
+    }
+  ],
+  "inline_ballot_type":"range-array",
+  "inline_ballots":
+  [
+    {"qty":400, "vote": {"candA":6}},
+    {"qty":300, "vote": {"candB":6, "candC":5}},
+    {"qty":200, "vote": {"candC":6}}
+  ]
+}
+

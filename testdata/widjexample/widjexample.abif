@@ -1,0 +1,22 @@
+{"version":"0.1"}
+{"description":"Generic election to parse with electowidget"}
+{"display_parameters": true}
+{"display_results": true}
+{"display_ballots": true}
+{"allow_voting": false}
+{"ballot_type": null}
+{"max_rating": 6}
+{"min_rating": 0}
+{"count_subpage_ballots": false}
+{"count_inline_ballots": true}
+{"inline_ballot_type":"range-array"}
+#-----------------
+=candA:[Candidate A]
+=candB:[Candidate B]
+=candC:[Candidate C]
+#-----------------
+400:candA/6
+300:candB/6>candC/5
+200:candC/6
+
+
