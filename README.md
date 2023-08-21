@@ -5,7 +5,7 @@ As of this writing in August 2023, this script (abiftool.py) aspires to convert 
 
 * ABIF (or ".abif") - The _Aggregated Ballot Information Format_ provides a concise, aggregated, text-based document to describe the ballots cast in range-based or ranked elections, as well as approval-based and choose-one balloting systems. See https://github.com/electorama/abif for more.
 * .jabmod - this is a JSON model for ABIF.  It's quite likely that many future conversions to/from .abif using abiftool will use .jabmod as an interim/internal format
-* .widj - this is the JSON representation used by Electowidget, a format
+* .widj - this is the JSON representation used by Electowidget. This format was developed circa 2005, and still can be found on [electowiki.org](https://electowiki.org) at the following location: https://electowiki.org/wiki/User:RobLa/Electowidget
 
 The primary author of abiftool.py (Rob Lanphier, a.k.a. "robla") has not yet fully decided on the following:
 * What the long-term license will be (it's currently licensed under GPLv3), but as of this writing (in August 2023), the primary author can probably be convinced to switch to an MIT, BSD, or Apache license of some sort.  As other contributors contribute under GPLv3, it will become more difficult for the primary author to convince other contributors to change license.  Visit [electorama/abiftool#1](https://github.com/electorama/abiftool/issues/1) to discuss this topic.
