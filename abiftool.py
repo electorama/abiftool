@@ -73,7 +73,14 @@ def convert_abifmodel_to_abifstr(abifmodel, add_ratings=True):
     abif_string += "#-----------------------\n"
 
     for ballot in abifmodel["votelines"]:
-        abif_string += f"{ballot['qty']}:{ballot['prefstr']}\n"
+        prefstr = ""
+        for pref in ballot['prefs']:
+            prefstr += pref
+            if 'nextdelim' in ballot['prefs'][pref]:
+                delim=ballot['prefs'][pref]['nextdelim']
+                prefstr += delim
+
+        abif_string += f"{ballot['qty']}:{prefstr}\n"
 
     return abif_string
 
@@ -251,9 +258,11 @@ def process_prefline(qty, prefstr, abifmodel, linecomment=None, debuginfo=False)
 
 def process_comment_line(abifmodelin={},
                          linecomment="",
-                         linenum=0):
+                         linenum=0,
+                         debuginfo=False):
     commenttuple = (linenum, linecomment)
-    abifmodelin['metadata']['comments'].append(commenttuple)
+    if debuginfo:
+        abifmodelin['metadata']['comments'].append(commenttuple)
 
     return abifmodelin
 
@@ -261,12 +270,13 @@ def process_comment_line(abifmodelin={},
 def convert_abif_file_to_json(filename, debuginfo=False):
     abifmodel = {
         'metadata': {
-            'ballotcount': 0,
-            'comments': []
+            'ballotcount': 0
         },
         'candidates': {},
         'votelines': []
     }
+    if debuginfo:
+        abifmodel['metadata']['comments'] = []
 
     with open(filename) as file:
         for i, fullline in enumerate(file):
@@ -303,7 +313,8 @@ def convert_abif_file_to_json(filename, debuginfo=False):
                 linecomment = None
             abifmodel = process_comment_line(abifmodelin=abifmodel,
                                              linecomment=linecomment,
-                                             linenum=i)
+                                             linenum=i,
+                                             debuginfo=debuginfo)
 
              # now to deal with the substance
             if (match := candlineregexp.match(strpdline)):
@@ -383,8 +394,11 @@ def main():
         # Convert from JSON ABIF model (.jabmod) to .abif
         add_ratings = True
 
-        with open(args.input_file) as f:
-            abifmodel = json.load(f)
+        if args.input_file == "-":
+            abifmodel = json.load(sys.stdin)
+        else:
+            with open(args.input_file) as f:
+                abifmodel = json.load(f)
         outstr = convert_abifmodel_to_abifstr(abifmodel,
                                               add_ratings)
     elif (input_format == 'widj' and output_format == 'abif'):
