@@ -21,7 +21,7 @@ import sys
 import argparse
 import json
 
-CONV_FORMATS = ('abif', 'jabmod', 'widj')
+CONV_FORMATS = ('abif', 'jabmod', 'jabmoddebug', 'widj')
 
 PRUNED_METADATA_FIELDS = ["display_parameters", "display_results",
                           "display_ballots", "allow_voting",
@@ -125,7 +125,7 @@ def _add_prefstr_and_rating_fields(abif_votelines, add_ratings=True):
             }
 
 
-def process_metadata(mkey, mvalue, abifmodel):
+def process_metadata(mkey, mvalue, abifmodel, linecomment=None):
     '''Simple key-value translation of metadata lines
 
     This function handles the metadata lines that begin with "{".
@@ -133,14 +133,14 @@ def process_metadata(mkey, mvalue, abifmodel):
     Lines" file.
 
     '''
-    if not 'metadata' in abifmodel:
-        abifmodel['metadata'] = {mkey: mvalue}
-    else:
+    if 'metadata' in abifmodel:
         abifmodel['metadata'][mkey] = mvalue
+    else:
+        abifmodel['metadata'] = {mkey: mvalue}
     return abifmodel
 
 
-def process_candline(candtoken, canddesc, abifmodel):
+def process_candline(candtoken, canddesc, abifmodel, linecomment=None):
     '''process_candline maps candtokens to full candidate names'''
     if not 'candidates' in abifmodel:
         abifmodel['candidates'] = {candtoken: canddesc}
@@ -191,7 +191,7 @@ def tokenize_prefs(prefstr):
     return retval
 
 
-def process_prefline(qty, prefstr, abifmodel, debuginfo=False):
+def process_prefline(qty, prefstr, abifmodel, linecomment=None, debuginfo=False):
     '''process vote bundles
 
     preflines are the heart of ABIF.  Each line describes batch of
@@ -204,7 +204,9 @@ def process_prefline(qty, prefstr, abifmodel, debuginfo=False):
     linepair = {}
     linepair['qty'] = int(qty)
     linepair['prefs'] = {}
-    linepair['prefstr'] = prefstr
+    linepair['comment'] = linecomment
+    if debuginfo:
+        linepair['prefstr'] = prefstr.rstrip()
 
     abifmodel['votelines'].append(linepair)
     if debuginfo:
@@ -221,6 +223,8 @@ def process_prefline(qty, prefstr, abifmodel, debuginfo=False):
         if 'cand' in tok:
             thiscand = tok['cand']
             prefs[thiscand] = {}
+            if not thiscand in abifmodel['candidates']:
+                abifmodel['candidates'][thiscand] = thiscand
         if 'rat' in tok:
             thisrating = tok['rat']
             prefs[thiscand]['rating'] = thisrating
@@ -245,43 +249,85 @@ def process_prefline(qty, prefstr, abifmodel, debuginfo=False):
         abifmodel['votelines'][-1]['orderedlist'] = orderedlist
     return abifmodel
 
+def process_comment_line(abifmodelin={},
+                         linecomment="",
+                         linenum=0):
+    commenttuple = (linenum, linecomment)
+    abifmodelin['metadata']['comments'].append(commenttuple)
 
-def convert_abif_file_to_json(filename):
+    return abifmodelin
+
+
+def convert_abif_file_to_json(filename, debuginfo=False):
     abifmodel = {
         'metadata': {
-            'ballotcount': 0
+            'ballotcount': 0,
+            'comments': []
         },
         'candidates': {},
         'votelines': []
     }
 
     with open(filename) as file:
-        for line in file:
-            line = line.strip()
-            if not line:
+        for i, fullline in enumerate(file):
+            fullline = fullline.strip()
+            if not fullline:
                 break
 
+            commentregexp = re.compile(
+                r'''
+                ^                       # beginning of line
+                (?P<beforesep>[^\#]*)    # before the comment separator
+                (?P<comsep>\#+)          # # or ## comment separator
+                (?P<whitespace>\s+)     # optional whitespace
+                (?P<aftersep>.*)        # after the # separator/whitespace
+                $                       # end of line
+                ''', re.VERBOSE
+            )
+
+            # TODO: change "metadataregexp" to use multiline regexp
+            metadataregexp = re.compile(
+                r'^\{\s*[\'\"]?([\w\s]+)\s*[\'\"]?\s*:\s*[\'\"]?([\w\s\.]+)\s*[\'\"]?\s*\}$')
             candlineregexp = re.compile(r'^\=([^:]*):\[([^\]]*)\]$')
             votelineregexp = re.compile(r'^(\d+):(.*)$')
 
-            metadataregexp = re.compile(
-                r'^\{\s*[\'\"]?([\w\s]+)\s*[\'\"]?\s*:\s*[\'\"]?([\w\s\.]+)\s*[\'\"]?\s*\}$')
+            matchgroup = None
+            # Strip the comments out first
+            if (match := commentregexp.match(fullline)):
+                matchgroup = 'commentregexp'
+                cparts=match.groupdict()
+                strpdline = cparts['beforesep']
+                linecomment = cparts['comsep'] + cparts['whitespace'] + cparts['aftersep']
+            else:
+                strpdline = fullline
+                linecomment = None
+            abifmodel = process_comment_line(abifmodelin=abifmodel,
+                                             linecomment=linecomment,
+                                             linenum=i)
 
-            if (match := candlineregexp.match(line)):
+             # now to deal with the substance
+            if (match := candlineregexp.match(strpdline)):
+                matchgroup = 'candlineregexp'
                 candtoken, canddesc = match.groups()
                 abifmodel = process_candline(candtoken,
                                              canddesc,
-                                             abifmodel)
-            elif (match := metadataregexp.match(line)):
+                                             abifmodel,
+                                             linecomment)
+            elif (match := metadataregexp.match(strpdline)):
+                matchgroup = 'metadataregexp'
                 mkey, mvalue = match.groups()
-                abifmodel = process_metadata(mkey, mvalue, abifmodel)
-            elif (match := votelineregexp.match(line)):
+                abifmodel = process_metadata(mkey, mvalue, abifmodel, linecomment)
+            elif (match := votelineregexp.match(strpdline)):
+                matchgroup = 'candlineregexp'
                 qty, prefstr = match.groups()
                 abifmodel = process_prefline(qty,
                                              prefstr,
-                                             abifmodel)
+                                             abifmodel,
+                                             linecomment,
+                                             debuginfo=debuginfo)
             else:
-                continue
+                matchgroup = 'empty'
+
     return abifmodel
 
 
@@ -315,11 +361,19 @@ def main():
         print(f"Error: Unsupported input format '{output_format}'")
         return
 
-    # CONV_FORMATS = ('abif', 'jabmod', 'widj')
-    # old formats: ('abif', 'jsonabifmodel', 'electowidgetjson')
+    # CONV_FORMATS = ('abif', 'jabmod', 'jabmoddebug', 'widj')
     if (input_format == 'abif' and output_format == 'jabmod'):
         # Convert .abif to JSON-based model (.jabmod)
         abifmodel = convert_abif_file_to_json(args.input_file)
+        try:
+            outstr = json.dumps(abifmodel, indent=4)
+        except:
+            outstr = "NOT JSON SERIALIZABLE"
+            outstr += pprint.pformat(abifmodel)
+    elif (input_format == 'abif' and output_format == 'jabmoddebug'):
+        # Convert .abif to JSON-based model (.jabmod) with debug info
+        abifmodel = convert_abif_file_to_json(args.input_file,
+                                              debuginfo=True)
         try:
             outstr = json.dumps(abifmodel, indent=4)
         except:
