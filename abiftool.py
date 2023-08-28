@@ -32,6 +32,9 @@ PRUNED_WIDJ_FIELDS = [
 ]
 ABIF_VERSION = "0.1"
 
+def debugprint(str):
+    #print(str)
+    return
 
 def convert_widj_to_jabmod(widgetjson):
     """Converts electowidget JSON (widj) to the JSON ABIF model (jabmod)."""
@@ -106,17 +109,32 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
             commentregexp = re.compile(
                 r'''
                 ^                       # beginning of line
-                (?P<beforesep>[^\#]*)    # before the comment separator
-                (?P<comsep>\#+)          # # or ## comment separator
+                (?P<beforesep>[^\#]*)   # before the comment separator
+                (?P<comsep>\#+)         # # or ## comment separator
                 (?P<whitespace>\s+)     # optional whitespace
                 (?P<aftersep>.*)        # after the # separator/whitespace
                 $                       # end of line
                 ''', re.VERBOSE
             )
-
-            # TODO: change "metadataregexp" to use multiline regexp
             metadataregexp = re.compile(
-                r'^\{\s*[\'\"]?([\w\s]+)\s*[\'\"]?\s*:\s*[\'\"]?([\w\s\.]+)\s*[\'\"]?\s*\}$')
+                r'''
+                ^\{                     # abif metadata lines always start with '{'
+                \s*                     # whitespace
+                [\'\"]?                 # optional quotation marks (single or double)
+                ([\w\s]+)               # METADATA KEY
+                \s*                     # moar whitespace!!!!
+                [\'\"]?                 # ending quotation
+                \s*                     # abif loves whitespace!!!!!
+                :                       # COLON! Very important!
+                \s*                     # moar whitesapce!!!1!
+                [\'\"]?                 # abif also loves optional quotes
+                ([\w\s\.]+)             # METADATA VALUE
+                \s*                     # more whitespace 'cuz
+                [\'\"]?                 # moar quotes
+                \s*                     # spaces the finals frontiers
+                \}                      # look!  squirrel!!!!!
+                $''', re.VERBOSE
+            )
             candlineregexp = re.compile(r'^\=([^:]*):\[([^\]]*)\]$')
             votelineregexp = re.compile(r'^(\d+):(.*)$')
 
@@ -147,6 +165,7 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
             elif (match := metadataregexp.match(strpdline)):
                 matchgroup = 'metadataregexp'
                 mkey, mvalue = match.groups()
+                debugprint(f"\n{mkey=}\n{mvalue=}")
                 abifmodel = _process_abif_metadata(
                     mkey, mvalue, abifmodel, linecomment)
             elif (match := votelineregexp.match(strpdline)):
