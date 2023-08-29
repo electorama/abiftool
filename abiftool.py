@@ -32,9 +32,11 @@ PRUNED_WIDJ_FIELDS = [
 ]
 ABIF_VERSION = "0.1"
 
+
 def debugprint(str):
-    #print(str)
+    print(str)
     return
+
 
 def convert_widj_to_jabmod(widgetjson):
     """Converts electowidget JSON (widj) to the JSON ABIF model (jabmod)."""
@@ -103,8 +105,6 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
     with open(filename) as file:
         for i, fullline in enumerate(file):
             fullline = fullline.strip()
-            if not fullline:
-                break
 
             commentregexp = re.compile(
                 r'''
@@ -165,11 +165,10 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
             elif (match := metadataregexp.match(strpdline)):
                 matchgroup = 'metadataregexp'
                 mkey, mvalue = match.groups()
-                debugprint(f"\n{mkey=}\n{mvalue=}")
                 abifmodel = _process_abif_metadata(
                     mkey, mvalue, abifmodel, linecomment)
             elif (match := votelineregexp.match(strpdline)):
-                matchgroup = 'candlineregexp'
+                matchgroup = 'votelineregexp'
                 qty, prefstr = match.groups()
                 abifmodel = _process_abif_prefline(qty,
                                                    prefstr,
@@ -239,38 +238,78 @@ def _tokenize_abif_prefline(prefstr):
     Break up the prefstr on a prefline into a series of tokens for
     further processing by _process_abif_prefline
     '''
-    # The following regex matches one of two clusters:
-    #
-    # 1. Match the cand token (\w+), and then optionally match the
-    #    rating ("/" then a number)
-    # 2. Match the seperator ([>=,]
-    regex = r"(\w+)(?:/(\d+))?|([>=,])"
-    matches = re.finditer(regex, prefstr)
 
     retval = []
-    candidate = None
-    rating = None
 
-    for match in matches:
-        # If the this is a candidate/rating pair
-        if match.group(1) is not None:
-            candidate = match.group(1)
-            rating = match.group(2)
-            candpref = {}
-            if rating is not None:
-                candpref['type'] = 'c'
-                candpref['cand'] = candidate
-                candpref['slash'] = '/'
-                candpref['rat'] = rating
-            else:
-                candpref['cand'] = candidate
-            retval.append(candpref)
-        # ..else this must be a delimiter
+    # Regular expression patterns
+    pref_range_squarebrack_regexp = re.compile(
+        r'''
+        ^                         # start of string
+        \s*                       # Optional whitespace
+        (?P<candplusrate>         # <candplusrate> begin
+        [\"\[]                    # beginning quotation or square bracket
+        (?P<cand>[^\"\]]*)        # <cand> (within quotes or square brackets)
+        [\"\]]                    # ending quotation or square bracket
+        (/                        # optional slashrating begin
+        (?P<rating>\d+)           # optional <rating> (number)
+        \s*)?                     # optional slashrating end
+        )                         # <candplusrate> end
+        (?P<restofline>.*)        # the <restofline>
+        $                         # end of string
+        ''', re.VERBOSE)
+    pref_range_baretok_regexp = re.compile(
+        r'''
+        ^                         # start of string
+        \s*                       # Optional whitespace
+        (?P<candplusrate>         # <candplusrate> begin
+        (?P<cand>[A-Za-z0-9_\-]*)   # <cand> (bare token)
+        (/                        # optional slashrating begin
+        (?P<rating>\d+)           # optional <rating> (number)
+        \s*)?                     # optional slashrating end
+        )                         # <candplusrate> end
+        (?P<restofline>.*)        # the <restofline>
+        $                         # end of string
+        ''', re.VERBOSE)
+
+    remainingtext = prefstr
+    loopsquare = bool(re.fullmatch(
+        pref_range_squarebrack_regexp, remainingtext))
+    loopbare = bool(re.fullmatch(pref_range_baretok_regexp, remainingtext))
+    killcounter = 0
+    while loopsquare or loopbare:
+        if killcounter > 400:
+            debugprint(f'{killcounter=} (too many)')
+            debugprint(f'{loopsquare=} {loopbare=}')
+            debugprint(f'{prefstr=}')
+            debugprint(f'{remainingtext=}')
+            sys.exit()
+        killcounter += 1
+        loopsquare = bool(re.fullmatch(
+            pref_range_squarebrack_regexp, remainingtext))
+        loopbare = bool(re.fullmatch(pref_range_baretok_regexp, remainingtext))
+        if loopsquare:
+            matches_new = re.fullmatch(
+                pref_range_squarebrack_regexp, remainingtext)
+            loopbare = False
+        elif loopbare:
+            matches_new = re.fullmatch(
+                pref_range_baretok_regexp, remainingtext)
+            loopsquare = False
         else:
-            delim = match.group(3)
-            if delim is not None:
-                retval.append({'delim': delim,
-                               'type': 'd'})
+            break
+        if not matches_new or matches_new.group(0) == '':
+            break
+        candplusrate = matches_new.group('candplusrate')
+        cand = matches_new.group('cand')
+        retval.append({'cand': cand})
+        rating = matches_new.group('rating')
+        retval.append({'rating': rating})
+        restofline = matches_new.group('restofline')
+        remainingtext = restofline.lstrip()
+        if remainingtext.startswith((">", "=", ",")):
+            delimiter = remainingtext[0]
+            retval.append({'delim': delimiter})
+            remainingtext = remainingtext[1:]
 
     return retval
 
@@ -336,7 +375,8 @@ def _process_abif_prefline(qty,
     toprating = 0
     ratingarray = {}
     orderedlist = None
-    for tok in _tokenize_abif_prefline(prefstr):
+    prefline_toks = _tokenize_abif_prefline(prefstr)
+    for tok in prefline_toks:
         if debuginfo:
             abifmodel['votelines'][-1]['tokens'].append(tok)
         if 'cand' in tok:
@@ -406,7 +446,7 @@ def main():
         abifmodel = convert_abif_to_jabmod(args.input_file)
         try:
             outstr = json.dumps(abifmodel, indent=4)
-        except:
+        except BaseException:
             outstr = "NOT JSON SERIALIZABLE"
             outstr += pprint.pformat(abifmodel)
     elif (input_format == 'abif' and output_format == 'jabmoddebug'):
@@ -415,7 +455,7 @@ def main():
                                            debuginfo=True)
         try:
             outstr = json.dumps(abifmodel, indent=4)
-        except:
+        except BaseException:
             outstr = "NOT JSON SERIALIZABLE"
             outstr += pprint.pformat(abifmodel)
     elif (input_format == 'jabmod' and output_format == 'abif'):
