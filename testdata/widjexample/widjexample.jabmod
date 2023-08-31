@@ -23,23 +23,22 @@
             "qty": 400,
             "prefs": {
                 "candA": {
-                    "rating": "6",
-                    "rank": 1
+                    "rating": "6"
                 }
             },
-            "comment": null
+            "comment": null,
+            "orderedlist": false
         },
         {
             "qty": 300,
             "prefs": {
                 "candB": {
                     "rating": "6",
-                    "rank": 1,
-                    "nextdelim": ">"
+                    "nextdelim": ">",
+                    "rank": 1
                 },
                 "candC": {
-                    "rating": "5",
-                    "rank": 2
+                    "rating": "5"
                 }
             },
             "comment": null,
@@ -49,11 +48,11 @@
             "qty": 200,
             "prefs": {
                 "candC": {
-                    "rating": "6",
-                    "rank": 1
+                    "rating": "6"
                 }
             },
-            "comment": null
+            "comment": null,
+            "orderedlist": false
         }
     ]
 }

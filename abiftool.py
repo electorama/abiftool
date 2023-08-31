@@ -31,10 +31,14 @@ PRUNED_WIDJ_FIELDS = [
     "candidates", "inline_ballots"
 ]
 ABIF_VERSION = "0.1"
+DEBUGFLAG = False
+LOOPLIMIT = 400
 
 
 def debugprint(str):
-    print(str)
+    global DEBUGFLAG
+    if DEBUGFLAG:
+        print(str)
     return
 
 
@@ -65,28 +69,29 @@ def convert_widj_to_jabmod(widgetjson):
 def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     """Converts electowidget JSON (widj) to a .abif string."""
     abif_string = ""
+    abif_string += "#------- metadata -------\n"
 
     for field, value in abifmodel["metadata"].items():
-        abif_string += f'{{{field}: {json.dumps(value)}}}\n'
+        jstr = json.dumps(value)
+        abif_string += f'{{{field}: {jstr}}}\n'
 
-    abif_string += "#-----------------------\n"
-
-    # Convert candidate declarations to abif.
+    abif_string += "#------ candlines ------\n"
     for candtoken in abifmodel["candidates"]:
         abif_string += f"={candtoken}:"
         abif_string += f"[{abifmodel['candidates'][candtoken]}]\n"
 
-    abif_string += "#-----------------------\n"
+    abif_string += "#------- votelines ------\n"
+    for (i, voteline) in enumerate(abifmodel["votelines"]):
+        try:
+            is_ordered = voteline["orderedlist"]
+        except KeyError:
+            is_ordered = False
 
-    for ballot in abifmodel["votelines"]:
-        prefstr = ""
-        for pref in ballot['prefs']:
-            prefstr += pref
-            if 'nextdelim' in ballot['prefs'][pref]:
-                delim = ballot['prefs'][pref]['nextdelim']
-                prefstr += delim
-
-        abif_string += f"{ballot['qty']}:{prefstr}\n"
+        if is_ordered:
+            abif_chunk = _rank_passthrough(voteline)
+        else:
+            abif_chunk = _ratings_to_ranks(voteline)
+        abif_string += abif_chunk
 
     return abif_string
 
@@ -181,6 +186,62 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
     return abifmodel
 
 
+def _rank_passthrough(ballot):
+    local_abif_str = ""
+    prefstr = ""
+    for pref in ballot['prefs']:
+        prefstr += pref
+        if 'nextdelim' in ballot['prefs'][pref]:
+            delim = ballot['prefs'][pref]['nextdelim']
+            prefstr += delim
+    local_abif_str += f"{ballot['qty']}:{prefstr}\n"
+    return local_abif_str
+
+
+def _ratings_to_ranks(ballot):
+    local_abif_str = ""
+    final_result = {}
+
+    sortedprefs = sorted(ballot['prefs'].items(),
+                         key=lambda item: (-int(item[1]['rating']),
+                                           item[0])
+                         )
+    final_result["tier"] = []
+    current_rating = 0
+    current_tier = []
+    for name, data in sortedprefs:
+        rating = int(data['rating'])
+
+        if rating != current_rating:
+            if current_tier:
+                final_result["tier"].append(current_tier)
+            current_rating = rating
+            current_tier = []
+
+        current_tier.append({name: data})
+    if current_tier:
+        final_result["tier"].append(current_tier)
+
+    prefstrfromratings = ""
+    for i, tierblob in enumerate(final_result['tier']):
+        rank = i + 1
+        lastindexi = len(final_result["tier"]) - 1
+        for j, thistier in enumerate(tierblob):
+            thistiercount = len(thistier)
+            for k, ckey in enumerate(thistier.keys()):
+                prefstrfromratings += ckey
+                rating = thistier[ckey]['rating']
+                prefstrfromratings += '/'
+                prefstrfromratings += str(rating)
+            tierblobcount = len(tierblob) - 1
+            if j < tierblobcount:
+                prefstrfromratings += '='
+        if i < lastindexi:
+            prefstrfromratings += '>'
+    local_abif_str += f"{ballot['qty']}:{prefstrfromratings}\n"
+    return local_abif_str
+
+
 def _map_widj_ballots(widgetjson):
     """Maps widj ballots to abif voteline objects"""
 
@@ -238,7 +299,7 @@ def _tokenize_abif_prefline(prefstr):
     Break up the prefstr on a prefline into a series of tokens for
     further processing by _process_abif_prefline
     '''
-
+    global LOOPLIMIT
     retval = []
 
     # Regular expression patterns
@@ -277,8 +338,8 @@ def _tokenize_abif_prefline(prefstr):
     loopbare = bool(re.fullmatch(pref_range_baretok_regexp, remainingtext))
     killcounter = 0
     while loopsquare or loopbare:
-        if killcounter > 400:
-            debugprint(f'{killcounter=} (too many)')
+        if killcounter > LOOPLIMIT:
+            debugprint(f'{killcounter=} (over {LOOPLIMIT=})')
             debugprint(f'{loopsquare=} {loopbare=}')
             debugprint(f'{prefstr=}')
             debugprint(f'{remainingtext=}')
@@ -376,41 +437,52 @@ def _process_abif_prefline(qty,
     ratingarray = {}
     orderedlist = None
     prefline_toks = _tokenize_abif_prefline(prefstr)
+    candnum = 0
     for tok in prefline_toks:
         if debuginfo:
             abifmodel['votelines'][-1]['tokens'].append(tok)
         if 'cand' in tok:
+            candnum += 1
             thiscand = tok['cand']
             prefs[thiscand] = {}
             if not thiscand in abifmodel['candidates']:
                 abifmodel['candidates'][thiscand] = thiscand
-        if 'rat' in tok:
-            thisrating = tok['rat']
+        if 'rating' in tok:
+            thisrating = tok['rating']
+            # debugprint(f'{thisrating=}')
             prefs[thiscand]['rating'] = thisrating
             if len(ratingarray) == 0:
                 ratingarray = {candrank: thisrating}
             else:
                 ratingarray[candrank] = thisrating
         if 'delim' in tok:
-            prefs[thiscand]['rank'] = candrank
             thisdelim = tok['delim']
             prefs[thiscand]['nextdelim'] = thisdelim
             if thisdelim == '>':
+                prefs[thiscand]['rank'] = candrank
                 candrank += 1
                 orderedlist = True
             elif thisdelim == '=':
+                prefs[thiscand]['rank'] = candrank
                 orderedlist = True
             elif thisdelim == ",":
+                prefs[thiscand]['rank'] = candrank
                 orderedlist = False
+
     prefs[thiscand]['rank'] = candrank
+    debugprint(f"{prefs=}")
+    debugprint(f"{abifmodel['candidates']=}")
     abifmodel['votelines'][-1]['prefs'] = prefs
-    if orderedlist is not None:
+    if orderedlist is None:
+        abifmodel['votelines'][-1]['orderedlist'] = False
+    else:
         abifmodel['votelines'][-1]['orderedlist'] = orderedlist
     return abifmodel
 
 
 def main():
     """Convert between .abif-adjacent formats."""
+    global DEBUGFLAG
 
     parser = argparse.ArgumentParser(
         description='Convert between .abif and JSON formats')
@@ -419,9 +491,13 @@ def main():
                         required=True, help='Output format')
     parser.add_argument('-f', '--fromfmt', choices=CONV_FORMATS,
                         help='Input format (overrides file extension)')
+    parser.add_argument('-d', '--debug',
+                        help='Output debugging info',
+                        action="store_true")
 
     args = parser.parse_args()
 
+    DEBUGFLAG = args.debug
     # CONV_FORMATS = ('abif', 'jabmod', 'jabmoddebug', 'widj')
 
     # Determine input format based on file extension or override from
