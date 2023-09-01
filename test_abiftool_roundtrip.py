@@ -3,10 +3,8 @@ import os
 import glob
 
 def test_roundtrip_conversion():
-    #abif_files = glob.glob("*.abif")  # Get a list of all *.abif files in the directory
     abif_files = [
-        "testdata/abif_testsuite/potus1980test01.abif",
-        "testdata/abif_testsuite/potus1980test01.abif"
+        "testdata/electorama-abif/testfiles/potus1980test01.abif"
         ]
     # next one to try: "testdata/abif_testsuite/test001.abif"
 
