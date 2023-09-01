@@ -19,6 +19,7 @@ import argparse
 import json
 import re
 import sys
+import urllib.parse
 
 CONV_FORMATS = ('abif', 'jabmod', 'jabmoddebug', 'widj')
 
@@ -77,7 +78,8 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
 
     abif_string += "#------ candlines ------\n"
     for candtoken in abifmodel["candidates"]:
-        abif_string += f"={candtoken}:"
+        candqtoken = _abif_token_quote(candtoken)
+        abif_string += f"={candqtoken}:"
         abif_string += f"[{abifmodel['candidates'][candtoken]}]\n"
 
     abif_string += "#------- votelines ------\n"
@@ -87,10 +89,11 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
         except KeyError:
             is_ordered = False
 
-        if is_ordered:
-            abif_chunk = _rank_passthrough(voteline)
-        else:
-            abif_chunk = _ratings_to_ranks(voteline)
+        # if is_ordered:
+        #    abif_chunk = _rank_passthrough(voteline)
+        # else:
+        #    abif_chunk = _ratings_to_ranks(voteline)
+        abif_chunk = _get_prefstr_from_voteline(voteline)
         abif_string += abif_chunk
 
     return abif_string
@@ -186,59 +189,87 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
     return abifmodel
 
 
-def _rank_passthrough(ballot):
-    local_abif_str = ""
-    prefstr = ""
-    for pref in ballot['prefs']:
-        prefstr += pref
-        if 'nextdelim' in ballot['prefs'][pref]:
-            delim = ballot['prefs'][pref]['nextdelim']
-            prefstr += delim
-    local_abif_str += f"{ballot['qty']}:{prefstr}\n"
-    return local_abif_str
+def _abif_token_quote(candtoken):
+    quotedcand = urllib.parse.quote_plus(candtoken)
+    if quotedcand == candtoken:
+        candtoken = candtoken
+    else:
+        candtoken = f"[{candtoken}]"
+    return candtoken
 
 
-def _ratings_to_ranks(ballot):
-    local_abif_str = ""
-    final_result = {}
+def _prefstr_from_ranked_line(sortedprefs):
+    prefstrfromranks = ""
+    rank = 1
+    for name, data in sortedprefs:
+        prefstrfromranks += _abif_token_quote(name)
+        if 'rating' in data and data['rating'] is not None:
+            prefstrfromranks += f"/{data['rating']}"
+        if 'nextdelim' in data:
+            if data['nextdelim'] == '>':
+                rank += 1
+            prefstrfromranks += data['nextdelim']
+    return prefstrfromranks
 
-    sortedprefs = sorted(ballot['prefs'].items(),
-                         key=lambda item: (-int(item[1]['rating']),
-                                           item[0])
-                         )
-    final_result["tier"] = []
+
+def _prefstr_from_ratings(sortedprefs):
+    tiered_cands = []
     current_rating = 0
     current_tier = []
     for name, data in sortedprefs:
-        rating = int(data['rating'])
+        try:
+            rating = int(data['rating'])
+        except TypeError:
+            rating = None
 
         if rating != current_rating:
             if current_tier:
-                final_result["tier"].append(current_tier)
+                tiered_cands.append(current_tier)
             current_rating = rating
             current_tier = []
-
         current_tier.append({name: data})
     if current_tier:
-        final_result["tier"].append(current_tier)
+        tiered_cands.append(current_tier)
 
     prefstrfromratings = ""
-    for i, tierblob in enumerate(final_result['tier']):
+    for i, tierblob in enumerate(tiered_cands):
         rank = i + 1
-        lastindexi = len(final_result["tier"]) - 1
+        lastindexi = len(tiered_cands) - 1
         for j, thistier in enumerate(tierblob):
             thistiercount = len(thistier)
             for k, ckey in enumerate(thistier.keys()):
-                prefstrfromratings += ckey
+                candqtoken = _abif_token_quote(ckey)
+                prefstrfromratings += candqtoken
                 rating = thistier[ckey]['rating']
-                prefstrfromratings += '/'
-                prefstrfromratings += str(rating)
+                prefstrfromratings += f'/{rating}'
             tierblobcount = len(tierblob) - 1
             if j < tierblobcount:
                 prefstrfromratings += '='
         if i < lastindexi:
             prefstrfromratings += '>'
-    local_abif_str += f"{ballot['qty']}:{prefstrfromratings}\n"
+    return prefstrfromratings
+
+
+def _get_prefstr_from_voteline(ballot):
+    local_abif_str = ""
+
+    try:
+        prefitems = sorted(ballot['prefs'].items(),
+                           key=lambda item: (-int(item[1]['rating']),
+                                             item[0])
+                           )
+        has_full_ratings = True
+    except TypeError:
+        #debugprint("I hope ballot['prefs'] is sorted already")
+        prefitems = ballot['prefs'].items()
+        has_full_ratings = False
+
+    if has_full_ratings:
+        prefstr = _prefstr_from_ratings(prefitems)
+    else:
+        prefstr = _prefstr_from_ranked_line(prefitems)
+
+    local_abif_str += f"{ballot['qty']}:{prefstr}\n"
     return local_abif_str
 
 
@@ -470,8 +501,8 @@ def _process_abif_prefline(qty,
                 orderedlist = False
 
     prefs[thiscand]['rank'] = candrank
-    debugprint(f"{prefs=}")
-    debugprint(f"{abifmodel['candidates']=}")
+    # debugprint(f"{prefs=}")
+    # debugprint(f"{abifmodel['candidates']=}")
     abifmodel['votelines'][-1]['prefs'] = prefs
     if orderedlist is None:
         abifmodel['votelines'][-1]['orderedlist'] = False
