@@ -143,7 +143,19 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
                 \}                      # look!  squirrel!!!!!
                 $''', re.VERBOSE
             )
-            candlineregexp = re.compile(r'^\=([^:]*):\[([^\]]*)\]$')
+            candlineregexp = re.compile(
+                r'''
+                ^\=                     # the first character of candlines: "="
+                \s*                     # whitespace
+                ["\[]?                  # optional '[' or '"' prior to candtoken
+                ([^:\"\]]*)             # candtoken; disallowed: " or ] or :
+                ["\[]?                  # optional '[' or '"' after candtoken
+                :                       # separator
+                \[?                     # optional '[' prior to canddesc
+                ([^\]]*)                # canddesc
+                \]?                     # optional ']' after canddesc
+                $                       # That's all, folks!
+                ''', re.VERBOSE)
             votelineregexp = re.compile(r'^(\d+):(.*)$')
 
             matchgroup = None
