@@ -62,7 +62,6 @@ def convert_widj_to_jabmod(widgetjson):
 
     # Fill in abifmodel["votelines"]
     abifmodel["votelines"] = _map_widj_ballots(widgetjson)
-    _add_prefstr_and_rating_fields(abifmodel["votelines"])
 
     return abifmodel
 
@@ -100,6 +99,7 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
 
 
 def convert_abif_to_jabmod(filename, debuginfo=False):
+    debugprint(f"convert_abif_to_jabmod({filename=}, {debuginfo=})")
     abifmodel = {
         'metadata': {
             'ballotcount': 0
@@ -201,6 +201,7 @@ def _abif_token_quote(candtoken):
 def _prefstr_from_ranked_line(sortedprefs):
     prefstrfromranks = ""
     rank = 1
+
     for name, data in sortedprefs:
         prefstrfromranks += _abif_token_quote(name)
         if 'rating' in data and data['rating'] is not None:
@@ -283,7 +284,7 @@ def _map_widj_ballots(widgetjson):
             "prefs": {},
         }
         for candtoken, rating in ballot["vote"].items():
-            abif_ballot["prefs"][candtoken] = rating
+            abif_ballot["prefs"][candtoken] = {'rating': rating}
         abif_votelines.append(abif_ballot)
 
     return abif_votelines
@@ -368,6 +369,7 @@ def _tokenize_abif_prefline(prefstr):
         pref_range_squarebrack_regexp, remainingtext))
     loopbare = bool(re.fullmatch(pref_range_baretok_regexp, remainingtext))
     killcounter = 0
+
     while loopsquare or loopbare:
         if killcounter > LOOPLIMIT:
             debugprint(f'{killcounter=} (over {LOOPLIMIT=})')
@@ -404,37 +406,6 @@ def _tokenize_abif_prefline(prefstr):
             remainingtext = remainingtext[1:]
 
     return retval
-
-
-def _add_prefstr_and_rating_fields(abif_votelines, add_ratings=True):
-    """Adds the prefstr and rating fields to each voteline."""
-
-    for ballot in abif_votelines:
-        prefs_list = []
-        for candtoken, rating in ballot["prefs"].items():
-            prefs_list.append((rating, candtoken))
-
-        # Sort the prefs_list in descending order by rating.
-        prefs_list.sort(reverse=True)
-
-        # Create the prefstr.
-        prefstr = ""
-        for i, (rating, candtoken) in enumerate(prefs_list):
-            if prefstr != "":
-                prefstr += ">" if rating != prefs_list[i - 1][0] else "="
-            if add_ratings:
-                prefstr += f"{candtoken}/{rating}"
-            else:
-                prefstr += f"{candtoken}"
-
-        ballot["prefstr"] = prefstr
-
-        # Extrapolate the ranking from rating-based sort
-        for i, (rating, candtoken) in enumerate(prefs_list):
-            ballot["prefs"][candtoken] = {
-                "rank": i + 1,
-                "rating": rating,
-            }
 
 
 def _process_abif_prefline(qty,
@@ -529,6 +500,8 @@ def main():
     args = parser.parse_args()
 
     DEBUGFLAG = args.debug
+    debugprint(f"{DEBUGFLAG=}")
+
     # CONV_FORMATS = ('abif', 'jabmod', 'jabmoddebug', 'widj')
 
     # Determine input format based on file extension or override from
@@ -550,7 +523,8 @@ def main():
 
     if (input_format == 'abif' and output_format == 'jabmod'):
         # Convert .abif to JSON-based model (.jabmod)
-        abifmodel = convert_abif_to_jabmod(args.input_file)
+        abifmodel = convert_abif_to_jabmod(args.input_file,
+                                           debuginfo=DEBUGFLAG)
         try:
             outstr = json.dumps(abifmodel, indent=4)
         except BaseException:
@@ -559,7 +533,7 @@ def main():
     elif (input_format == 'abif' and output_format == 'jabmoddebug'):
         # Convert .abif to JSON-based model (.jabmod) with debug info
         abifmodel = convert_abif_to_jabmod(args.input_file,
-                                           debuginfo=True)
+                                           debuginfo=DEBUGFLAG)
         try:
             outstr = json.dumps(abifmodel, indent=4)
         except BaseException:
