@@ -24,15 +24,9 @@ def test_roundtrip_conversion():
     ##########################
     for (fn, abstr) in abif_files:
         # Convert abif to jabmod
-        jabmod_content = subprocess.run(["abiftool.py", "-t", "jabmod", fn],
-                                        capture_output=True,
-                                        text=True).stdout
+        roundtrip_abif_content = subprocess.run(["abiftool.py", "-t", "abif", fn],
+                                                capture_output=True,
+                                                text=True).stdout
 
-        # Convert jabmod back to abif after roundtrip
-        roundtrip_abif_content = subprocess.run(["abiftool.py",
-                                                 "-f", "jabmod",
-                                                 "-t", "abif", "-"
-                                                 ], capture_output=True,
-                                                text=True, input=jabmod_content).stdout
         assert abstr in roundtrip_abif_content
 

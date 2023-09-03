@@ -112,6 +112,13 @@ def main():
                 abifmodel = json.load(f)
         outstr = convert_jabmod_to_abif(abifmodel,
                                         add_ratings)
+    elif (input_format == 'abif' and output_format == 'abif'):
+        add_ratings = True
+        # Convert .abif to JSON-based model (.jabmod) with debug info
+        abifmodel = convert_abif_to_jabmod(args.input_file,
+                                           debuginfo=DEBUGFLAG)
+        outstr = convert_jabmod_to_abif(abifmodel,
+                                        add_ratings)
     elif (input_format == 'widj' and output_format == 'abif'):
         # Convert from electowidget (.widj) to .abif
         add_ratings = True
