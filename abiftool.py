@@ -22,7 +22,7 @@ import re
 import sys
 import urllib.parse
 
-CONV_FORMATS = ('abif', 'jabmod', 'jabmoddebug', 'widj')
+CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'widj')
 
 PRUNED_WIDJ_FIELDS = [
     "display_parameters", "display_results",
@@ -64,7 +64,7 @@ def main():
     DEBUGFLAG = args.debug
     debugprint(f"{DEBUGFLAG=}")
 
-    # CONV_FORMATS = ('abif', 'jabmod', 'jabmoddebug', 'widj')
+    # CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'widj')
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
@@ -86,16 +86,18 @@ def main():
     if (input_format == 'abif' and output_format == 'jabmod'):
         # Convert .abif to JSON-based model (.jabmod)
         abifmodel = convert_abif_to_jabmod(args.input_file,
-                                           debuginfo=DEBUGFLAG)
+                                           debugflag=DEBUGFLAG,
+                                           extrainfo=False)
         try:
             outstr = json.dumps(abifmodel, indent=4)
         except BaseException:
             outstr = "NOT JSON SERIALIZABLE"
             outstr += pprint.pformat(abifmodel)
-    elif (input_format == 'abif' and output_format == 'jabmoddebug'):
+    elif (input_format == 'abif' and output_format == 'jabmodextra'):
         # Convert .abif to JSON-based model (.jabmod) with debug info
         abifmodel = convert_abif_to_jabmod(args.input_file,
-                                           debuginfo=DEBUGFLAG)
+                                           debugflag=DEBUGFLAG,
+                                           extrainfo=True)
         try:
             outstr = json.dumps(abifmodel, indent=4)
         except BaseException:
@@ -114,9 +116,9 @@ def main():
                                         add_ratings)
     elif (input_format == 'abif' and output_format == 'abif'):
         add_ratings = True
-        # Convert .abif to JSON-based model (.jabmod) with debug info
         abifmodel = convert_abif_to_jabmod(args.input_file,
-                                           debuginfo=DEBUGFLAG)
+                                           debugflag=DEBUGFLAG,
+                                           extrainfo=False)
         outstr = convert_jabmod_to_abif(abifmodel,
                                         add_ratings)
     elif (input_format == 'widj' and output_format == 'abif'):

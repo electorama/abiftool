@@ -62,8 +62,9 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     return abif_string
 
 
-def convert_abif_to_jabmod(filename, debuginfo=False):
-    debugprint(f"convert_abif_to_jabmod({filename=}, {debuginfo=})")
+def convert_abif_to_jabmod(filename, debugflag=False, extrainfo=False):
+    debugprint(
+        f"convert_abif_to_jabmod({filename=}, {debugflag=}, {extrainfo=}")
     abifmodel = {
         'metadata': {
             'ballotcount': 0
@@ -71,7 +72,7 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
         'candidates': {},
         'votelines': []
     }
-    if debuginfo:
+    if extrainfo:
         abifmodel['metadata']['comments'] = []
 
     with open(filename) as file:
@@ -136,7 +137,7 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
             abifmodel = _process_abif_comment_line(abifmodelin=abifmodel,
                                                    linecomment=linecomment,
                                                    linenum=i,
-                                                   debuginfo=debuginfo)
+                                                   extrainfo=extrainfo)
 
             # now to deal with the substance
             if (match := candlineregexp.match(strpdline)):
@@ -158,7 +159,7 @@ def convert_abif_to_jabmod(filename, debuginfo=False):
                                                    prefstr,
                                                    abifmodel,
                                                    linecomment,
-                                                   debuginfo=debuginfo)
+                                                   extrainfo=extrainfo)
             else:
                 matchgroup = 'empty'
 
@@ -253,9 +254,9 @@ def _get_prefstr_from_voteline(ballot):
 def _process_abif_comment_line(abifmodelin={},
                                linecomment="",
                                linenum=0,
-                               debuginfo=False):
+                               extrainfo=False):
     commenttuple = (linenum, linecomment)
-    if debuginfo:
+    if extrainfo:
         abifmodelin['metadata']['comments'].append(commenttuple)
 
     return abifmodelin
@@ -372,7 +373,7 @@ def _process_abif_prefline(qty,
                            prefstr,
                            abifmodel,
                            linecomment=None,
-                           debuginfo=False):
+                           extrainfo=False):
     '''process vote bundles
 
     preflines are the heart of ABIF.  Each line describes batch of
@@ -386,11 +387,11 @@ def _process_abif_prefline(qty,
     linepair['qty'] = int(qty)
     linepair['prefs'] = {}
     linepair['comment'] = linecomment
-    if debuginfo:
+    if extrainfo:
         linepair['prefstr'] = prefstr.rstrip()
 
     abifmodel['votelines'].append(linepair)
-    if debuginfo:
+    if extrainfo:
         abifmodel['votelines'][-1]['tokens'] = []
     prefs = {}
     candrank = 1
@@ -401,7 +402,7 @@ def _process_abif_prefline(qty,
     prefline_toks = _tokenize_abif_prefline(prefstr)
     candnum = 0
     for tok in prefline_toks:
-        if debuginfo:
+        if extrainfo:
             abifmodel['votelines'][-1]['tokens'].append(tok)
         if 'cand' in tok:
             candnum += 1
