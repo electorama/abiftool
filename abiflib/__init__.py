@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# abiflib/__init.py - conversion to/from .abif to other electoral expressions
+# abiflib/__init__.py - conversion to/from .abif to other electoral expressions
 #
 # Copyright (C) 2023 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
@@ -16,4 +16,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib.core import *
+from abiflib.pairwise import *
+from abiflib.textoutput import *
 from abiflib.widjfuncs import *

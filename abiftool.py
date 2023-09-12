@@ -18,11 +18,12 @@
 from abiflib import *
 import argparse
 import json
+import os
 import re
 import sys
 import urllib.parse
 
-CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'widj')
+CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'texttable', 'widj')
 
 PRUNED_WIDJ_FIELDS = [
     "display_parameters", "display_results",
@@ -64,7 +65,7 @@ def main():
     DEBUGFLAG = args.debug
     debugprint(f"{DEBUGFLAG=}")
 
-    # CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'widj')
+    # CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'texttable', 'widj')
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
@@ -76,6 +77,10 @@ def main():
     if input_format not in CONV_FORMATS:
         print(f"Error: Unsupported input format '{input_format}'")
         return
+
+    if not os.path.exists(args.input_file):
+        print(f"The file '{args.input_file}' doesn't exist.")
+        sys.exit()
 
     # the "-t/--to" option
     output_format = args.to
@@ -135,6 +140,23 @@ def main():
             widgetjson = json.load(f)
             abifmodel = convert_widj_to_jabmod(widgetjson)
         outstr = json.dumps(abifmodel, indent=2)
+    elif (input_format == 'abif' and output_format == 'texttable'):
+        add_ratings = True
+        abifmodel = convert_abif_to_jabmod(args.input_file,
+                                           debugflag=DEBUGFLAG,
+                                           extrainfo=False)
+        outstr = ""
+        outstr += headerfy_text_file(args.input_file)
+
+        pairdict = pairwise_count_dict(
+            abifmodel['candidates'],
+            abifmodel['votelines']
+        )
+        outstr += textgrid_for_2D_dict(
+            twodimdict=pairdict,
+            DEBUGFLAG=DEBUGFLAG,
+            tablelabel='   Loser ->\nv Winner')
+
     else:
         outstr = \
             f"Cannot convert from {input_format} to {output_format} yet."

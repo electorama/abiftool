@@ -5,11 +5,12 @@ from subprocess import run, PIPE
     'input_file, command_line_args, expected_output_length',
     [
         ('testdata/widjexample/widjexample.jabmod', ['-t', 'abif'], 22),
-        ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 10231)
+        ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 10231),
+        ('testdata/burl2009/burl2009.abif', ['-t', 'texttable'], 417)
     ]
 )
 
-def test_abiftool(input_file, command_line_args, expected_output_length):
+def test_abiftool_linecount(input_file, command_line_args, expected_output_length):
     command = ['python', 'abiftool.py', *command_line_args, input_file]
     completed_process = run(command, stdout=PIPE, text=True)
 
