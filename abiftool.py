@@ -23,7 +23,8 @@ import re
 import sys
 import urllib.parse
 
-CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'texttable', 'widj')
+CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'paircountjson', 'texttable',
+                'widj', 'winlosstiejson')
 
 PRUNED_WIDJ_FIELDS = [
     "display_parameters", "display_results",
@@ -64,8 +65,6 @@ def main():
 
     DEBUGFLAG = args.debug
     debugprint(f"{DEBUGFLAG=}")
-
-    # CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'texttable', 'widj')
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
@@ -146,7 +145,8 @@ def main():
                                            debugflag=DEBUGFLAG,
                                            extrainfo=False)
         outstr = ""
-        outstr += headerfy_text_file(args.input_file)
+        if DEBUGFLAG:
+            outstr += headerfy_text_file(args.input_file)
 
         pairdict = pairwise_count_dict(
             abifmodel['candidates'],
@@ -157,6 +157,36 @@ def main():
             DEBUGFLAG=DEBUGFLAG,
             tablelabel='   Loser ->\nv Winner')
 
+    elif (input_format == 'abif' and output_format == 'paircountjson'):
+        add_ratings = True
+        abifmodel = convert_abif_to_jabmod(args.input_file,
+                                           debugflag=DEBUGFLAG,
+                                           extrainfo=False)
+        outstr = ""
+        if DEBUGFLAG:
+            outstr += headerfy_text_file(args.input_file)
+
+        pairdict = pairwise_count_dict(
+            abifmodel['candidates'],
+            abifmodel['votelines']
+        )
+
+        outstr += json.dumps(pairdict, indent=4)
+
+    elif (input_format == 'abif' and output_format == 'winlosstiejson'):
+        add_ratings = True
+        abifmodel = convert_abif_to_jabmod(args.input_file,
+                                           debugflag=DEBUGFLAG,
+                                           extrainfo=False)
+        outstr = ""
+        if DEBUGFLAG:
+            outstr += headerfy_text_file(args.input_file)
+
+        candlist = abifmodel['candidates']
+        votelns = abifmodel['votelines']
+        pairdict = pairwise_count_dict(candlist, votelns)
+        wltdict = winlosstie_dict_from_pairdict(candlist, pairdict)
+        outstr += json.dumps(wltdict, indent=4)
     else:
         outstr = \
             f"Cannot convert from {input_format} to {output_format} yet."

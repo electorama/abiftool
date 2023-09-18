@@ -58,8 +58,7 @@ def main():
     args = parser.parse_args()
     for repospec_fn in args.repospec:
         (repo_url, subdir) = read_repospec(repospec_fn)
-
-    checkout_repository(repo_url, subdir)
+        checkout_repository(repo_url, subdir)
 
 
 if __name__ == "__main__":

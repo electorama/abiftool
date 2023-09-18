@@ -52,6 +52,39 @@ def pairwise_count_dict(candidates, votelines):
     return retval_a_over_b
 
 
+def winlosstie_dict_from_pairdict(candidates, pairdict):
+    candtoks = list(candidates.keys())
+    winlosstie_dict = {}
+    for atok in candtoks:
+        winlosstie_dict[atok] = {'wins': 0,
+                                 'losses': 0,
+                                 'ties': 0}
+    for atok in candtoks:
+        for btok in candtoks:
+            a2b = pairdict[atok][btok]
+            b2a = pairdict[btok][atok]
+            # When atok == btok, that's the diagonal stripe in the
+            # midddle of the matrix with no values because candidates
+            # don't run against each other.
+            if atok != btok:
+                if a2b > b2a:
+                    winlosstie_dict[atok]['wins'] += 1
+                    winlosstie_dict[btok]['losses'] += 1
+                elif a2b == b2a:
+                    winlosstie_dict[atok]['ties'] += 1
+                    winlosstie_dict[btok]['ties'] += 1
+                else:
+                    # Avoiding counting each matchup twice by only paying
+                    # attention to half of the matrix
+                    pass
+
+    stuples = sorted(winlosstie_dict.items(),
+                     key=lambda item: item[1]['wins'], reverse=True)
+    sorted_dict = {k: v for k, v in stuples}
+
+    return sorted_dict
+
+
 def main():
     """Create pairwise matrix"""
     global DEBUGFLAG

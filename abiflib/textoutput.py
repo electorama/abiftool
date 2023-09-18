@@ -46,7 +46,6 @@ def textgrid_for_2D_dict(twodimdict,
         retval += "=============================\n"
         retval += "textgrid_for_2D_dict:\n"
 
-    retval += "texttable render of twodimdict\n"
     table = Texttable()
     ctok = list(twodimdict.keys())
     table.add_row([tablelabel] + ctok)
