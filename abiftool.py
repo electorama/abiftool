@@ -91,7 +91,8 @@ def main():
         # Convert .abif to JSON-based model (.jabmod)
         abifmodel = convert_abif_to_jabmod(args.input_file,
                                            debugflag=DEBUGFLAG,
-                                           extrainfo=False)
+                                           extrainfo=False,
+                                           dedup=True)
         try:
             outstr = json.dumps(abifmodel, indent=4)
         except BaseException:
@@ -101,7 +102,8 @@ def main():
         # Convert .abif to JSON-based model (.jabmod) with debug info
         abifmodel = convert_abif_to_jabmod(args.input_file,
                                            debugflag=DEBUGFLAG,
-                                           extrainfo=True)
+                                           extrainfo=True,
+                                           dedup=True)
         try:
             outstr = json.dumps(abifmodel, indent=4)
         except BaseException:
@@ -122,7 +124,9 @@ def main():
         add_ratings = True
         abifmodel = convert_abif_to_jabmod(args.input_file,
                                            debugflag=DEBUGFLAG,
-                                           extrainfo=False)
+                                           extrainfo=False,
+                                           dedup=True,
+                                           sortqty=True)
         outstr = convert_jabmod_to_abif(abifmodel,
                                         add_ratings)
     elif (input_format == 'widj' and output_format == 'abif'):
@@ -143,7 +147,8 @@ def main():
         add_ratings = True
         abifmodel = convert_abif_to_jabmod(args.input_file,
                                            debugflag=DEBUGFLAG,
-                                           extrainfo=False)
+                                           extrainfo=False,
+                                           dedup=True)
         outstr = ""
         if DEBUGFLAG:
             outstr += headerfy_text_file(args.input_file)

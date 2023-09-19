@@ -62,7 +62,8 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     return abif_string
 
 
-def convert_abif_to_jabmod(filename, debugflag=False, extrainfo=False):
+def convert_abif_to_jabmod(filename, debugflag=False, extrainfo=False,
+                           dedup=False, sortqty=False):
     debugprint(
         f"convert_abif_to_jabmod({filename=}, {debugflag=}, {extrainfo=}")
     abifmodel = {
@@ -163,7 +164,56 @@ def convert_abif_to_jabmod(filename, debugflag=False, extrainfo=False):
             else:
                 matchgroup = 'empty'
 
+    if dedup:
+        deduped = _deduplicate_jabmod_votelines(abifmodel["votelines"])
+        abifmodel["votelines"] = deduped
+
+    if sortqty:
+        slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
+                       reverse=True)
+        abifmodel["votelines"] = slist
+
     return abifmodel
+
+
+def _deduplicate_jabmod_votelines(votelines):
+    """Deduplicate votelines."""
+    uniqprefs = {}
+    for (i, voteline) in enumerate(votelines):
+        try:
+            is_ordered = voteline["orderedlist"]
+        except KeyError:
+            is_ordered = False
+
+        try:
+            prefitems = sorted(voteline['prefs'].items(),
+                               key=lambda item: (-int(item[1]['rating']),
+                                                 item[0])
+                               )
+            has_full_ratings = True
+        except TypeError:
+            #debugprint("I hope ballot['prefs'] is sorted already")
+            prefitems = voteline['prefs'].items()
+            has_full_ratings = False
+
+        if has_full_ratings:
+            prefstr = _prefstr_from_ratings(prefitems)
+        else:
+            prefstr = _prefstr_from_ranked_line(prefitems)
+        if prefstr in uniqprefs.keys():
+            uniqprefs[prefstr]['qty'] += voteline['qty']
+        else:
+            uniqprefs[prefstr] = {}
+            uniqprefs[prefstr]['qty'] = voteline['qty']
+            uniqprefs[prefstr]['prefs'] = voteline['prefs']
+            if 'comment' in voteline.keys():
+                uniqprefs[prefstr]['comment'] = voteline['comment']
+            if 'orderedlist' in voteline.keys():
+                uniqprefs[prefstr]['orderedlist'] = voteline['orderedlist']
+    retval = []
+    for k, v in uniqprefs.items():
+        retval.append(v)
+    return retval
 
 
 def _abif_token_quote(candtoken):
