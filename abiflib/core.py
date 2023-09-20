@@ -62,10 +62,8 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     return abif_string
 
 
-def convert_abif_to_jabmod(filename, debugflag=False, extrainfo=False,
+def convert_abif_to_jabmod(inputstr, debugflag=False, extrainfo=False,
                            dedup=False, sortqty=False):
-    debugprint(
-        f"convert_abif_to_jabmod({filename=}, {debugflag=}, {extrainfo=}")
     abifmodel = {
         'metadata': {
             'ballotcount': 0
@@ -76,93 +74,90 @@ def convert_abif_to_jabmod(filename, debugflag=False, extrainfo=False,
     if extrainfo:
         abifmodel['metadata']['comments'] = []
 
-    with open(filename) as file:
-        for i, fullline in enumerate(file):
-            fullline = fullline.strip()
-
-            commentregexp = re.compile(
-                r'''
-                ^                       # beginning of line
-                (?P<beforesep>[^\#]*)   # before the comment separator
-                (?P<comsep>\#+)         # # or ## comment separator
-                (?P<whitespace>\s+)     # optional whitespace
-                (?P<aftersep>.*)        # after the # separator/whitespace
-                $                       # end of line
-                ''', re.VERBOSE
+    for i, fullline in enumerate(inputstr.splitlines()):
+        commentregexp = re.compile(
+            r'''
+            ^                       # beginning of line
+            (?P<beforesep>[^\#]*)   # before the comment separator
+            (?P<comsep>\#+)         # # or ## comment separator
+            (?P<whitespace>\s+)     # optional whitespace
+            (?P<aftersep>.*)        # after the # separator/whitespace
+            $                       # end of line
+            ''', re.VERBOSE
+        )
+        metadataregexp = re.compile(
+            r'''
+            ^\{                     # abif metadata lines always start with '{'
+            \s*                     # whitespace
+            [\'\"]?                 # optional quotation marks (single or double)
+            ([\w\s]+)               # METADATA KEY
+            \s*                     # moar whitespace!!!!
+            [\'\"]?                 # ending quotation
+            \s*                     # abif loves whitespace!!!!!
+            :                       # COLON! Very important!
+            \s*                     # moar whitesapce!!!1!
+            [\'\"]?                 # abif also loves optional quotes
+            ([\w\s\.]+)             # METADATA VALUE
+            \s*                     # more whitespace 'cuz
+            [\'\"]?                 # moar quotes
+            \s*                     # spaces the finals frontiers
+            \}                      # look!  squirrel!!!!!
+            $''', re.VERBOSE
             )
-            metadataregexp = re.compile(
-                r'''
-                ^\{                     # abif metadata lines always start with '{'
-                \s*                     # whitespace
-                [\'\"]?                 # optional quotation marks (single or double)
-                ([\w\s]+)               # METADATA KEY
-                \s*                     # moar whitespace!!!!
-                [\'\"]?                 # ending quotation
-                \s*                     # abif loves whitespace!!!!!
-                :                       # COLON! Very important!
-                \s*                     # moar whitesapce!!!1!
-                [\'\"]?                 # abif also loves optional quotes
-                ([\w\s\.]+)             # METADATA VALUE
-                \s*                     # more whitespace 'cuz
-                [\'\"]?                 # moar quotes
-                \s*                     # spaces the finals frontiers
-                \}                      # look!  squirrel!!!!!
-                $''', re.VERBOSE
-            )
-            candlineregexp = re.compile(
-                r'''
-                ^\=                     # the first character of candlines: "="
-                \s*                     # whitespace
-                ["\[]?                  # optional '[' or '"' prior to candtoken
-                ([^:\"\]]*)             # candtoken; disallowed: " or ] or :
-                ["\[]?                  # optional '[' or '"' after candtoken
-                :                       # separator
-                \[?                     # optional '[' prior to canddesc
-                ([^\]]*)                # canddesc
-                \]?                     # optional ']' after canddesc
-                $                       # That's all, folks!
-                ''', re.VERBOSE)
-            votelineregexp = re.compile(r'^(\d+):(.*)$')
+        candlineregexp = re.compile(
+            r'''
+            ^\=                     # the first character of candlines: "="
+            \s*                     # whitespace
+            ["\[]?                  # optional '[' or '"' prior to candtoken
+            ([^:\"\]]*)             # candtoken; disallowed: " or ] or :
+            ["\[]?                  # optional '[' or '"' after candtoken
+            :                       # separator
+            \[?                     # optional '[' prior to canddesc
+            ([^\]]*)                # canddesc
+            \]?                     # optional ']' after canddesc
+            $                       # That's all, folks!
+            ''', re.VERBOSE)
+        votelineregexp = re.compile(r'^(\d+):(.*)$')
 
-            matchgroup = None
-            # Strip the comments out first
-            if (match := commentregexp.match(fullline)):
-                matchgroup = 'commentregexp'
-                cparts = match.groupdict()
-                strpdline = cparts['beforesep']
-                linecomment = cparts['comsep'] + \
-                    cparts['whitespace'] + cparts['aftersep']
-            else:
-                strpdline = fullline
-                linecomment = None
-            abifmodel = _process_abif_comment_line(abifmodelin=abifmodel,
-                                                   linecomment=linecomment,
-                                                   linenum=i,
-                                                   extrainfo=extrainfo)
+        matchgroup = None
+        # Strip the comments out first
+        if (match := commentregexp.match(fullline)):
+            matchgroup = 'commentregexp'
+            cparts = match.groupdict()
+            strpdline = cparts['beforesep']
+            linecomment = cparts['comsep'] + \
+                cparts['whitespace'] + cparts['aftersep']
+        else:
+            strpdline = fullline
+            linecomment = None
+        abifmodel = _process_abif_comment_line(abifmodelin=abifmodel,
+                                               linecomment=linecomment,
+                                               linenum=i,
+                                               extrainfo=extrainfo)
 
-            # now to deal with the substance
-            if (match := candlineregexp.match(strpdline)):
-                matchgroup = 'candlineregexp'
-                candtoken, canddesc = match.groups()
-                abifmodel = _process_abif_candline(candtoken,
-                                                   canddesc,
-                                                   abifmodel,
-                                                   linecomment)
-            elif (match := metadataregexp.match(strpdline)):
-                matchgroup = 'metadataregexp'
-                mkey, mvalue = match.groups()
-                abifmodel = _process_abif_metadata(
-                    mkey, mvalue, abifmodel, linecomment)
-            elif (match := votelineregexp.match(strpdline)):
-                matchgroup = 'votelineregexp'
-                qty, prefstr = match.groups()
-                abifmodel = _process_abif_prefline(qty,
-                                                   prefstr,
-                                                   abifmodel,
-                                                   linecomment,
-                                                   extrainfo=extrainfo)
-            else:
-                matchgroup = 'empty'
+        # now to deal with the substance
+        if (match := candlineregexp.match(strpdline)):
+            matchgroup = 'candlineregexp'
+            candtoken, canddesc = match.groups()
+            abifmodel = _process_abif_candline(candtoken,
+                                               canddesc,
+                                               abifmodel,
+                                               linecomment)
+        elif (match := metadataregexp.match(strpdline)):
+            matchgroup = 'metadataregexp'
+            mkey, mvalue = match.groups()
+            abifmodel = _process_abif_metadata(
+                mkey, mvalue, abifmodel, linecomment)
+        elif (match := votelineregexp.match(strpdline)):
+            matchgroup = 'votelineregexp'
+            qty, prefstr = match.groups()
+            abifmodel = _process_abif_prefline(qty,
+                                               prefstr,
+                                               abifmodel,
+                                               linecomment,
+                                               extrainfo=extrainfo)
+        else:
+            matchgroup = 'empty'
 
     if dedup:
         deduped = _deduplicate_jabmod_votelines(abifmodel["votelines"])

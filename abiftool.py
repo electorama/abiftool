@@ -70,6 +70,8 @@ def main():
     # the "-f/--fromfmt" option
     if args.fromfmt:
         input_format = args.fromfmt
+    elif args.input_file == '-':
+        parser.error("The -f parameter is required with '-'")
     else:
         _, file_extension = args.input_file.rsplit('.', 1)
         input_format = file_extension
@@ -77,9 +79,15 @@ def main():
         print(f"Error: Unsupported input format '{input_format}'")
         return
 
-    if not os.path.exists(args.input_file):
+    inputstr = ""
+    if args.input_file == '-':
+        inputstr = sys.stdin.read()
+    elif not os.path.exists(args.input_file):
         print(f"The file '{args.input_file}' doesn't exist.")
         sys.exit()
+    else:
+        with open(args.input_file, "r") as f:
+            inputstr = f.read()
 
     # the "-t/--to" option
     output_format = args.to
@@ -89,7 +97,7 @@ def main():
 
     if (input_format == 'abif' and output_format == 'jabmod'):
         # Convert .abif to JSON-based model (.jabmod)
-        abifmodel = convert_abif_to_jabmod(args.input_file,
+        abifmodel = convert_abif_to_jabmod(inputstr,
                                            debugflag=DEBUGFLAG,
                                            extrainfo=False,
                                            dedup=True)
@@ -100,7 +108,7 @@ def main():
             outstr += pprint.pformat(abifmodel)
     elif (input_format == 'abif' and output_format == 'jabmodextra'):
         # Convert .abif to JSON-based model (.jabmod) with debug info
-        abifmodel = convert_abif_to_jabmod(args.input_file,
+        abifmodel = convert_abif_to_jabmod(inputstr,
                                            debugflag=DEBUGFLAG,
                                            extrainfo=True,
                                            dedup=True)
@@ -113,16 +121,12 @@ def main():
         # Convert from JSON ABIF model (.jabmod) to .abif
         add_ratings = True
 
-        if args.input_file == "-":
-            abifmodel = json.load(sys.stdin)
-        else:
-            with open(args.input_file) as f:
-                abifmodel = json.load(f)
+        abifmodel = json.loads(inputstr)
         outstr = convert_jabmod_to_abif(abifmodel,
                                         add_ratings)
     elif (input_format == 'abif' and output_format == 'abif'):
         add_ratings = True
-        abifmodel = convert_abif_to_jabmod(args.input_file,
+        abifmodel = convert_abif_to_jabmod(inputstr,
                                            debugflag=DEBUGFLAG,
                                            extrainfo=False,
                                            dedup=True,
@@ -132,26 +136,24 @@ def main():
     elif (input_format == 'widj' and output_format == 'abif'):
         # Convert from electowidget (.widj) to .abif
         add_ratings = True
-        with open(args.input_file) as f:
-            widgetjson = json.load(f)
-            abifmodel = convert_widj_to_jabmod(widgetjson)
+        widgetjson = json.loads(inputstr)
+        abifmodel = convert_widj_to_jabmod(widgetjson)
         outstr = convert_jabmod_to_abif(abifmodel,
                                         add_ratings)
     elif (input_format == 'widj' and output_format == 'jabmod'):
         # Convert from electowidget (.widj) to .abif
-        with open(args.input_file) as f:
-            widgetjson = json.load(f)
-            abifmodel = convert_widj_to_jabmod(widgetjson)
+        widgetjson = json.loads(inputstr)
+        abifmodel = convert_widj_to_jabmod(widgetjson)
         outstr = json.dumps(abifmodel, indent=2)
     elif (input_format == 'abif' and output_format == 'texttable'):
         add_ratings = True
-        abifmodel = convert_abif_to_jabmod(args.input_file,
+        abifmodel = convert_abif_to_jabmod(inputstr,
                                            debugflag=DEBUGFLAG,
                                            extrainfo=False,
                                            dedup=True)
         outstr = ""
         if DEBUGFLAG:
-            outstr += headerfy_text_file(args.input_file)
+            outstr += headerfy_text_file(inputstr, filename=args.input_file)
 
         pairdict = pairwise_count_dict(
             abifmodel['candidates'],
@@ -164,12 +166,12 @@ def main():
 
     elif (input_format == 'abif' and output_format == 'paircountjson'):
         add_ratings = True
-        abifmodel = convert_abif_to_jabmod(args.input_file,
+        abifmodel = convert_abif_to_jabmod(inputstr,
                                            debugflag=DEBUGFLAG,
                                            extrainfo=False)
         outstr = ""
         if DEBUGFLAG:
-            outstr += headerfy_text_file(args.input_file)
+            outstr += headerfy_text_file(inputstr, filename=args.input_file)
 
         pairdict = pairwise_count_dict(
             abifmodel['candidates'],
@@ -180,12 +182,12 @@ def main():
 
     elif (input_format == 'abif' and output_format == 'winlosstiejson'):
         add_ratings = True
-        abifmodel = convert_abif_to_jabmod(args.input_file,
+        abifmodel = convert_abif_to_jabmod(inputstr,
                                            debugflag=DEBUGFLAG,
                                            extrainfo=False)
         outstr = ""
         if DEBUGFLAG:
-            outstr += headerfy_text_file(args.input_file)
+            outstr += headerfy_text_file(inputstr, filename=args.input_file)
 
         candlist = abifmodel['candidates']
         votelns = abifmodel['votelines']

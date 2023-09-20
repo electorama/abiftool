@@ -76,13 +76,12 @@ def textgrid_for_2D_dict(twodimdict,
     return retval
 
 
-def headerfy_text_file(textfile):
+def headerfy_text_file(filetext, filename="???"):
     retval = ""
     retval += "============================\n"
-    retval += f"{textfile=}\n"
+    retval += f"{filename}\n"
     retval += "-------------------------\n"
-    with open(textfile) as f:
-        retval += f.read()
+    retval += filetext
     return retval
 
 
