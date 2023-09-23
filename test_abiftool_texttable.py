@@ -20,7 +20,7 @@ def test_roundtrip_conversion(abif_file, pattern):
     except:
         print(f'Missing file: {abif_file}')
         print(
-            "Please run './repomgr.py *.repospec.json' " +
+            "Please run './fetchmgr.py *.fetchspec.json' " +
             "if you haven't already")
         sys.exit()
 

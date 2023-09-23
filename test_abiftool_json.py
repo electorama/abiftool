@@ -27,7 +27,7 @@ def test_json_key_subkey_val(abif_file, outformat, key1, subkey1, val1):
     except:
         print(f'Missing file: {abif_file}')
         print(
-            "Please run './repomgr.py *.repospec.json' " +
+            "Please run './fetchmgr.py *.fetchspec.json' " +
             "if you haven't already")
         sys.exit()
 
