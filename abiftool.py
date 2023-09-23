@@ -23,8 +23,8 @@ import re
 import sys
 import urllib.parse
 
-CONV_FORMATS = ('abif', 'jabmod', 'jabmodextra', 'paircountjson', 'texttable',
-                'widj', 'winlosstiejson')
+CONV_FORMATS = ('abif', 'debtally', 'jabmod', 'jabmodextra', 'paircountjson',
+                'texttable', 'widj', 'winlosstiejson')
 
 PRUNED_WIDJ_FIELDS = [
     "display_parameters", "display_results",
@@ -125,14 +125,8 @@ def main():
         outstr = convert_jabmod_to_abif(abifmodel,
                                         add_ratings)
     elif (input_format == 'abif' and output_format == 'abif'):
-        add_ratings = True
-        abifmodel = convert_abif_to_jabmod(inputstr,
-                                           debugflag=DEBUGFLAG,
-                                           extrainfo=False,
-                                           dedup=True,
-                                           sortqty=True)
-        outstr = convert_jabmod_to_abif(abifmodel,
-                                        add_ratings)
+        outstr = roundtrip_abif_with_dedup(inputstr)
+
     elif (input_format == 'widj' and output_format == 'abif'):
         # Convert from electowidget (.widj) to .abif
         add_ratings = True
@@ -194,6 +188,9 @@ def main():
         pairdict = pairwise_count_dict(candlist, votelns)
         wltdict = winlosstie_dict_from_pairdict(candlist, pairdict)
         outstr += json.dumps(wltdict, indent=4)
+    elif (input_format == 'debtally' and output_format == 'abif'):
+        rawabifstr = convert_debtally_to_abif(inputstr)
+        outstr = roundtrip_abif_with_dedup(rawabifstr)
     else:
         outstr = \
             f"Cannot convert from {input_format} to {output_format} yet."

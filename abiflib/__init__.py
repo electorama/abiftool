@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib.core import *
+from abiflib.debtally import *
 from abiflib.pairwise import *
 from abiflib.textoutput import *
 from abiflib.widjfuncs import *

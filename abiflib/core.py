@@ -170,6 +170,17 @@ def convert_abif_to_jabmod(inputstr, debugflag=False, extrainfo=False,
 
     return abifmodel
 
+def roundtrip_abif_with_dedup(abifstr,
+                              debugflag=DEBUGFLAG,
+                              add_ratings=True):
+    abifmodel = convert_abif_to_jabmod(abifstr,
+                                       debugflag=DEBUGFLAG,
+                                       extrainfo=False,
+                                       dedup=True,
+                                       sortqty=True)
+    outstr = convert_jabmod_to_abif(abifmodel,
+                                    add_ratings)
+    return outstr
 
 def _deduplicate_jabmod_votelines(votelines):
     """Deduplicate votelines."""
