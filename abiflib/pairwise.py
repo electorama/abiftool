@@ -15,15 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import abiflib
+# import abiflib
 from abiflib import *
+from abiflib.textoutput import *
 import argparse
 import json
 import re
 import sys
 import texttable
 import urllib.parse
-
 
 def pairwise_count_dict(abifmodel):
     candidates = abifmodel['candidates']
@@ -90,20 +90,13 @@ def winlosstie_dict_from_pairdict(candidates, pairdict):
 
 def main():
     """Create pairwise matrix"""
-    global DEBUGFLAG
-
     parser = argparse.ArgumentParser(
         description='Condorcet calc')
     parser.add_argument('input_file', help='Input .abif')
-    parser.add_argument('-d', '--debug',
-                        help='Flip the global DEBUGFLAG',
-                        action="store_true")
 
     args = parser.parse_args()
-    DEBUGFLAG = args.debug
     jabmod = abiflib.convert_abif_to_jabmod(
         args.input_file,
-        debugflag=DEBUGFLAG,
         extrainfo=False)
 
     outstr = ""
@@ -116,10 +109,8 @@ def main():
 
     outstr += textgrid_for_2D_dict(
         twodimdict=pairdict,
-        DEBUGFLAG=DEBUGFLAG,
         tablelabel='   Loser ->\nv Winner')
 
-    debugprint(f"{DEBUGFLAG=}")
     print(outstr)
 
 

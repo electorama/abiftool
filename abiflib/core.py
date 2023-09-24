@@ -21,14 +21,7 @@ import sys
 import urllib.parse
 
 ABIF_VERSION = "0.1"
-DEBUGFLAG = False
 LOOPLIMIT = 400
-
-def debugprint(str):
-    global DEBUGFLAG
-    if DEBUGFLAG:
-        print(str)
-    return
 
 
 def convert_jabmod_to_abif(abifmodel, add_ratings=True):
@@ -59,7 +52,7 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     return abif_string
 
 
-def convert_abif_to_jabmod(inputstr, debugflag=DEBUGFLAG):
+def convert_abif_to_jabmod(inputstr):
     abifmodel = {
         'metadata': {
             'ballotcount': 0
@@ -366,10 +359,10 @@ def _tokenize_abif_prefline(prefstr):
 
     while loopsquare or loopbare:
         if killcounter > LOOPLIMIT:
-            debugprint(f'{killcounter=} (over {LOOPLIMIT=})')
-            debugprint(f'{loopsquare=} {loopbare=}')
-            debugprint(f'{prefstr=}')
-            debugprint(f'{remainingtext=}')
+            print(f'{killcounter=} (over {LOOPLIMIT=})')
+            print(f'{loopsquare=} {loopbare=}')
+            print(f'{prefstr=}')
+            print(f'{remainingtext=}')
             sys.exit()
         killcounter += 1
         loopsquare = bool(re.fullmatch(
@@ -441,7 +434,6 @@ def _process_abif_prefline(qty,
                 abifmodel['candidates'][thiscand] = thiscand
         if 'rating' in tok:
             thisrating = tok['rating']
-            # debugprint(f'{thisrating=}')
             prefs[thiscand]['rating'] = thisrating
             if len(ratingarray) == 0:
                 ratingarray = {candrank: thisrating}

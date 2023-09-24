@@ -35,21 +35,10 @@ PRUNED_WIDJ_FIELDS = [
     "candidates", "inline_ballots"
 ]
 ABIF_VERSION = "0.1"
-DEBUGFLAG = False
 LOOPLIMIT = 400
-
-
-def debugprint(str):
-    global DEBUGFLAG
-    if DEBUGFLAG:
-        print(str)
-    return
-
 
 def main():
     """Convert between .abif-adjacent formats."""
-    global DEBUGFLAG
-
     parser = argparse.ArgumentParser(
         description='Convert between .abif and JSON formats')
     parser.add_argument('input_file', help='Input file to convert')
@@ -57,14 +46,8 @@ def main():
                         required=True, help='Output format')
     parser.add_argument('-f', '--fromfmt', choices=CONV_FORMATS,
                         help='Input format (overrides file extension)')
-    parser.add_argument('-d', '--debug',
-                        help='Output debugging info',
-                        action="store_true")
 
     args = parser.parse_args()
-
-    DEBUGFLAG = args.debug
-    debugprint(f"{DEBUGFLAG=}")
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
@@ -119,7 +102,6 @@ def main():
         pairdict = pairwise_count_dict(abifmodel)
         outstr = textgrid_for_2D_dict(
             twodimdict=pairdict,
-            DEBUGFLAG=DEBUGFLAG,
             tablelabel='   Loser ->\nv Winner')
     elif (output_format == 'winlosstiejson'):
         pairdict = pairwise_count_dict(abifmodel)

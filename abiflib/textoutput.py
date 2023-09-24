@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import abiflib
+from abiflib import *
 import argparse
 import json
 import re
@@ -24,27 +25,13 @@ import texttable
 from texttable import Texttable
 import urllib.parse
 
-DEBUGFLAG = False
-
-
-def debugprint(str):
-    global DEBUGFLAG
-    if DEBUGFLAG:
-        print(str)
-    return
-
 
 def textgrid_for_2D_dict(twodimdict,
-                         DEBUGFLAG=DEBUGFLAG,
                          tablelabel="YYYYYYX"):
     # The first level of dict keys becomes row labels
     # The second level of dict keys becomes column labels
 
     retval = ""
-
-    if DEBUGFLAG:
-        retval += "=============================\n"
-        retval += "textgrid_for_2D_dict:\n"
 
     table = Texttable()
     ctok = list(twodimdict.keys())

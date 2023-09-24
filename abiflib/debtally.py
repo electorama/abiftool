@@ -54,24 +54,16 @@ def convert_debtally_to_abif(debtallysheet):
 
 def main():
     """Convert Debian tally sheet to crude .abif file"""
-    global DEBUGFLAG
-
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument('input_file', help='Input Debian tally file')
-    parser.add_argument('-d', '--debug',
-                        help='Flip the global DEBUGFLAG',
-                        action="store_true")
 
     args = parser.parse_args()
-    DEBUGFLAG = args.debug
 
     debtallysheet = ""
     with open(args.input_file) as f:
         debtallysheet += f.read()
 
     outstr = ""
-    if DEBUGFLAG:
-        outstr += headerfy_text_file(args.input_file)
     outstr += convert_debtally_to_abif(debtallysheet)
         
     print(outstr)
