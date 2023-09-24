@@ -25,7 +25,10 @@ import texttable
 import urllib.parse
 
 
-def pairwise_count_dict(candidates, votelines):
+def pairwise_count_dict(abifmodel):
+    candidates = abifmodel['candidates']
+    votelines = abifmodel['votelines']
+
     candtoks = list(candidates.keys())
     retval_a_over_b = {}
     for atok in candtoks:
