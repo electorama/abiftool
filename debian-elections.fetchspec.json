@@ -1,0 +1,22 @@
+{
+  "subdir": "testdata/debian-elections",
+  "web_urls":
+  [
+    {
+      "url":"https://www.debian.org/vote/2022/vote_001_tally.txt",
+      "local":"2022/vote_001_tally.txt"
+    },
+    {
+      "url":"https://www.debian.org/vote/2022/vote_002_tally.txt",
+      "local":"2022/vote_002_tally.txt"
+    },
+    {
+      "url":"https://www.debian.org/vote/2021/vote_001_tally.txt",
+      "local":"2021/vote_001_tally.txt"
+    },
+    {
+      "url":"https://www.debian.org/vote/2003/leader2003_tally.txt",
+      "local":"2003/leader2003_tally.txt"
+    }
+  ]
+}

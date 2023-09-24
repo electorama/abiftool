@@ -7,8 +7,9 @@ git repositories or wgets urls in associated .json files.
 import argparse
 import json
 import os
+import requests
 import subprocess
-
+import sys
 
 def checkout_repository(gitrepo_url, subdir):
     if os.path.exists(subdir):
@@ -31,18 +32,32 @@ def read_fetchspec(fetchspec_fn):
     with open(fetchspec_fn, "r") as fetchspec_fh:
         fetchspec = json.load(fetchspec_fh)
 
-    gitrepo_url = fetchspec.get("gitrepo_url")
-    subdir = fetchspec.get("subdir")
+    return fetchspec
 
-    if not gitrepo_url:
-        print(f"{fetchspec_fn}: Invalid gitrepo_url: {gitrepo_url}")
-        raise
 
-    if not subdir:
-        print(f"{fetchspec_fn}: Invalid subdir: {subdir}")
-        raise
+def fetch_web_items(fetchspec):
+    subdir = fetchspec['subdir']
+    if not os.path.exists(subdir):
+        os.makedirs(subdir)
 
-    return (gitrepo_url, subdir)
+    for urldict in fetchspec['web_urls']:
+        localpath = os.path.join(subdir, urldict['local'])
+        if os.path.exists(localpath):
+            sys.stderr.write(f"Skipping existing {localpath}\n")
+            continue
+        sys.stderr.write(f"Fetching {urldict['url']} to {subdir}\n")
+        response = requests.get(urldict['url'])
+
+        if response.status_code == 200:
+            d, f = os.path.split(localpath)
+
+            if not os.path.exists(d):
+                os.makedirs(d)
+
+            with open(localpath, "wb") as f:
+                f.write(response.content)
+        else:
+            raise Exception(f"Bad URL: {response.status_code}")
 
 
 def main():
@@ -57,8 +72,14 @@ def main():
 
     args = parser.parse_args()
     for fetchspec_fn in args.fetchspec:
-        (gitrepo_url, subdir) = read_fetchspec(fetchspec_fn)
-        checkout_repository(gitrepo_url, subdir)
+        fetchspec = read_fetchspec(fetchspec_fn)
+        if 'gitrepo_url' in fetchspec.keys():
+            checkout_repository(fetchspec['gitrepo_url'],
+                                fetchspec['subdir'])
+        elif 'web_urls' in fetchspec.keys():
+            fetch_web_items(fetchspec)
+        else:
+            raise Exception(f"Need either gitrepo or web url(s)")
 
 
 if __name__ == "__main__":

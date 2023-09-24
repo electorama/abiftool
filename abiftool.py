@@ -114,7 +114,7 @@ def main():
         outstr = json.dumps(abifmodel, indent=4)
     elif (output_format == 'paircountjson'):
         pairdict = pairwise_count_dict(abifmodel)
-        outstr += json.dumps(pairdict, indent=4)
+        outstr = json.dumps(pairdict, indent=4)
     elif (output_format == 'texttable'):
         pairdict = pairwise_count_dict(abifmodel)
         outstr = textgrid_for_2D_dict(
