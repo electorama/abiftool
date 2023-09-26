@@ -9,7 +9,7 @@ import pytest
     ('abif_file', 'pattern'),
     [
         ("testdata/burl2009/burl2009.abif",
-         r"Montroll[^\d]+2708")
+         r"Montroll[^\d]+4067")
     ]
 )
 

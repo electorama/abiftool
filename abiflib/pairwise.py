@@ -20,39 +20,54 @@ from abiflib import *
 from abiflib.textoutput import *
 import argparse
 import json
+from pprint import pprint
 import re
 import sys
 import texttable
 import urllib.parse
 
+
 def pairwise_count_dict(abifmodel):
+    '''Convert abifmodel into pairwise matrix of vote counts'''
     candidates = abifmodel['candidates']
     votelines = abifmodel['votelines']
 
     candtoks = list(candidates.keys())
-    retval_a_over_b = {}
+
+    # Initialize the return value matrix
+    retval = {}
     for atok in candtoks:
-        retval_a_over_b[atok] = {}
+        retval[atok] = {}
         for btok in candtoks:
             if atok == btok:
-                retval_a_over_b[atok][btok] = None
+                retval[atok][btok] = None
             else:
-                retval_a_over_b[atok][btok] = 0
+                retval[atok][btok] = 0
 
+    # Now add votelline qtys for each higher ranked cand
     for i, line in enumerate(votelines):
         thisqty = line['qty']
-        prevrank = None
-        prevcand = None
-        prevcandlist = []
-        for j, (jkey,
-                jitem) in enumerate(line['prefs'].items()):
-            for pkey in prevcandlist:
-                retval_a_over_b[pkey][jkey] += thisqty
+        lineprefs = line['prefs']
+        maxrank = sys.maxsize
+        for atok in candtoks:
+            for btok in candtoks:
+                if atok in lineprefs:
+                    arank = lineprefs[atok]['rank']
+                else:
+                    arank = maxrank
+                if btok in lineprefs:
+                    brank = lineprefs[btok]['rank']
+                else:
+                    brank = maxrank
+                # note that we're just ignoring arank > brank, since
+                # the larger loop is only responsible for adding votes
+                # when atok has a higher rank (lower number) than btok
+                if atok == btok:
+                    retval[atok][btok] = None
+                elif arank < brank:
+                    retval[atok][btok] += thisqty
 
-            prevcand = jkey
-            prevcandlist.append(jkey)
-            prevrank = jitem['rank']
-    return retval_a_over_b
+    return retval
 
 
 def winlosstie_dict_from_pairdict(candidates, pairdict):
@@ -67,7 +82,7 @@ def winlosstie_dict_from_pairdict(candidates, pairdict):
             a2b = pairdict[atok][btok]
             b2a = pairdict[btok][atok]
             # When atok == btok, that's the diagonal stripe in the
-            # midddle of the matrix with no values because candidates
+            # middle of the matrix with no values because candidates
             # don't run against each other.
             if atok != btok:
                 if a2b > b2a:

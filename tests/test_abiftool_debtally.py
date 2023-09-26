@@ -15,6 +15,20 @@ import pytest
             "metadata",
             "ballotcount",
             354
+        ),
+        (
+            "paircountjson",
+            "testdata/debian-elections/2003/leader2003_tally.txt",
+            "MartinMichlmayr",
+            "BdaleGarbee",
+            228
+        ),
+        (
+            "paircountjson",
+            "testdata/debian-elections/2003/leader2003_tally.txt",
+            "BdaleGarbee",
+            "MartinMichlmayr",
+            224
         )
     ]
 )
