@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# abiflib/__init.py - conversion to/from .abif to other electoral expressions
+# abiflib/core.py - core ABIF<=>jabmod conversion functions
 #
 # Copyright (C) 2023 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+from abiflib import *
 import json
 import re
 import sys
@@ -60,53 +61,15 @@ def convert_abif_to_jabmod(inputstr):
         'candidates': {},
         'votelines': []
     }
+    global COMMENT_REGEX, METADATA_REGEX, CANDLINE_REGEX, VOTELINE_REGEX
+    commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
+    metadataregexp = re.compile(METADATA_REGEX, re.VERBOSE)
+    candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
+    votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
+
     abifmodel['metadata']['comments'] = []
 
     for i, fullline in enumerate(inputstr.splitlines()):
-        commentregexp = re.compile(
-            r'''
-            ^                       # beginning of line
-            (?P<beforesep>[^\#]*)   # before the comment separator
-            (?P<comsep>\#+)         # # or ## comment separator
-            (?P<whitespace>\s+)     # optional whitespace
-            (?P<aftersep>.*)        # after the # separator/whitespace
-            $                       # end of line
-            ''', re.VERBOSE
-        )
-        metadataregexp = re.compile(
-            r'''
-            ^\{                     # abif metadata lines always start with '{'
-            \s*                     # whitespace
-            [\'\"]?                 # optional quotation marks (single or double)
-            ([\w\s]+)               # METADATA KEY
-            \s*                     # moar whitespace!!!!
-            [\'\"]?                 # ending quotation
-            \s*                     # abif loves whitespace!!!!!
-            :                       # COLON! Very important!
-            \s*                     # moar whitesapce!!!1!
-            [\'\"]?                 # abif also loves optional quotes
-            ([\w\s\.]+)             # METADATA VALUE
-            \s*                     # more whitespace 'cuz
-            [\'\"]?                 # moar quotes
-            \s*                     # spaces the finals frontiers
-            \}                      # look!  squirrel!!!!!
-            $''', re.VERBOSE
-            )
-        candlineregexp = re.compile(
-            r'''
-            ^\=                     # the first character of candlines: "="
-            \s*                     # whitespace
-            ["\[]?                  # optional '[' or '"' prior to candtoken
-            ([^:\"\]]*)             # candtoken; disallowed: " or ] or :
-            ["\[]?                  # optional '[' or '"' after candtoken
-            :                       # separator
-            \[?                     # optional '[' prior to canddesc
-            ([^\]]*)                # canddesc
-            \]?                     # optional ']' after canddesc
-            $                       # That's all, folks!
-            ''', re.VERBOSE)
-        votelineregexp = re.compile(r'^(\d+):(.*)$')
-
         matchgroup = None
         # Strip the comments out first
         if (match := commentregexp.match(fullline)):
