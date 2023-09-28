@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from abiftool import *
+from abiflib import *
 import re
 
 def _extract_option_names_from_tally_sheet(tally_sheet):

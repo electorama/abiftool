@@ -17,13 +17,11 @@
 
 # import abiflib
 from abiflib import *
-from abiflib.textoutput import *
 import argparse
 import json
 from pprint import pprint
 import re
 import sys
-import texttable
 import urllib.parse
 
 

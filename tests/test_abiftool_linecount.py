@@ -11,7 +11,7 @@ from subprocess import run, PIPE
 )
 
 def test_abiftool_linecount(input_file, command_line_args, expected_output_length):
-    command = ['python', 'abiftool.py', *command_line_args, input_file]
+    command = ['python3', 'abiftool.py', *command_line_args, input_file]
     completed_process = run(command, stdout=PIPE, text=True)
 
     # Get the captured output and count the lines

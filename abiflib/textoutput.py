@@ -21,8 +21,11 @@ import argparse
 import json
 import re
 import sys
-import texttable
-from texttable import Texttable
+try:
+    import texttable
+    from texttable import Texttable
+except:
+    pass
 import urllib.parse
 
 
