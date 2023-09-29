@@ -1,0 +1,14 @@
+{
+  "subdir": "testdata/preflib/vt-burlington-2009-preflib",
+  "web_urls":
+  [
+    {
+      "url":"https://www.preflib.org/static/data/burlington/00005-00000002.toc",
+      "local":"burl2009-00005-00000002.toc"
+    },
+    {
+      "url":"https://www.preflib.org/static/data/burlington/00005-00000002.toi",
+      "local":"burl2009-00005-00000002.toi"
+    }
+  ]
+}

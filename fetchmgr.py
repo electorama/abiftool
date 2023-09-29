@@ -11,6 +11,7 @@ import requests
 import subprocess
 import sys
 
+
 def checkout_repository(gitrepo_url, subdir):
     if os.path.exists(subdir):
         print(f"Directory '{subdir}' already exists.")
@@ -35,6 +36,32 @@ def read_fetchspec(fetchspec_fn):
     return fetchspec
 
 
+def fetch_url_to_subdir(url=None, subdir=None, localpath=None):
+    if not url or not subdir or not localpath:
+        err = "err:"
+        err += f"url: {url}\n"
+        err += f"subdir: {subdir}\n"
+        err += f"localpath: {localpath}\n"
+        raise BaseException(err)
+    sys.stderr.write(f"Fetching {url} to {subdir}\n")
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        d, f = os.path.split(localpath)
+
+        if not os.path.exists(d):
+            os.makedirs(d)
+
+        if os.path.exists(d):
+            with open(localpath, "wb") as f:
+                f.write(response.content)
+        else:
+            print(f"d {d} f {f}")
+            raise Exception(f"Bad URL: {response.status_code}")
+
+    return response
+
+
 def fetch_web_items(fetchspec):
     subdir = fetchspec['subdir']
     if not os.path.exists(subdir):
@@ -45,19 +72,10 @@ def fetch_web_items(fetchspec):
         if os.path.exists(localpath):
             sys.stderr.write(f"Skipping existing {localpath}\n")
             continue
-        sys.stderr.write(f"Fetching {urldict['url']} to {subdir}\n")
-        response = requests.get(urldict['url'])
-
-        if response.status_code == 200:
-            d, f = os.path.split(localpath)
-
-            if not os.path.exists(d):
-                os.makedirs(d)
-
-            with open(localpath, "wb") as f:
-                f.write(response.content)
-        else:
-            raise Exception(f"Bad URL: {response.status_code}")
+        response = fetch_url_to_subdir(url=urldict['url'],
+                                       subdir=subdir,
+                                       localpath=localpath)
+    return True
 
 
 def main():

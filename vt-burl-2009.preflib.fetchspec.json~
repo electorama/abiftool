@@ -1,0 +1,27 @@
+{
+  "preflib-toc": "https://www.preflib.org/static/data/burlington/00005-00000002.toc",
+  "preflib-toi": "https://www.preflib.org/static/data/burlington/00005-00000002.toi",
+  "subdir": "testdata/preflib/vt-burlington-2009-preflib"
+}
+{
+  "subdir": "testdata/debian-elections",
+  "web_urls":
+  [
+    {
+      "url":"https://www.debian.org/vote/2022/vote_001_tally.txt",
+      "local":"2022/vote_001_tally.txt"
+    },
+    {
+      "url":"https://www.debian.org/vote/2022/vote_002_tally.txt",
+      "local":"2022/vote_002_tally.txt"
+    },
+    {
+      "url":"https://www.debian.org/vote/2021/vote_001_tally.txt",
+      "local":"2021/vote_001_tally.txt"
+    },
+    {
+      "url":"https://www.debian.org/vote/2003/leader2003_tally.txt",
+      "local":"2003/leader2003_tally.txt"
+    }
+  ]
+}
