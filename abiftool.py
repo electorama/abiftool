@@ -24,7 +24,7 @@ import sys
 import urllib.parse
 
 CONV_FORMATS = ('abif', 'debtally', 'jabmod', 'paircountjson',
-                'texttable', 'widj', 'winlosstiejson')
+                'preflib', 'texttable', 'widj', 'winlosstiejson')
 
 PRUNED_WIDJ_FIELDS = [
     "display_parameters", "display_results",
@@ -80,10 +80,15 @@ def main():
         abifmodel = convert_abif_to_jabmod(rawabifstr)
     elif (input_format == 'jabmod'):
         abifmodel = json.loads(inputstr)
+    elif (input_format == 'preflib'):
+        rawabifstr = convert_preflib_str_to_abif(inputstr)
+        abifmodel = convert_abif_to_jabmod(rawabifstr)
     elif (input_format == 'widj'):
         abifmodel = convert_widj_to_jabmod(inputstr)
     else:
         outstr = f"Cannot convert from {input_format} yet."
+        print(outstr)
+        sys.exit()
 
     # the "-t/--to" option
     output_format = args.to
