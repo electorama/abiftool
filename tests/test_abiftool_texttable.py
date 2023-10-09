@@ -1,28 +1,29 @@
-import subprocess
+from abiftestfuncs import *
 import os
-import re
-import glob
-import sys
 import pytest
+import re
+import subprocess
+import sys
 
-@pytest.mark.parametrize(
-    ('abif_file', 'pattern'),
+testgrid = [
     [
-        ("testdata/burl2009/burl2009.abif",
-         r"Montroll[^\d]+4067")
+        "testdata/burl2009/burl2009.abif",
+        r"Montroll[^\d]+4067",
+        "vt-burl-2009.preflib.fetchspec.json"
     ]
-)
+]
+
+testlist = []
+for testrow in testgrid:
+    myparam = get_pytest_param_for_file(
+        testrow[0], testrow[1], fetchspec=testrow[2])
+    testlist.append(myparam)
 
 
+testcolnames = ('abif_file', 'pattern')
+@pytest.mark.parametrize(testcolnames, testlist)
 def test_roundtrip_conversion(abif_file, pattern):
-    try:
-        fh = open(abif_file, 'rb')
-    except:
-        print(f'Missing file: {abif_file}')
-        print(
-            "Please run './fetchmgr.py *.fetchspec.json' " +
-            "if you haven't already")
-        sys.exit()
+    fh = open(abif_file, 'rb')
 
     texttable_content = \
         subprocess.run(["abiftool.py", "-t", "texttable", abif_file],
