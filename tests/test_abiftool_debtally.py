@@ -1,3 +1,4 @@
+from abiftestfuncs import *
 import json
 import subprocess
 import os
@@ -6,40 +7,50 @@ import glob
 import sys
 import pytest
 
-@pytest.mark.parametrize(
-    ('outformat', 'debtallyfile', 'key1', 'subkey1', 'val1'),
-    [
-        (
-            "jabmod",
-            "testdata/debian-elections/2022/vote_002_tally.txt",
-            "metadata",
-            "ballotcount",
-            354
-        ),
-        (
-            "paircountjson",
-            "testdata/debian-elections/2003/leader2003_tally.txt",
-            "MartinMichlmayr",
-            "BdaleGarbee",
-            228
-        ),
-        (
-            "paircountjson",
-            "testdata/debian-elections/2003/leader2003_tally.txt",
-            "BdaleGarbee",
-            "MartinMichlmayr",
-            224
-        )
-    ]
-)
+testdicts=[
+    {
+        "fetchspec":"debian-elections.fetchspec.json",
+        'outformat':"jabmod",
+        'filename':"testdata/debian-elections/2022/vote_002_tally.txt",
+        'key1':"metadata",
+        'subkey1':"ballotcount",
+        'val1':354
+    },
+    {
+        "fetchspec":"debian-elections.fetchspec.json",
+        'outformat':"paircountjson",
+        'filename':"testdata/debian-elections/2003/leader2003_tally.txt",
+        'key1':"MartinMichlmayr",
+        'subkey1':"BdaleGarbee",
+        'val1':228
+    },
+    {
+        "fetchspec":"debian-elections.fetchspec.json",
+        'outformat':"paircountjson",
+        'filename':"testdata/debian-elections/2003/leader2003_tally.txt",
+        'key1':"BdaleGarbee",
+        'subkey1':"MartinMichlmayr",
+        'val1':224
+    }
+]
+
+mycols = ('outformat', 'filename', 'key1', 'subkey1', 'val1')
+
+pytestlist = []
+for testdict in testdicts:
+    myparam = get_pytest_abif_testsubkey(testdict, cols=mycols)
+    pytestlist.append(myparam)
 
 
-def test_debtallyfile(outformat, debtallyfile, key1, subkey1, val1):
+print(f"{pytestlist=}")
+
+@pytest.mark.parametrize(mycols, pytestlist)
+def test_filename(outformat, filename, key1, subkey1, val1):
     """Testing debtally"""
     try:
-        fh = open(debtallyfile, 'rb')
+        fh = open(filename, 'rb')
     except:
-        print(f'Missing file: {debtallyfile}')
+        print(f'Missing file: {filename}')
         print(
             "Please run './fetchmgr.py *.fetchspec.json' " +
             "if you haven't already")
@@ -49,7 +60,7 @@ def test_debtallyfile(outformat, debtallyfile, key1, subkey1, val1):
         subprocess.run(["abiftool.py",
                         "-f", "debtally",
                         "-t", outformat,
-                        debtallyfile],
+                        filename],
                        capture_output=True,
                        text=True).stdout
     #print(abiftool_output)

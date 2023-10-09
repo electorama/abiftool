@@ -5,23 +5,22 @@ import re
 import subprocess
 import sys
 
-testgrid = [
-    [
-        "testdata/burl2009/burl2009.abif",
-        r"Montroll[^\d]+4067",
-        "vt-burl-2009.preflib.fetchspec.json"
-    ]
+testdicts = [
+    {
+        "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
+        "file":"testdata/burl2009/burl2009.abif",
+        "pattern":r"Montroll[^\d]+4067"
+    }
 ]
 
-testlist = []
-for testrow in testgrid:
-    myparam = get_pytest_param_for_file(
-        testrow[0], testrow[1], fetchspec=testrow[2])
-    testlist.append(myparam)
+pytestlist = []
+for testdict in testdicts:
+    myparam = get_pytest_param_for_file(testdict)
+    pytestlist.append(myparam)
 
 
 testcolnames = ('abif_file', 'pattern')
-@pytest.mark.parametrize(testcolnames, testlist)
+@pytest.mark.parametrize(testcolnames, pytestlist)
 def test_roundtrip_conversion(abif_file, pattern):
     fh = open(abif_file, 'rb')
 
