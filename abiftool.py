@@ -23,17 +23,11 @@ import re
 import sys
 import urllib.parse
 
-CONV_FORMATS = ('abif', 'debtally', 'jabmod', 'paircountjson',
-                'preflib', 'texttable', 'widj', 'winlosstiejson')
+INPUT_FORMATS = ['abif', 'debtally', 'jabmod', 'preflib', 'widj']
 
-PRUNED_WIDJ_FIELDS = [
-    "display_parameters", "display_results",
-    "display_ballots", "allow_voting",
-    "ballot_type", "max_rating", "min_rating",
-    "count_subpage_ballots", "count_inline_ballots",
-    "election_methods", "inline_ballot_type",
-    "candidates", "inline_ballots"
-]
+OUTPUT_FORMATS = ['abif', 'jabmod', 'paircountjson', 'texttable',
+                  'winlosstiejson']
+
 ABIF_VERSION = "0.1"
 LOOPLIMIT = 400
 
@@ -42,9 +36,9 @@ def main():
     parser = argparse.ArgumentParser(
         description='Convert between .abif and JSON formats')
     parser.add_argument('input_file', help='Input file to convert')
-    parser.add_argument('-t', '--to', choices=CONV_FORMATS,
+    parser.add_argument('-t', '--to', choices=OUTPUT_FORMATS,
                         required=True, help='Output format')
-    parser.add_argument('-f', '--fromfmt', choices=CONV_FORMATS,
+    parser.add_argument('-f', '--fromfmt', choices=INPUT_FORMATS,
                         help='Input format (overrides file extension)')
 
     args = parser.parse_args()
@@ -58,7 +52,7 @@ def main():
     else:
         _, file_extension = args.input_file.rsplit('.', 1)
         input_format = file_extension
-    if input_format not in CONV_FORMATS:
+    if input_format not in INPUT_FORMATS:
         print(f"Error: Unsupported input format '{input_format}'")
         return
 
@@ -92,7 +86,7 @@ def main():
 
     # the "-t/--to" option
     output_format = args.to
-    if output_format not in CONV_FORMATS:
+    if output_format not in OUTPUT_FORMATS:
         print(f"Error: Unsupported output format '{output_format}'")
         return
 
