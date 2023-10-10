@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# import abiflib
 from abiflib import *
 import argparse
 import json
@@ -125,6 +124,7 @@ def main():
         tablelabel='   Loser ->\nv Winner')
 
     print(outstr)
+
 
 
 if __name__ == "__main__":

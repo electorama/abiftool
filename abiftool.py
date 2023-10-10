@@ -26,7 +26,7 @@ import urllib.parse
 INPUT_FORMATS = ['abif', 'debtally', 'jabmod', 'preflib', 'widj']
 
 OUTPUT_FORMATS = ['abif', 'jabmod', 'paircountjson', 'texttable',
-                  'winlosstiejson']
+                  'texttablecountsonly', 'winlosstiejson']
 
 ABIF_VERSION = "0.1"
 LOOPLIMIT = 400
@@ -97,11 +97,13 @@ def main():
     elif (output_format == 'paircountjson'):
         pairdict = pairwise_count_dict(abifmodel)
         outstr = json.dumps(pairdict, indent=4)
-    elif (output_format == 'texttable'):
+    elif (output_format == 'texttablecountsonly'):
         pairdict = pairwise_count_dict(abifmodel)
         outstr = textgrid_for_2D_dict(
             twodimdict=pairdict,
             tablelabel='   Loser ->\nv Winner')
+    elif (output_format == 'texttable'):
+        outstr = texttable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'winlosstiejson'):
         pairdict = pairwise_count_dict(abifmodel)
         wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'],

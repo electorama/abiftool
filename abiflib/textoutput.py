@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import abiflib
 from abiflib import *
+from abiflib.pairwise import *
 import argparse
 import json
 import re
@@ -51,9 +51,78 @@ def textgrid_for_2D_dict(twodimdict,
     tabletext = table.draw()
     tabletextarray = tabletext.splitlines()
 
-    third_line = tabletextarray[2]
-    new_third_line = re.sub("-", "=", third_line)
-    tabletextarray[2] = new_third_line
+    # kludge to put "====" instead of "---" between header row and body
+    header_break = tabletextarray[3]
+    equalsign_break = re.sub("-", "=", header_break)
+    tabletextarray[3] = equalsign_break
+
+    subarray = []
+    for i, ln in enumerate(tabletextarray):
+        newln, count = re.subn(r"\|", r"+", ln, count=2)
+        if count > 1:
+            tabletextarray[i] = newln
+
+    retval += "\n".join(tabletextarray)
+    retval += "\n\n"
+    return retval
+
+
+def texttable_pairwise_and_winlosstie(abifmodel):
+    def wltstr(cand):
+        retval=f"{wltdict[cand]['wins']}" + "-"
+        retval+=f"{wltdict[cand]['losses']}" + "-"
+        retval+=f"{wltdict[cand]['ties']}"
+        return retval
+
+    pairdict = pairwise_count_dict(abifmodel)
+    wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
+    tablelabel='   Loser ->\nv Winner'
+    retval = ""
+
+    table = Texttable()
+    ctok = list(pairdict.keys())
+
+
+    candkeys = sorted(pairdict.keys(),
+                      key=lambda x: wltdict[x]['wins'],
+                      reverse=True)
+
+    toprow = [tablelabel] + candkeys
+    table.add_row(toprow)
+
+    dbg = False
+    for ck in candkeys:
+        inner_dict = pairdict[ck]
+        try:
+            mykeys = list(inner_dict.keys())
+            myvals = list(inner_dict.values())
+            invals = []
+            for ik in candkeys:
+                invals.append(pairdict[ck][ik])
+            #candkeys = sorted(pairdict.keys(),
+            #          key=lambda x: wltdict[x]['wins'],
+            #          reverse=True)
+
+
+            if dbg:
+                print(f"{mykeys=}")
+                print(f"{candkeys=}")
+                print(f"{myvals=}")
+                print(f"{invals=}")
+            rowlabel=f"{ck} ({wltstr(ck)})"
+            #table.add_row([rowlabel] + myvals)
+            table.add_row([rowlabel] + invals)
+        except AttributeError:
+            print(inner_dict)
+            raise
+
+    tabletext = table.draw()
+    tabletextarray = tabletext.splitlines()
+
+    # kludge to put "====" instead of "---" between header row and body
+    header_break = tabletextarray[3]
+    equalsign_break = re.sub("-", "=", header_break)
+    tabletextarray[3] = equalsign_break
 
     subarray = []
     for i, ln in enumerate(tabletextarray):
