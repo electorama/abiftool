@@ -56,4 +56,21 @@ CANDLINE_REGEX = r'''
     '''
 
 VOTELINE_REGEX = r'^(\d+):(.*)$'
-
+VOTELINE_PREFPART_REGEX = r'''
+    ^                         # start of string
+    \s*                       # Optional whitespace
+    (?P<candplusrate>         # <candplusrate> begin
+    (
+    (?P<candbare>[A-Za-z0-9_\-]*)   # <cand> (bare token)
+    |
+    [\"\[]                    # beginning quotation or square bracket
+    (?P<candsqr>[^\"\]]*)     # <cand> (within quotes or square brackets)
+    [\"\]]                    # ending quotation or square bracket
+    )
+    (/                        # optional slashrating begin
+    (?P<rating>\d+)           # optional <rating> (number)
+    \s*)?                     # optional slashrating end
+    )                         # <candplusrate> end
+    (?P<restofline>.*)        # the <restofline>
+    $                         # end of string
+    '''

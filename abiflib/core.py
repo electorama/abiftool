@@ -61,7 +61,8 @@ def convert_abif_to_jabmod(inputstr):
         'candidates': {},
         'votelines': []
     }
-    global COMMENT_REGEX, METADATA_REGEX, CANDLINE_REGEX, VOTELINE_REGEX
+    global COMMENT_REGEX, METADATA_REGEX
+    global CANDLINE_REGEX, VOTELINE_REGEX
     commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
     metadataregexp = re.compile(METADATA_REGEX, re.VERBOSE)
     candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
@@ -284,67 +285,41 @@ def _tokenize_abif_prefline(prefstr):
     global LOOPLIMIT
     retval = []
 
-    # Regular expression patterns
-    pref_range_squarebrack_regexp = re.compile(
-        r'''
-        ^                         # start of string
-        \s*                       # Optional whitespace
-        (?P<candplusrate>         # <candplusrate> begin
-        [\"\[]                    # beginning quotation or square bracket
-        (?P<cand>[^\"\]]*)        # <cand> (within quotes or square brackets)
-        [\"\]]                    # ending quotation or square bracket
-        (/                        # optional slashrating begin
-        (?P<rating>\d+)           # optional <rating> (number)
-        \s*)?                     # optional slashrating end
-        )                         # <candplusrate> end
-        (?P<restofline>.*)        # the <restofline>
-        $                         # end of string
-        ''', re.VERBOSE)
-    pref_range_baretok_regexp = re.compile(
-        r'''
-        ^                         # start of string
-        \s*                       # Optional whitespace
-        (?P<candplusrate>         # <candplusrate> begin
-        (?P<cand>[A-Za-z0-9_\-]*)   # <cand> (bare token)
-        (/                        # optional slashrating begin
-        (?P<rating>\d+)           # optional <rating> (number)
-        \s*)?                     # optional slashrating end
-        )                         # <candplusrate> end
-        (?P<restofline>.*)        # the <restofline>
-        $                         # end of string
-        ''', re.VERBOSE)
+    pref_range_candpart_regexp = VOTELINE_PREFPART_REGEX
+    candpart_robj = re.compile(pref_range_candpart_regexp,
+                               re.VERBOSE)
 
     remainingtext = prefstr
-    loopsquare = bool(re.fullmatch(
-        pref_range_squarebrack_regexp, remainingtext))
-    loopbare = bool(re.fullmatch(pref_range_baretok_regexp, remainingtext))
+    loop_prefs = bool(re.fullmatch(candpart_robj, remainingtext))
     killcounter = 0
 
-    while loopsquare or loopbare:
+    while loop_prefs:
         if killcounter > LOOPLIMIT:
             print(f'{killcounter=} (over {LOOPLIMIT=})')
-            print(f'{loopsquare=} {loopbare=}')
+            print(f'{loop_prefs=}')
             print(f'{prefstr=}')
             print(f'{remainingtext=}')
             sys.exit()
         killcounter += 1
-        loopsquare = bool(re.fullmatch(
-            pref_range_squarebrack_regexp, remainingtext))
-        loopbare = bool(re.fullmatch(pref_range_baretok_regexp, remainingtext))
-        if loopsquare:
-            matches_new = re.fullmatch(
-                pref_range_squarebrack_regexp, remainingtext)
-            loopbare = False
-        elif loopbare:
-            matches_new = re.fullmatch(
-                pref_range_baretok_regexp, remainingtext)
+
+        if loop_prefs:
+            mt = re.fullmatch(candpart_robj, remainingtext)
+            matches_new = mt
             loopsquare = False
         else:
             break
         if not matches_new or matches_new.group(0) == '':
             break
         candplusrate = matches_new.group('candplusrate')
-        cand = matches_new.group('cand')
+        canddict = matches_new.groupdict()
+        if 'candbare' in canddict.keys():
+            cand = matches_new.group('candbare')
+        elif 'candplusrate' in canddict.keys():
+            cand = matches_new.group('candplusrate')
+        elif 'candsqr' in canddict.keys():
+            cand = matches_new.group('candsqr')
+        else:
+            raise
         retval.append({'cand': cand})
         rating = matches_new.group('rating')
         retval.append({'rating': rating})
