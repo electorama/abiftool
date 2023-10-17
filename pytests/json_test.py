@@ -9,7 +9,7 @@ import pytest
 
 testdicts=[
     {
-        "fetchspec":"debian-elections.fetchspec.json",
+        "fetchspec":"tennessee-example.fetchspec.json",
         "filename":"testdata/tennessee-example/tennessee-example-scores.abif",
         "outformat":"winlosstiejson",
         "key1":"Chat",

@@ -5,7 +5,7 @@ from subprocess import run, PIPE
     'input_file, command_line_args, expected_output_length',
     [
         ('testdata/widjexample/widjexample.jabmod', ['-t', 'abif'], 22),
-        ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 10232),
+        ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 10233),
         ('testdata/burl2009/burl2009.abif', ['-t', 'texttable'], 18)
     ]
 )

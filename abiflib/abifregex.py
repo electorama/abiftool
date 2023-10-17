@@ -35,7 +35,7 @@ METADATA_REGEX = r'''
     :                       # COLON! Very important!
     \s*                     # moar whitesapce!!!1!
     [\'\"]?                 # abif also loves optional quotes
-    ([\w\s\.]+)             # METADATA VALUE
+    ([\w\s\,\.\(\)\-/]+)    # METADATA VALUE
     \s*                     # more whitespace 'cuz
     [\'\"]?                 # moar quotes
     \s*                     # spaces the finals frontiers

@@ -18,6 +18,7 @@
 from abiflib.abifregex import *
 from abiflib.core import *
 from abiflib.debtally import *
+from abiflib.html_output import *
 from abiflib.pairwise import *
 from abiflib.preflib import *
 from abiflib.textoutput import *
