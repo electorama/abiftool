@@ -25,11 +25,12 @@ import urllib.parse
 
 INPUT_FORMATS = ['abif', 'debtally', 'jabmod', 'preflib', 'widj']
 
-OUTPUT_FORMATS = ['abif', 'html', 'jabmod', 'paircountjson',
-                  'texttable', 'texttablecountsonly',
+OUTPUT_FORMATS = ['abif', 'html', 'html_snippet', 'jabmod',
+                  'paircountjson', 'texttable', 'texttablecountsonly',
                   'winlosstiejson']
 
 ABIF_VERSION = "0.1"
+ABIFMODEL_LIMIT = 2500
 LOOPLIMIT = 400
 
 def main():
@@ -95,6 +96,11 @@ def main():
         outstr = convert_jabmod_to_abif(abifmodel)
     elif (output_format == 'html'):
         outstr = htmltable_pairwise_and_winlosstie(abifmodel)
+    elif (output_format == 'html_snippet'):
+        outstr = htmltable_pairwise_and_winlosstie(abifmodel,
+                                                   snippet = True,
+                                                   validate = True,
+                                                   modlimit = ABIFMODEL_LIMIT)
     elif (output_format == 'jabmod'):
         outstr = json.dumps(abifmodel, indent=4)
     elif (output_format == 'paircountjson'):

@@ -26,7 +26,10 @@ except:
     pass
 
 
-def htmltable_pairwise_and_winlosstie(abifmodel):
+def htmltable_pairwise_and_winlosstie(abifmodel,
+                                      snippet = False,
+                                      validate = False,
+                                      modlimit = 50):
     '''Generate HTML summary of election as abifmodel
 
     The "abifmodel" is the internal data structure for abiflib,
@@ -72,11 +75,23 @@ def htmltable_pairwise_and_winlosstie(abifmodel):
                       key=lambda x: wltdict[x]['wins'],
                       reverse=True)
 
+    def get_title_for_html(abifmodel):
+        retval = f"abiflib/html_output.py Results: {get_abif_title(abifmodel)}"
+        return retval
+
+    def validate_abifmodel(abifmodel):
+        modsize = sys.getsizeof(abifmodel)
+        err = f"Model size {modsize} exceeds modlimit {modlimit}"
+        if modsize > modlimit:
+            raise Exception(err)
+
     # Initialization of key variables
+    if validate:
+        validate_abifmodel(abifmodel)
     retval = ""
     pairdict = pairwise_count_dict(abifmodel)
     wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
-    mytitle = f"abiflib/html_output.py Results: {get_abif_title(abifmodel)}"
+    mytitle = get_title_for_html(abifmodel)
     candtoks = get_winlosstie_sorted_keys(pairdict, wltdict)
     candnames = abifmodel.get('candidates', None)
 
@@ -84,20 +99,24 @@ def htmltable_pairwise_and_winlosstie(abifmodel):
     soup = BeautifulSoup('', 'html.parser')
     html_doc = soup.new_tag('html')
 
-    # Soup head
-    head = soup.new_tag('head')
-    title = soup.new_tag('title')
-    title.string = mytitle
-    head.append(title)
+    if not snippet:
+        # Soup head
+        head = soup.new_tag('head')
+        title = soup.new_tag('title')
+        title.string = get_title_for_html(abifmodel)
+        head.append(title)
 
-    # Soup body
-    body = soup.new_tag('body')
-    h1 = soup.new_tag('h1')
-    h1.string = mytitle
-    body.append(h1)
-    p = soup.new_tag('p')
-    p.string = f'{get_abif_desc(abifmodel)}'
-    body.append(p)
+        # Soup body
+        body = soup.new_tag('body')
+        h1 = soup.new_tag('h1')
+        h1.string = get_title_for_html(abifmodel)
+        body.append(h1)
+    desc = soup.new_tag('p')
+    desc.string = f'{get_abif_desc(abifmodel)}'
+    if snippet:
+        soup.append(desc)        
+    else:
+        body.append(desc)
 
     # Soup table
     table = soup.new_tag('table')
@@ -150,10 +169,13 @@ def htmltable_pairwise_and_winlosstie(abifmodel):
         table.append(candrow)
 
     # Finalize soup table
-    body.append(table)
-    html_doc.append(head)
-    html_doc.append(body)
-    soup.append(html_doc)
+    if snippet:
+        soup.append(table)
+    else:
+        body.append(table)
+        html_doc.append(head)
+        html_doc.append(body)
+        soup.append(html_doc)
 
     retval += soup.prettify()
 
