@@ -119,6 +119,24 @@ def convert_abif_to_jabmod(inputstr):
     return abifmodel
 
 
+def ranklist_from_jabmod_voteline(voteline):
+    """Construct list of candtoks in order of ranking"""
+    orderedcands = []
+    toklist = list(voteline['prefs'].keys())
+    firstcand = toklist[0]
+    firstrank = voteline['prefs'][firstcand].get('rank', None)
+    firstrating = voteline['prefs'][firstcand].get('rating', None)
+    if firstrank:
+        orderedcands = toklist.copy()
+        orderedcands.sort(key=lambda x: voteline['prefs'][x]['rank'], reverse=False)
+    elif firstrating:
+        orderedcands = toklist.copy()
+        orderedcands.sort(key=lambda x: voteline['prefs'][x]['rating'], reverse=True)
+    else:
+        orderedcands = toklist
+    return orderedcands
+
+
 def _deduplicate_jabmod_votelines(votelines):
     """Deduplicate votelines."""
     uniqprefs = {}
@@ -383,18 +401,11 @@ def _process_abif_prefline(qty,
             if thisdelim == '>':
                 prefs[thiscand]['rank'] = candrank
                 candrank += 1
-                orderedlist = True
             elif thisdelim == '=':
                 prefs[thiscand]['rank'] = candrank
-                orderedlist = True
             elif thisdelim == ",":
-                prefs[thiscand]['rank'] = candrank
-                orderedlist = False
-
+                # FIXME - use ratings when comma is delimiter
+                prefs[thiscand]['rank'] = None
     prefs[thiscand]['rank'] = candrank
     abifmodel['votelines'][-1]['prefs'] = prefs
-    if orderedlist is None:
-        abifmodel['votelines'][-1]['orderedlist'] = False
-    else:
-        abifmodel['votelines'][-1]['orderedlist'] = orderedlist
     return abifmodel
