@@ -16,6 +16,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
+from pprint import pprint
+import copy
 import json
 import re
 import sys
@@ -109,8 +111,15 @@ def convert_abif_to_jabmod(inputstr):
         else:
             matchgroup = 'empty'
 
-    deduped = _deduplicate_jabmod_votelines(abifmodel["votelines"])
-    abifmodel["votelines"] = deduped
+    # Dive down and find if ranks are provided.  If not, calculate
+    # ranks based on ratings.
+    firstprefs = abifmodel['votelines'][0]['prefs']
+    firstk, firstv = list(firstprefs.items())[0]
+    if not firstv['rank']:
+        abifmodel = _add_ranks_to_jabmod_votelines(abifmodel)
+
+    cleaned_lines = _cleanup_jabmod_votelines(abifmodel["votelines"])
+    abifmodel["votelines"] = cleaned_lines
 
     slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
                    reverse=True)
@@ -128,18 +137,34 @@ def ranklist_from_jabmod_voteline(voteline):
     firstrating = voteline['prefs'][firstcand].get('rating', None)
     if firstrank:
         orderedcands = toklist.copy()
-        orderedcands.sort(key=lambda x: voteline['prefs'][x]['rank'], reverse=False)
+        orderedcands.sort(
+            key=lambda x: voteline['prefs'][x]['rank'], reverse=False)
     elif firstrating:
         orderedcands = toklist.copy()
-        orderedcands.sort(key=lambda x: voteline['prefs'][x]['rating'], reverse=True)
+        orderedcands.sort(
+            key=lambda x: voteline['prefs'][x]['rating'], reverse=True)
     else:
         orderedcands = toklist
     return orderedcands
 
 
-def _deduplicate_jabmod_votelines(votelines):
+def _add_ranks_to_jabmod_votelines(inmod):
+    outmod = copy.deepcopy(inmod)
+    for vl in outmod['votelines']:
+        ratingvalset = set()
+        for k, v in vl['prefs'].items():
+            ratingvalset.add(v['rating'])
+        rlist = sorted(ratingvalset, key=lambda x: int(x),
+                       reverse=True)
+        lookup = {rating: i + 1 for i, rating in enumerate(rlist)}
+        for k, v in vl['prefs'].items():
+            v['rank'] = lookup[v['rating']]
+    return outmod
+
+
+def _cleanup_jabmod_votelines(votelines):
     """Deduplicate votelines."""
-    uniqprefs = {}
+    cln_votelines = {}
     for (i, voteline) in enumerate(votelines):
         try:
             is_ordered = voteline["orderedlist"]
@@ -160,18 +185,18 @@ def _deduplicate_jabmod_votelines(votelines):
             prefstr = _prefstr_from_ratings(prefitems)
         else:
             prefstr = _prefstr_from_ranked_line(prefitems)
-        if prefstr in uniqprefs.keys():
-            uniqprefs[prefstr]['qty'] += voteline['qty']
+        if prefstr in cln_votelines.keys():
+            cln_votelines[prefstr]['qty'] += voteline['qty']
         else:
-            uniqprefs[prefstr] = {}
-            uniqprefs[prefstr]['qty'] = voteline['qty']
-            uniqprefs[prefstr]['prefs'] = voteline['prefs']
+            cln_votelines[prefstr] = {}
+            cln_votelines[prefstr]['qty'] = voteline['qty']
+            cln_votelines[prefstr]['prefs'] = voteline['prefs']
             if 'comment' in voteline.keys():
-                uniqprefs[prefstr]['comment'] = voteline['comment']
+                cln_votelines[prefstr]['comment'] = voteline['comment']
             if 'orderedlist' in voteline.keys():
-                uniqprefs[prefstr]['orderedlist'] = voteline['orderedlist']
+                cln_votelines[prefstr]['orderedlist'] = voteline['orderedlist']
     retval = []
-    for k, v in uniqprefs.items():
+    for k, v in cln_votelines.items():
         retval.append(v)
     return retval
 
@@ -375,7 +400,6 @@ def _process_abif_prefline(qty,
     prefs = {}
     candrank = 1
     votelineorder = 1
-    toprating = 0
     ratingarray = {}
     orderedlist = None
     prefline_toks = _tokenize_abif_prefline(prefstr)

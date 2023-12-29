@@ -12,7 +12,7 @@ testdicts=[
         "filename":"testdata/tennessee-example/tennessee-example-scores.abif",
         "element":"tr",
         "index":1,
-        "pattern":r"\b68 --\s"
+        "pattern":r"\bNash:68 -- Chat:32\s"
     }
 ]
 
