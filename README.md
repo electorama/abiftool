@@ -1,14 +1,56 @@
 # abiftool.py
-Conversion of ABIF to/from other formats
+*ABIF conversion utility*
 
-As of this writing in August 2023, this script (abiftool.py) aspires to convert between ABIF and other commonly-used electoral expression formats.  As of right now, conversion is limited to the following formats:
+A script (abiftool.py) which converts between [ABIF](https://electowiki.org/wiki/ABIF) and other commonly-used electoral expression formats.
 
-* ABIF (or ".abif") - The _Aggregated Ballot Information Format_ provides a concise, aggregated, text-based document to describe the ballots cast in range-based or ranked elections, as well as approval-based and choose-one balloting systems. See https://github.com/electorama/abif for more.
-* .jabmod - this is a JSON model for ABIF.  It's quite likely that many future conversions to/from .abif using abiftool will use .jabmod as an interim/internal format
-* .widj - this is the JSON representation used by Electowidget. This format was developed circa 2005, and still can be found on [electowiki.org](https://electowiki.org) at the following location: https://electowiki.org/wiki/User:RobLa/Electowidget
+**Homepage**: [https://electorama.com/abiftool](https://electorama.com/abiftool)
 
-The primary author of abiftool.py (Rob Lanphier, a.k.a. "robla") has not yet fully decided on the following:
-* What the long-term license will be (it's currently licensed under GPLv3), but as of this writing (in August 2023), the primary author can probably be convinced to switch to an MIT, BSD, or Apache license of some sort.  As other contributors contribute under GPLv3, it will become more difficult for the primary author to convince other contributors to change license.  Visit [electorama/abiftool#1](https://github.com/electorama/abiftool/issues/1) to discuss this topic.
-* What formats/tools the primary author should focus on interoperability with.  There are many tools and formats out there.  Where to start?  Visit https://github.com/electorama/abif/issues/29 to discuss this topic.
+## Getting started
+To try `abiftool.py`, perform the following steps:
 
-Please file issues in [the abiftool.py issue tracker](https://github.com/electorama/abiftool/issues) if you notice problems with the tool that likely need to get fixed sooner rather than later.  Please participate in the broader ABIF project (at https://github.com/electorama/abif ) to help define the ABIF format.
+1. Drop to a shell prompt, and change to a directory for a local copy of `abiftool.py` and supporting tests and libraries.
+2. Clone the repo:
+```
+git clone https://github.com/electorama/abiftool.git
+cd abiftool
+```
+3. Run an example command (see below)
+
+## Examples
+### Burlington 2009
+The following command runs with test data checked into this repository:
+```
+./abiftool.py -t texttable testdata/burl2009/burl2009.abif
+```
+
+The expected output is a table with the pairwise output from the election described in ```burl2009.abif```:
+
+```
++------------------+----------+------+--------+-------+---------+----------+
++    Loser ->      + Montroll | Kiss | Wright | Smith | Simpson | Write-in |
++ v Winner         +          |      |        |       |         |          |
++==================+==========+======+========+=======+=========+==========+
++ Montroll (5-0-0) + None     | 4067 | 4597   | 4573  | 6267    | 6658     |
++------------------+----------+------+--------+-------+---------+----------+
++ Kiss (4-1-0)     + 3477     | None | 4314   | 3946  | 5517    | 6149     |
++------------------+----------+------+--------+-------+---------+----------+
++ Wright (3-2-0)   + 3668     | 4064 | None   | 3975  | 5274    | 6063     |
++------------------+----------+------+--------+-------+---------+----------+
++ Smith (2-3-0)    + 2998     | 3577 | 3793   | None  | 5573    | 6057     |
++------------------+----------+------+--------+-------+---------+----------+
++ Simpson (1-4-0)  + 591      | 845  | 1309   | 721   | None    | 3338     |
++------------------+----------+------+--------+-------+---------+----------+
++ Write-in (0-5-0) + 104      | 116  | 163    | 117   | 165     | None     |
++------------------+----------+------+--------+-------+---------+----------+
+```
+
+The table above expresses the same results that can be found in the "Pairwise results" table in the article:
+
+[https://electowiki.org/wiki/2009_Burlington_mayoral_election#Pairwise_results](https://electowiki.org/wiki/2009_Burlington_mayoral_election#Pairwise_results)
+
+## Licensing
+abiftool.py is currently licensed under the GNU General Public License version 3 (GPLv3).  As of this writing (in February 2024), the primary author can probably be convinced to switch to an MIT, BSD, or Apache license of some sort. Visit [electorama/abiftool#1](https://github.com/electorama/abiftool/issues/1) to discuss this topic.
+
+## More info...
+More about the formats supported, history of the project, and future plans for abiftool can be found on the homepage for this project:
+[https://electorama.com/abiftool](https://electorama.com/abiftool)
