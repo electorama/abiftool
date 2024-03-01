@@ -100,6 +100,16 @@ def winlosstie_dict_from_pairdict(candidates, pairdict):
     return sorted_dict
 
 
+def full_copecount_from_abifmodel(abifmodel):
+    '''Consolidate pairwise tally and win-loss-tie structs'''
+    copecount = {}
+    copecount['winningvotes'] = pairwise_count_dict(abifmodel)
+    copecount['winlosstie'] = winlosstie_dict_from_pairdict(
+        abifmodel['candidates'],
+        copecount['winningvotes'])
+    return copecount
+
+
 def main():
     """Create pairwise matrix"""
     parser = argparse.ArgumentParser(

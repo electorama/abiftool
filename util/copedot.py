@@ -17,51 +17,11 @@ copedot - render directed graph of election in given abif file
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from graphviz import Digraph
 import argparse
 import json
 import os
 import sys
 OUTPUT_FORMATS = ['dot', 'json', 'svg']
-
-
-def gen_output_from_copejson(copejson, outformat='svg'):
-    winningvotes = copejson['winningvotes']
-    winlosstie = copejson['winlosstie']
-
-    # Determine the candidate with the highest Copeland score (most wins)
-    top_candidate = max(winlosstie,
-                        key=lambda candidate: winlosstie[candidate]['wins'])
-
-    # Create a Digraph object
-    dot = Digraph(comment='Pairwise Matchup Visualization')
-
-    # Add nodes with win-loss-tie counts
-    # Include the description only for the top candidate
-    for candidate, scores in winlosstie.items():
-        wins = scores['wins']
-        losses = scores['losses']
-        ties = scores['ties']
-        if candidate == top_candidate:
-            label = f"{candidate}\n"
-            label += f"{wins}-{losses}-{ties}\n"
-            label += f"({wins} wins, {losses} losses, {ties} ties)"
-        else:
-            label = f"{candidate}\n{
-                scores['wins']}-{scores['losses']}-{scores['ties']}"
-        dot.node(candidate, label)
-
-    # Add edges for matchups with full candidate names in labels
-    for wcand, wvotes in winningvotes.items():
-        for lcand, wtally in wvotes.items():
-            ltally = winningvotes[lcand][wcand]
-            if wcand != lcand and wtally >= ltally:
-                label_text = f"<--- {wcand}: {wtally}\n{lcand}: {ltally}"
-                dot.edge(wcand, lcand, label=label_text)
-
-    # Use pipe to render to requested format
-    svg_output = dot.pipe(format=outformat).decode('utf-8')
-    return svg_output
 
 
 def main(argv=None):
@@ -85,16 +45,12 @@ def main(argv=None):
             inputstr = f.read()
 
     abifmodel = convert_abif_to_jabmod(inputstr)
-    copejson = {}
-    copejson['winningvotes'] = pairwise_count_dict(abifmodel)
-    copejson['winlosstie'] = winlosstie_dict_from_pairdict(
-        abifmodel['candidates'],
-        copejson['winningvotes'])
+    copecount = full_copecount_from_abifmodel(abifmodel)
 
     if args.outfmt == 'svg' or 'dot':
-        print(gen_output_from_copejson(copejson, outformat=args.outfmt))
+        print(copecount_diagram(copecount, outformat=args.outfmt))
     elif args.outfmt == 'json':
-        print(json.dumps(copejson))
+        print(json.dumps(copecount))
     else:
         print(f"wtf is {args.outfmt=}?")
 

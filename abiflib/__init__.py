@@ -22,4 +22,5 @@ from abiflib.html_output import *
 from abiflib.pairwise import *
 from abiflib.preflib import *
 from abiflib.textoutput import *
+from abiflib.vizelect import *
 from abiflib.widjfuncs import *
