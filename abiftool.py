@@ -25,13 +25,14 @@ import urllib.parse
 
 INPUT_FORMATS = ['abif', 'debtally', 'jabmod', 'preflib', 'widj']
 
-OUTPUT_FORMATS = ['abif', 'html', 'html_snippet', 'jabmod',
-                  'paircountjson', 'texttable', 'texttablecountsonly',
+OUTPUT_FORMATS = ['abif', 'dot', 'html', 'html_snippet', 'jabmod',
+                  'paircountjson', 'svg', 'texttable', 'texttablecountsonly',
                   'winlosstiejson']
 
 ABIF_VERSION = "0.1"
 ABIFMODEL_LIMIT = 2500
 LOOPLIMIT = 400
+
 
 def main():
     """Convert between .abif-adjacent formats."""
@@ -68,7 +69,6 @@ def main():
         with open(args.input_file, "r") as f:
             inputstr = f.read()
 
-
     if (input_format == 'abif'):
         abifmodel = convert_abif_to_jabmod(inputstr)
     elif (input_format == 'debtally'):
@@ -94,18 +94,26 @@ def main():
 
     if (output_format == 'abif'):
         outstr = convert_jabmod_to_abif(abifmodel)
+    elif (output_format == 'dot'):
+        abifmodel = convert_abif_to_jabmod(inputstr)
+        copecount = full_copecount_from_abifmodel(abifmodel)
+        outstr = copecount_diagram(copecount, outformat='dot')
     elif (output_format == 'html'):
         outstr = htmltable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'html_snippet'):
         outstr = htmltable_pairwise_and_winlosstie(abifmodel,
-                                                   snippet = True,
-                                                   validate = True,
-                                                   modlimit = ABIFMODEL_LIMIT)
+                                                   snippet=True,
+                                                   validate=True,
+                                                   modlimit=ABIFMODEL_LIMIT)
     elif (output_format == 'jabmod'):
         outstr = json.dumps(abifmodel, indent=4)
     elif (output_format == 'paircountjson'):
         pairdict = pairwise_count_dict(abifmodel)
         outstr = json.dumps(pairdict, indent=4)
+    elif (output_format == 'svg'):
+        abifmodel = convert_abif_to_jabmod(inputstr)
+        copecount = full_copecount_from_abifmodel(abifmodel)
+        outstr = copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'texttablecountsonly'):
         pairdict = pairwise_count_dict(abifmodel)
         outstr = textgrid_for_2D_dict(
