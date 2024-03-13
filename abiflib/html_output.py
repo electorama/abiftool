@@ -61,11 +61,12 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
     def get_abif_desc(abifmodel):
         '''Description of the election from the abifmodel metadata'''
         metadata = abifmodel.get('metadata', None)
-        defdesc = f"(.metadata.description missing)"
+        cand_list_str = ', '.join(abifmodel['candidates'].values())
+        default_desc = f"Candidate matchups for {cand_list_str}"
         if metadata:
-            retval = metadata.get('description', defdesc)
+            retval = metadata.get('description', default_desc)
         else:
-            retval = defdesc
+            retval = default_desc
         return retval
 
     def get_winlosstie_sorted_keys(pairdict, wltdict):
