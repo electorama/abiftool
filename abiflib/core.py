@@ -27,6 +27,14 @@ ABIF_VERSION = "0.1"
 LOOPLIMIT = 400
 
 
+class ABIFVotelineException(Exception):
+    """Raised when votelines are missing from ABIF."""
+    def __init__(self, value, message="ABIFVotelineException glares at you"):
+        self.value = value
+        self.message = message
+        super().__init__(self.message)
+
+
 def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     """Converts electowidget JSON (widj) to a .abif string."""
     abif_string = ""
@@ -72,6 +80,11 @@ def convert_abif_to_jabmod(inputstr):
 
     abifmodel['metadata']['comments'] = []
 
+    if len(inputstr) == 0:
+        msg = f'Empty ABIF string..'
+        raise ABIFVotelineException(value=inputstr, message=msg)
+
+
     for i, fullline in enumerate(inputstr.splitlines()):
         matchgroup = None
         # Strip the comments out first
@@ -110,6 +123,14 @@ def convert_abif_to_jabmod(inputstr):
                                                linecomment)
         else:
             matchgroup = 'empty'
+
+    if len(abifmodel['votelines']) == 0:
+        if len(inputstr) > 20:
+            msg = f'No votelines in "{inputstr[:20]}...". '
+        else:
+            msg = f'No votelines in "{inputstr}". '
+        msg += "Votelines (like '20:A>B>C') are required in valid ABIF files."
+        raise ABIFVotelineException(value=inputstr, message=msg)
 
     # Dive down and find if ranks are provided.  If not, calculate
     # ranks based on ratings.

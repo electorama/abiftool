@@ -70,7 +70,12 @@ def main():
             inputstr = f.read()
 
     if (input_format == 'abif'):
-        abifmodel = convert_abif_to_jabmod(inputstr)
+        try:
+            abifmodel = convert_abif_to_jabmod(inputstr)
+        except ABIFVotelineException as e:
+            print(f"ERROR: {e.message}")
+            sys.exit()
+
     elif (input_format == 'debtally'):
         rawabifstr = convert_debtally_to_abif(inputstr)
         abifmodel = convert_abif_to_jabmod(rawabifstr)

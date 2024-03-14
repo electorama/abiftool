@@ -44,3 +44,9 @@ def get_pytest_abif_testsubkey(testdict, cols=None):
             not os.path.isfile(this_file),
             reason=f"Missing {this_file=}. {skipmsg}")
     )
+
+def check_regex_in_textarray(needle, haystack):
+    retval = False
+    for stackline in haystack:
+        retval = re.search(needle, stackline) or retval
+    return retval
