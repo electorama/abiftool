@@ -1,0 +1,13 @@
+{"title": "Tennessee capitol example"}
+{"description": "Hypothetical example of selecting capitol of Tennessee, frequently used on Wikipedia and electowiki.  The proportion of voters is loosely based on the people who live in the metropolitan areas of the four largest cities in Tennessee, and the numeric ratings are based on crow-flying mileage to the city from the other metro areas."}
+# See https://electowiki.org/wiki/Tennessee_example for illustrations
+=Memph:[Memphis, TN]
+=Nash:[Nashville, TN]
+=Chat:[Chattanooga, TN]
+=Knox:[Knoxville, TN]
+# -------------------------
+# Ratings are 400 miles minus crow-flying mileage to city 
+42:Memph/400>Nash/200>Chat/133>Knox/45
+26:Nash/400>Chat/290>Knox/240>Memph/200
+15:Chat/400>Knox/296>Nash/290>Memph/133
+17:Knox/400>Chat/296>Nash/240>Memph/45

@@ -9,7 +9,7 @@ testdicts=[
     {
         "fetchspec":"tennessee-example.fetchspec.json",
         "in_format":"abif",
-        "filename":"testdata/tennessee-example/tennessee-example-scores.abif",
+        "filename":"testdata/tenn-example/tennessee-example-scores.abif",
         "element":"tr",
         "index":1,
         "pattern":r"\bNash:68 -- Chat:32\s"

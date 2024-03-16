@@ -10,7 +10,7 @@ import pytest
 testdicts=[
     {
         "fetchspec":"tennessee-example.fetchspec.json",
-        "filename":"testdata/tennessee-example/tennessee-example-scores.abif",
+        "filename":"testdata/tenn-example/tennessee-example-scores.abif",
         "outformat":"winlosstiejson",
         "key1":"Chat",
         "subkey1":"wins",
