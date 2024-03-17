@@ -7,11 +7,14 @@ from abiftestfuncs import *
     'cmd_args, inputfile, pattern',
     [
         (['-t', 'jabmod'],
-         'testdata/invalid/empty.abif',
+         'testdata/questionable/empty.abif',
          r"ERROR: Empty ABIF string"),
         (['-t', 'jabmod'],
-         'testdata/invalid/tenn-invalid.abif',
-         "ERROR: No votelines in ")
+         'testdata/questionable/novotelines-tenn.abif',
+         "ERROR: No votelines in "),
+        (['-t', 'jabmod', '--cleanws'],
+         'testdata/questionable/leadingspace-tenn.abif',
+         r".ballotcount.: 100")
     ]
 )
 def test_abiftool_linecount(cmd_args, inputfile, pattern):

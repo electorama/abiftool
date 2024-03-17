@@ -63,7 +63,7 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     return abif_string
 
 
-def convert_abif_to_jabmod(inputstr):
+def convert_abif_to_jabmod(inputstr, cleanws=False):
     abifmodel = {
         'metadata': {
             'ballotcount': 0
@@ -84,9 +84,11 @@ def convert_abif_to_jabmod(inputstr):
         msg = f'Empty ABIF string..'
         raise ABIFVotelineException(value=inputstr, message=msg)
 
-
     for i, fullline in enumerate(inputstr.splitlines()):
         matchgroup = None
+        # if "--cleanws" flag is given, strip leading whitespace
+        if cleanws:
+            fullline = re.sub(r"^\s+", "", fullline)
         # Strip the comments out first
         if (match := commentregexp.match(fullline)):
             matchgroup = 'commentregexp'

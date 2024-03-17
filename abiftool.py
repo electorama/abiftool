@@ -43,6 +43,9 @@ def main():
                         required=True, help='Output format')
     parser.add_argument('-f', '--fromfmt', choices=INPUT_FORMATS,
                         help='Input format (overrides file extension)')
+    parser.add_argument('--cleanws', help='Clean whitespace in ABIF file',
+                        action="store_true")
+
 
     args = parser.parse_args()
 
@@ -71,7 +74,8 @@ def main():
 
     if (input_format == 'abif'):
         try:
-            abifmodel = convert_abif_to_jabmod(inputstr)
+            abifmodel = convert_abif_to_jabmod(inputstr,
+                                               cleanws=args.cleanws)
         except ABIFVotelineException as e:
             print(f"ERROR: {e.message}")
             sys.exit()

@@ -29,6 +29,7 @@ except:
 def htmltable_pairwise_and_winlosstie(abifmodel,
                                       snippet = False,
                                       validate = False,
+                                      clean = False,
                                       modlimit = 50):
     '''Generate HTML summary of election as abifmodel
 
@@ -80,11 +81,13 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         retval = f"abiflib/html_output.py Results: {get_abif_title(abifmodel)}"
         return retval
 
+
     def validate_abifmodel(abifmodel):
         modsize = sys.getsizeof(abifmodel)
         err = f"Model size {modsize} exceeds modlimit {modlimit}"
         if modsize > modlimit:
             raise Exception(err)
+
 
     # Initialization of key variables
     if validate:
