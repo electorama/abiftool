@@ -17,11 +17,5 @@ from abiftestfuncs import *
          r".ballotcount.: 100")
     ]
 )
-def test_abiftool_linecount(cmd_args, inputfile, pattern):
-    command = ['python3', 'abiftool.py', *cmd_args, inputfile]
-    completed_process = run(command, stdout=PIPE, text=True)
-
-    # Get the captured output and count the lines
-    output_lines = completed_process.stdout.splitlines()
-
-    assert check_regex_in_textarray(pattern, output_lines)
+def test_questionable_output(cmd_args, inputfile, pattern):
+    assert check_regex_in_output(cmd_args, inputfile, pattern)

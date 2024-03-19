@@ -45,6 +45,8 @@ def main():
                         help='Input format (overrides file extension)')
     parser.add_argument('--cleanws', help='Clean whitespace in ABIF file',
                         action="store_true")
+    parser.add_argument('--with-svg', help='Add SVG to the HTML output',
+                        action="store_true")
 
 
     args = parser.parse_args()
@@ -104,23 +106,27 @@ def main():
     if (output_format == 'abif'):
         outstr = convert_jabmod_to_abif(abifmodel)
     elif (output_format == 'dot'):
-        abifmodel = convert_abif_to_jabmod(inputstr)
         copecount = full_copecount_from_abifmodel(abifmodel)
         outstr = copecount_diagram(copecount, outformat='dot')
     elif (output_format == 'html'):
         outstr = htmltable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'html_snippet'):
+        if args.with_svg:
+            copecount = full_copecount_from_abifmodel(abifmodel)
+            svg_text = copecount_diagram(copecount, outformat='svg')
+        else:
+            svg_text = None
         outstr = htmltable_pairwise_and_winlosstie(abifmodel,
-                                                   snippet=True,
-                                                   validate=True,
-                                                   modlimit=ABIFMODEL_LIMIT)
+                                                   snippet = True,
+                                                   validate = True,
+                                                   modlimit = ABIFMODEL_LIMIT,
+                                                   svg_text=svg_text)
     elif (output_format == 'jabmod'):
         outstr = json.dumps(abifmodel, indent=4)
     elif (output_format == 'paircountjson'):
         pairdict = pairwise_count_dict(abifmodel)
         outstr = json.dumps(pairdict, indent=4)
     elif (output_format == 'svg'):
-        abifmodel = convert_abif_to_jabmod(inputstr)
         copecount = full_copecount_from_abifmodel(abifmodel)
         outstr = copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'texttablecountsonly'):

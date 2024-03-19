@@ -23,7 +23,7 @@ import os
 import sys
 
 
-def copecount_diagram(copecount, outformat='svg'):
+def copecount_diagram(copecount, outformat='svg', is_inline=False):
     winningvotes = copecount['winningvotes']
     winlosstie = copecount['winlosstie']
 
@@ -31,7 +31,6 @@ def copecount_diagram(copecount, outformat='svg'):
     top_candidate = max(winlosstie,
                         key=lambda candidate: winlosstie[candidate]['wins'])
 
-    # Create a Digraph object
     dot = Digraph(comment='Pairwise Matchup Visualization')
 
     # Add nodes with win-loss-tie counts
@@ -54,6 +53,14 @@ def copecount_diagram(copecount, outformat='svg'):
                 label_text = f"<--- {wcand}: {wtally}\n{lcand}: {ltally}"
                 dot.edge(wcand, lcand, label=label_text)
 
-    # Use pipe to render to requested format
     diagram_output = dot.pipe(format=outformat).decode('utf-8')
+
+    is_inline = True
+    # strip out initial xml cruft if this intended for embedding in html
+    if is_inline:
+        # TODO: does it make sense to generalize this beyond svg?
+        start_index = diagram_output.find('<svg')
+        if start_index != -1:
+            diagram_output = diagram_output[start_index:]
+
     return diagram_output

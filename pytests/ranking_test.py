@@ -14,8 +14,8 @@ testdicts = [
         "votelinecandtok": "Anderson",
         "abif_offset": -7,
         "abif_line": "20010:Carter>Anderson>Reagan",
-        "html_offset": 6,
-        "html_line": "   Anderson"
+        "html_offset": 8,
+        "html_line": "     Anderson"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
@@ -25,8 +25,8 @@ testdicts = [
         "votelinecandtok": "Allie",
         "abif_offset": -4,
         "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy/0=Frank/0",
-        "html_offset": 6,
-        "html_line": "   Allie"
+        "html_offset": 8,
+        "html_line": "     Allie"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
@@ -36,8 +36,8 @@ testdicts = [
         "votelinecandtok": "DGM",
         "abif_offset": -6,
         "abif_line": "27:DGM/5>SBJ/2>SY/1>AM/0",
-        "html_offset": 6,
-        "html_line": "   Doña García Márquez [\"DGM\"]"
+        "html_offset": 8,
+        "html_line": "     Doña García Márquez [\"DGM\"]"
     }
 ]
 
@@ -77,5 +77,10 @@ def test_voteline_to_ranking(fetchspec, filename,
                        text=True)
     html_from_abiftool = errorobj.stdout
     html_lines = html_from_abiftool.split("\n")
-
+    if False:
+        print(f"-2 {html_lines[html_offset - 2]}")
+        print(f"-1 {html_lines[html_offset - 1]}")
+        print(f"{html_lines[html_offset]}")
+        print(f"+1 {html_lines[html_offset + 1]}")
+        print(f"+2 {html_lines[html_offset + 2]}")
     assert html_lines[html_offset] == html_line

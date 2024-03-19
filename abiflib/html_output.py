@@ -30,7 +30,8 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
                                       snippet = False,
                                       validate = False,
                                       clean = False,
-                                      modlimit = 50):
+                                      modlimit = 50,
+                                      svg_text = None):
     '''Generate HTML summary of election as abifmodel
 
     The "abifmodel" is the internal data structure for abiflib,
@@ -172,11 +173,22 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         wltcolspan += -1
         table.append(candrow)
 
-    # Finalize soup table
+    results_div = soup.new_tag("div")
+    if svg_text:
+        svg_diagram = BeautifulSoup(svg_text, 'xml')
+        svg_scroll = soup.new_tag("div",
+                                  attrs={"class": "hscroll"})
+        svg_scroll.append(svg_diagram)
+        results_div.append(svg_scroll)
+    table_scroll = soup.new_tag("div",
+                                attrs={"class": "hscroll"})
+    table_scroll.append(table)
+    results_div.append(table_scroll)
+
     if snippet:
-        soup.append(table)
+        soup.append(results_div)
     else:
-        body.append(table)
+        body.append(results_div)
         html_doc.append(head)
         html_doc.append(body)
         soup.append(html_doc)

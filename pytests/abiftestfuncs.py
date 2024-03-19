@@ -3,6 +3,8 @@ import pytest
 import re
 import subprocess
 import sys
+from subprocess import run, PIPE
+
 
 def get_pytest_param_for_file(testdict):
     this_file = testdict['file']
@@ -50,3 +52,13 @@ def check_regex_in_textarray(needle, haystack):
     for stackline in haystack:
         retval = re.search(needle, stackline) or retval
     return retval
+
+def check_regex_in_output(cmd_args, inputfile, pattern):
+    command = ['python3', 'abiftool.py', *cmd_args, inputfile]
+    completed_process = subprocess.run(command,
+                                       stdout=subprocess.PIPE, text=True)
+
+    # Get the captured output and count the lines
+    output_lines = completed_process.stdout.splitlines()
+
+    return check_regex_in_textarray(pattern, output_lines)

@@ -41,3 +41,15 @@ def test_html_find_element(in_format, filename, element, index, pattern):
 
     haystack = table_row_contents[2]
     assert re.search(pattern, haystack)
+
+
+@pytest.mark.parametrize(
+    'cmd_args, inputfile, pattern',
+    [
+        (['-t', 'html_snippet', '--with-svg'],
+         'testdata/tenn-example/tennessee-example-simple.abif',
+         r"--- Knox: 58")
+    ]
+)
+def test_svg_output(cmd_args, inputfile, pattern):
+    assert check_regex_in_output(cmd_args, inputfile, pattern)
