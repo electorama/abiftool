@@ -41,6 +41,7 @@ _abiftool_autocomplete() {
 
     # Everything other than "-f" and "-t" should just uses filenames
     COMPREPLY=( $(compgen -f -- "${cur}") )
+    compopt -o plusdirs
     return 0
 }
 
