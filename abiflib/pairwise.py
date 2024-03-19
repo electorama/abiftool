@@ -18,6 +18,7 @@
 from abiflib import *
 import argparse
 import json
+import pathlib
 from pprint import pprint
 import re
 import sys
@@ -117,17 +118,18 @@ def main():
     parser.add_argument('input_file', help='Input .abif')
 
     args = parser.parse_args()
-    jabmod = abiflib.convert_abif_to_jabmod(
-        args.input_file,
-        extrainfo=False)
+
+    abiftext = pathlib.Path(args.input_file).read_text()
+    jabmod = convert_abif_to_jabmod(abiftext)
 
     outstr = ""
-    outstr += headerfy_text_file(args.input_file)
+    outstr += "======= ABIF FILE =======\n\n"
+    outstr += headerfy_text_file(abiftext,
+                                 filename=args.input_file)
 
-    pairdict = pairwise_count_dict(
-        jabmod['candidates'],
-        jabmod['votelines']
-    )
+    outstr += "\n======= PAIRWISE RESULTS =======\n\n"
+
+    pairdict = pairwise_count_dict(jabmod)
 
     outstr += textgrid_for_2D_dict(
         twodimdict=pairdict,
