@@ -35,7 +35,7 @@ class ABIFVotelineException(Exception):
         super().__init__(self.message)
 
 
-def convert_jabmod_to_abif(abifmodel, add_ratings=True):
+def convert_jabmod_to_abif(abifmodel, add_ratings=False):
     """Converts electowidget JSON (widj) to a .abif string."""
     abif_string = ""
     abif_string += "#------- metadata -------\n"
@@ -63,7 +63,7 @@ def convert_jabmod_to_abif(abifmodel, add_ratings=True):
     return abif_string
 
 
-def convert_abif_to_jabmod(inputstr, cleanws=False):
+def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
     abifmodel = {
         'metadata': {
             'ballotcount': 0
@@ -141,6 +141,10 @@ def convert_abif_to_jabmod(inputstr, cleanws=False):
     if not firstv['rank']:
         abifmodel = _add_ranks_to_jabmod_votelines(abifmodel)
 
+    # Add in Borda-ish scores if ratings are not provided
+    if not firstv['rating'] and add_ratings:
+        abifmodel = _add_ratings_to_jabmod_votelines(abifmodel)
+
     cleaned_lines = _cleanup_jabmod_votelines(abifmodel["votelines"])
     abifmodel["votelines"] = cleaned_lines
 
@@ -172,6 +176,7 @@ def ranklist_from_jabmod_voteline(voteline):
 
 
 def _add_ranks_to_jabmod_votelines(inmod):
+    ''' Calculate rankings from scores '''
     outmod = copy.deepcopy(inmod)
     for vl in outmod['votelines']:
         ratingvalset = set()
@@ -182,6 +187,16 @@ def _add_ranks_to_jabmod_votelines(inmod):
         lookup = {rating: i + 1 for i, rating in enumerate(rlist)}
         for k, v in vl['prefs'].items():
             v['rank'] = lookup[v['rating']]
+    return outmod
+
+
+def _add_ratings_to_jabmod_votelines(inmod):
+    ''' Calculate Borda-like ratings in lieu of explicit ratings '''
+    numcands = len(inmod['candidates'])
+    outmod = copy.deepcopy(inmod)
+    for vl in outmod['votelines']:
+        for k, v in vl['prefs'].items():
+            v['rating'] = numcands - v['rank']
     return outmod
 
 

@@ -60,5 +60,6 @@ def check_regex_in_output(cmd_args, inputfile, pattern):
 
     # Get the captured output and count the lines
     output_lines = completed_process.stdout.splitlines()
+    print(output_lines)
 
     return check_regex_in_textarray(pattern, output_lines)

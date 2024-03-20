@@ -43,11 +43,12 @@ def main():
                         required=True, help='Output format')
     parser.add_argument('-f', '--fromfmt', choices=INPUT_FORMATS,
                         help='Input format (overrides file extension)')
-    parser.add_argument('--cleanws', help='Clean whitespace in ABIF file',
-                        action="store_true")
-    parser.add_argument('--with-svg', help='Add SVG to the HTML output',
-                        action="store_true")
-
+    parser.add_argument('--cleanws', action="store_true",
+                        help='Clean whitespace in ABIF file')
+    parser.add_argument('--with-svg', action="store_true",
+                        help='Add SVG to the HTML output')
+    parser.add_argument('--add-scores', action="store_true",
+                        help='Ensure scores exist only rankings are provided')
 
     args = parser.parse_args()
 
@@ -77,7 +78,8 @@ def main():
     if (input_format == 'abif'):
         try:
             abifmodel = convert_abif_to_jabmod(inputstr,
-                                               cleanws=args.cleanws)
+                                               cleanws=args.cleanws,
+                                               add_ratings=args.add_scores)
         except ABIFVotelineException as e:
             print(f"ERROR: {e.message}")
             sys.exit()
