@@ -10,17 +10,17 @@ testdicts = [
         "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
         "filename":"testdata/burl2009/burl2009.abif",
         "pattern":r"Montroll[^\d]+4067",
-        "outfmt":"texttablecountsonly"
+        "options": ["-t", "text", "--modifier", "nowinlosstie"]
     },
     {
         "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
         "filename":"testdata/burl2009/burl2009.abif",
         "pattern":r"Montroll \(5-0-0\)",
-        "outfmt":"texttable"
+        "options": ["-t", "text"]
     }
 ]
 
-mycols = ('filename', 'pattern', 'outfmt')
+mycols = ('filename', 'pattern', 'options')
 
 pytestlist = []
 for testdict in testdicts:
@@ -29,16 +29,16 @@ for testdict in testdicts:
 
 
 @pytest.mark.parametrize(mycols, pytestlist)
-def test_pattern_match(filename, pattern, outfmt):
+def test_pattern_match(filename, pattern, options):
     fh = open(filename, 'rb')
 
     texttable_content = \
-        subprocess.run(["abiftool.py", "-t", outfmt, filename],
+        subprocess.run(["abiftool.py", *options, filename],
                        capture_output=True,
                        text=True).stdout
 
     if not re.search(pattern, texttable_content):
         raise AssertionError(
             f"No match for {pattern=} in '{filename}'.\n"
-            f"abiftool.py -t {outfmt} {filename}"
+            f"abiftool.py {' '.join(options)} {filename}"
         )

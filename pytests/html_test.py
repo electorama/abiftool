@@ -46,7 +46,7 @@ def test_html_find_element(in_format, filename, element, index, pattern):
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
     [
-        (['-t', 'html_snippet', '--modifier', 'winlosstie,svg'],
+        (['-t', 'html_snippet', '--modifier', 'svg'],
          'testdata/tenn-example/tennessee-example-simple.abif',
          r"--- Knox: 58")
     ]

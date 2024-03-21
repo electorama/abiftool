@@ -39,9 +39,14 @@ OUTPUT_FORMATS = [
     {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
     {'paircountjson': 'Pairwise ballot counts'},
     {'svg': 'SVG output showing pairwise matchups and Copeland wins/losses/ties'},
-    {'texttable': 'Text table showing pairwise matchups and Copeland wins/losses/ties'},
-    {'texttablecountsonly': 'Text table showing pairwise matchups only'},
+    {'text': 'Text table showing pairwise matchups and Copeland wins/losses/ties'},
     {'winlosstiejson': 'JSON format representing win, loss, and tie counts'}
+]
+
+MODIFIERS = [
+    {'nowinlosstie': 'Remove win-loss-tie info if possible'},
+    {'svg': 'Add SVG to the output if avaiable'},
+    {'winlosstie': 'Add win-loss-tie info if possible (default)'}
 ]
 
 ABIF_VERSION = "0.1"
@@ -50,14 +55,22 @@ LOOPLIMIT = 400
 
 def gen_epilog():
     ''' Generate format list for --help '''
-    retval = "Input Formats:\n"
-    for fmtdicts in INPUT_FORMATS:
-        for fkey, fdesc in fmtdicts.items():
-            retval += f" --from {fkey}: {fdesc}\n"
-    retval += "\nOutput Formats:\n"
-    for fmtdicts in OUTPUT_FORMATS:
-        for fkey, fdesc in fmtdicts.items():
-            retval += f" --to {fkey}: {fdesc}\n"
+    def help_text(caption='XX', bullet='* ',
+                  dictlist=None):
+        retval = f"{caption}:\n"
+        for fmtdicts in dictlist:
+            for fkey, fdesc in fmtdicts.items():
+                retval += f"{bullet} {fkey}: {fdesc}\n"
+        return retval
+    retval = ''
+    retval += help_text(caption="Input formats", bullet="--from",
+                        dictlist=INPUT_FORMATS)
+    retval += f"\n"
+    retval += help_text(caption="Output formats", bullet="--to",
+                        dictlist=OUTPUT_FORMATS)
+    retval += f"\n"
+    retval += help_text(caption="Modifiers (preface with 'no' to remove)",
+                        bullet="--modifier", dictlist=MODIFIERS)
     return retval
 
 def get_keys_from_dict_list(dictlist):
@@ -72,15 +85,16 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
-    infmts = get_keys_from_dict_list(INPUT_FORMATS)
-    outfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
+    validinfmts = get_keys_from_dict_list(INPUT_FORMATS)
+    validoutfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
+    validmod = get_keys_from_dict_list(MODIFIERS)
     parser.add_argument('input_file', help='Input file to convert (--help for list of options)')
-    parser.add_argument('-t', '--to', choices=outfmts,
+    parser.add_argument('-t', '--to', choices=validoutfmts,
                         required=True, help='Output format (--help for list of options)')
-    parser.add_argument('-f', '--fromfmt', choices=infmts,
+    parser.add_argument('-f', '--fromfmt', choices=validinfmts,
                         help='Input format (overrides file extension)')
-    parser.add_argument("-m", "--modifier", default="winlosstie",
-                        help='Catch-all for modified output specifiers.')
+    parser.add_argument("-m", "--modifier", default=['winlosstie'], action='append',
+                        choices=validmod, help='Catch-all for modified output specifiers.')
     parser.add_argument('--cleanws', action="store_true",
                         help='Clean whitespace in ABIF file')
     parser.add_argument('--add-scores', action="store_true",
@@ -97,7 +111,7 @@ def main():
     else:
         _, file_extension = args.input_file.rsplit('.', 1)
         input_format = file_extension
-    if input_format not in infmts:
+    if input_format not in validinfmts:
         print(f"Error: Unsupported input format '{input_format}'")
         return
 
@@ -137,12 +151,12 @@ def main():
 
     # the "-t/--to" option
     output_format = args.to
-    if output_format not in outfmts:
+    if output_format not in validoutfmts:
         print(f"Error: Unsupported output format '{output_format}'")
         return
 
     # handle output modifiers first
-    modifiers = set(args.modifier.split(","))
+    modifiers = set(args.modifier)
 
     if (output_format == 'abif'):
         outstr = convert_jabmod_to_abif(abifmodel)
@@ -171,13 +185,15 @@ def main():
     elif (output_format == 'svg'):
         copecount = full_copecount_from_abifmodel(abifmodel)
         outstr = copecount_diagram(copecount, outformat='svg')
-    elif (output_format == 'texttablecountsonly'):
-        pairdict = pairwise_count_dict(abifmodel)
-        outstr = textgrid_for_2D_dict(
-            twodimdict=pairdict,
-            tablelabel='   Loser ->\nv Winner')
-    elif (output_format == 'texttable'):
-        outstr = texttable_pairwise_and_winlosstie(abifmodel)
+    elif (output_format == 'text'):
+        if 'nowinlosstie' in modifiers:
+            pairdict = pairwise_count_dict(abifmodel)
+            outstr = textgrid_for_2D_dict(
+                twodimdict=pairdict,
+                tablelabel='   Loser ->\nv Winner')
+        else:
+            outstr = texttable_pairwise_and_winlosstie(abifmodel)
+
     elif (output_format == 'winlosstiejson'):
         pairdict = pairwise_count_dict(abifmodel)
         wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'],
