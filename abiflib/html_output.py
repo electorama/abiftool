@@ -31,7 +31,8 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
                                       validate = False,
                                       clean = False,
                                       modlimit = 50,
-                                      svg_text = None):
+                                      svg_text = None,
+                                      modifiers = set()):
     '''Generate HTML summary of election as abifmodel
 
     The "abifmodel" is the internal data structure for abiflib,

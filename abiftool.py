@@ -79,10 +79,10 @@ def main():
                         required=True, help='Output format (--help for list of options)')
     parser.add_argument('-f', '--fromfmt', choices=infmts,
                         help='Input format (overrides file extension)')
+    parser.add_argument("-m", "--modifier", default="winlosstie",
+                        help='Catch-all for modified output specifiers.')
     parser.add_argument('--cleanws', action="store_true",
                         help='Clean whitespace in ABIF file')
-    parser.add_argument('--with-svg', action="store_true",
-                        help='Add SVG to the HTML output')
     parser.add_argument('--add-scores', action="store_true",
                         help='Add scores to votelines when only rankings are provided')
 
@@ -141,6 +141,9 @@ def main():
         print(f"Error: Unsupported output format '{output_format}'")
         return
 
+    # handle output modifiers first
+    modifiers = set(args.modifier.split(","))
+
     if (output_format == 'abif'):
         outstr = convert_jabmod_to_abif(abifmodel)
     elif (output_format == 'dot'):
@@ -149,7 +152,7 @@ def main():
     elif (output_format == 'html'):
         outstr = htmltable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'html_snippet'):
-        if args.with_svg:
+        if 'svg' in modifiers:
             copecount = full_copecount_from_abifmodel(abifmodel)
             svg_text = copecount_diagram(copecount, outformat='svg')
         else:
@@ -158,7 +161,8 @@ def main():
                                                    snippet = True,
                                                    validate = True,
                                                    modlimit = ABIFMODEL_LIMIT,
-                                                   svg_text=svg_text)
+                                                   svg_text = svg_text,
+                                                   modifiers = modifiers)
     elif (output_format == 'jabmod'):
         outstr = json.dumps(abifmodel, indent=4)
     elif (output_format == 'paircountjson'):
