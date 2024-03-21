@@ -17,9 +17,22 @@ from abiftestfuncs import *
          r"                    \"rating\": \"133\","),
         (['-t', 'jabmod', '--add-scores'],
          'testdata/tenn-example/tennessee-example-scores.abif',
-         r"                    \"rating\": \"133\",")
+         r"                    \"rating\": \"133\","),
+        (['-t', 'text', '-m', 'score'],
+         'testdata/tenn-example/tennessee-example-scores.abif',
+         r"19370 points \(from 100 voters\) -- Knoxville, TN"),
+        (['-t', 'text', '-m', 'STAR'],
+         'testdata/tenn-example/tennessee-example-STAR.abif',
+         r"261 stars \(from 100 voters\) -- Nashville, TN"),
+        (['-t', 'text', '-m', 'STAR'],
+         'testdata/tenn-example/tennessee-example-STAR.abif',
+         r"Nashville, TN preferred by 68 of 100 voters"),
+        (['-t', 'text', '-m', 'STAR'],
+         'testdata/tenn-example/tennessee-example-STAR.abif',
+         r"Winner: Nashville, TN"),
     ]
 )
+
 def test_score_extrapolation(cmd_args, inputfile, pattern):
     print(inputfile)
     from pathlib import Path

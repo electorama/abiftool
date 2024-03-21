@@ -44,7 +44,10 @@ OUTPUT_FORMATS = [
 ]
 
 MODIFIERS = [
+    {'nopairwise': 'Remove any pairwise tables if possible'},
     {'nowinlosstie': 'Remove win-loss-tie info if possible'},
+    {'score': 'Provide score results'},
+    {'STAR': 'Provide STAR results'},
     {'svg': 'Add SVG to the output if avaiable'},
     {'winlosstie': 'Add win-loss-tie info if possible (default)'}
 ]
@@ -89,10 +92,10 @@ def main():
     validoutfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
     validmod = get_keys_from_dict_list(MODIFIERS)
     parser.add_argument('input_file', help='Input file to convert (--help for list of options)')
-    parser.add_argument('-t', '--to', choices=validoutfmts,
-                        required=True, help='Output format (--help for list of options)')
     parser.add_argument('-f', '--fromfmt', choices=validinfmts,
                         help='Input format (overrides file extension)')
+    parser.add_argument('-t', '--to', choices=validoutfmts,
+                        required=True, help='Output format (--help for list of options)')
     parser.add_argument("-m", "--modifier", default=['winlosstie'], action='append',
                         choices=validmod, help='Catch-all for modified output specifiers.')
     parser.add_argument('--cleanws', action="store_true",
@@ -101,6 +104,7 @@ def main():
                         help='Add scores to votelines when only rankings are provided')
 
     args = parser.parse_args()
+    modifiers = set(args.modifier)
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
@@ -125,11 +129,14 @@ def main():
         with open(args.input_file, "r") as f:
             inputstr = f.read()
 
+    add_STAR = 'STAR' in modifiers
+    add_scores = 'scores' in modifiers
+    add_ratings = args.add_scores or add_STAR or add_scores
     if (input_format == 'abif'):
         try:
             abifmodel = convert_abif_to_jabmod(inputstr,
                                                cleanws=args.cleanws,
-                                               add_ratings=args.add_scores)
+                                               add_ratings=add_ratings)
         except ABIFVotelineException as e:
             print(f"ERROR: {e.message}")
             sys.exit()
@@ -155,16 +162,14 @@ def main():
         print(f"Error: Unsupported output format '{output_format}'")
         return
 
-    # handle output modifiers first
-    modifiers = set(args.modifier)
-
+    outstr = ''
     if (output_format == 'abif'):
-        outstr = convert_jabmod_to_abif(abifmodel)
+        outstr += convert_jabmod_to_abif(abifmodel)
     elif (output_format == 'dot'):
         copecount = full_copecount_from_abifmodel(abifmodel)
-        outstr = copecount_diagram(copecount, outformat='dot')
+        outstr += copecount_diagram(copecount, outformat='dot')
     elif (output_format == 'html'):
-        outstr = htmltable_pairwise_and_winlosstie(abifmodel)
+        outstr += htmltable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'html_snippet'):
         if 'svg' in modifiers:
             copecount = full_copecount_from_abifmodel(abifmodel)
@@ -178,29 +183,36 @@ def main():
                                                    svg_text = svg_text,
                                                    modifiers = modifiers)
     elif (output_format == 'jabmod'):
-        outstr = json.dumps(abifmodel, indent=4)
+        outstr += json.dumps(abifmodel, indent=4)
     elif (output_format == 'paircountjson'):
         pairdict = pairwise_count_dict(abifmodel)
-        outstr = json.dumps(pairdict, indent=4)
+        outstr += json.dumps(pairdict, indent=4)
     elif (output_format == 'svg'):
         copecount = full_copecount_from_abifmodel(abifmodel)
-        outstr = copecount_diagram(copecount, outformat='svg')
+        outstr += copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'text'):
-        if 'nowinlosstie' in modifiers:
+        if 'nopairwise' in modifiers:
+            pass
+        elif 'nowinlosstie' in modifiers:
             pairdict = pairwise_count_dict(abifmodel)
-            outstr = textgrid_for_2D_dict(
+            outstr += textgrid_for_2D_dict(
                 twodimdict=pairdict,
                 tablelabel='   Loser ->\nv Winner')
         else:
-            outstr = texttable_pairwise_and_winlosstie(abifmodel)
+            outstr += texttable_pairwise_and_winlosstie(abifmodel)
+        if 'score' in modifiers:
+            outstr += score_report(abifmodel)
+        if 'STAR' in modifiers:
+            outstr += STAR_report(abifmodel)
+
 
     elif (output_format == 'winlosstiejson'):
         pairdict = pairwise_count_dict(abifmodel)
         wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'],
                                                 pairdict)
-        outstr = json.dumps(wltdict, indent=4)
+        outstr += json.dumps(wltdict, indent=4)
     else:
-        outstr = f"Cannot convert to {output_format} yet."
+        outstr += f"Cannot convert to {output_format} yet."
 
     print(outstr)
 
