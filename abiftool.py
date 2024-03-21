@@ -23,32 +23,68 @@ import re
 import sys
 import urllib.parse
 
-INPUT_FORMATS = ['abif', 'debtally', 'jabmod', 'preflib', 'widj']
+INPUT_FORMATS = [
+    {'abif': 'ABIF format'},
+    {'debtally': 'Election output format used by the Debian Project'},
+    {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
+    {'preflib': 'Files downloaded from preflib.org'},
+    {'widj': 'Legacy format from Electowidget'}
+]
 
-OUTPUT_FORMATS = ['abif', 'dot', 'html', 'html_snippet', 'jabmod',
-                  'paircountjson', 'svg', 'texttable', 'texttablecountsonly',
-                  'winlosstiejson']
+OUTPUT_FORMATS = [
+    {'abif': 'ABIF format'},
+    {'dot': 'Graphviz DOT format showing pairwise matchups'},
+    {'html': 'Full HTML output from <html> to </html>'},
+    {'html_snippet': 'HTML snippet that does not includes the <head> elements'},
+    {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
+    {'paircountjson': 'Pairwise ballot counts'},
+    {'svg': 'SVG output showing pairwise matchups and Copeland wins/losses/ties'},
+    {'texttable': 'Text table showing pairwise matchups and Copeland wins/losses/ties'},
+    {'texttablecountsonly': 'Text table showing pairwise matchups only'},
+    {'winlosstiejson': 'JSON format representing win, loss, and tie counts'}
+]
 
 ABIF_VERSION = "0.1"
 ABIFMODEL_LIMIT = 2500
 LOOPLIMIT = 400
 
+def gen_epilog():
+    ''' Generate format list for --help '''
+    retval = "Input Formats:\n"
+    for fmtdicts in INPUT_FORMATS:
+        for fkey, fdesc in fmtdicts.items():
+            retval += f" --from {fkey}: {fdesc}\n"
+    retval += "\nOutput Formats:\n"
+    for fmtdicts in OUTPUT_FORMATS:
+        for fkey, fdesc in fmtdicts.items():
+            retval += f" --to {fkey}: {fdesc}\n"
+    return retval
+
+def get_keys_from_dict_list(dictlist):
+    retval = [key for d in dictlist for key in d]
+    return retval
 
 def main():
     """Convert between .abif-adjacent formats."""
     parser = argparse.ArgumentParser(
-        description='Convert between .abif and JSON formats')
-    parser.add_argument('input_file', help='Input file to convert')
-    parser.add_argument('-t', '--to', choices=OUTPUT_FORMATS,
-                        required=True, help='Output format')
-    parser.add_argument('-f', '--fromfmt', choices=INPUT_FORMATS,
+        description='Convert between .abif and JSON formats',
+        epilog=gen_epilog(),
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+
+    infmts = get_keys_from_dict_list(INPUT_FORMATS)
+    outfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
+    parser.add_argument('input_file', help='Input file to convert (--help for list of options)')
+    parser.add_argument('-t', '--to', choices=outfmts,
+                        required=True, help='Output format (--help for list of options)')
+    parser.add_argument('-f', '--fromfmt', choices=infmts,
                         help='Input format (overrides file extension)')
     parser.add_argument('--cleanws', action="store_true",
                         help='Clean whitespace in ABIF file')
     parser.add_argument('--with-svg', action="store_true",
                         help='Add SVG to the HTML output')
     parser.add_argument('--add-scores', action="store_true",
-                        help='Ensure scores exist only rankings are provided')
+                        help='Add scores to votelines when only rankings are provided')
 
     args = parser.parse_args()
 
@@ -61,7 +97,7 @@ def main():
     else:
         _, file_extension = args.input_file.rsplit('.', 1)
         input_format = file_extension
-    if input_format not in INPUT_FORMATS:
+    if input_format not in infmts:
         print(f"Error: Unsupported input format '{input_format}'")
         return
 
@@ -101,7 +137,7 @@ def main():
 
     # the "-t/--to" option
     output_format = args.to
-    if output_format not in OUTPUT_FORMATS:
+    if output_format not in outfmts:
         print(f"Error: Unsupported output format '{output_format}'")
         return
 
