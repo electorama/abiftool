@@ -25,7 +25,7 @@ import urllib.parse
 
 ABIF_VERSION = "0.1"
 LOOPLIMIT = 400
-
+ABIF_MODEL_LIMIT = 2500
 
 class ABIFVotelineException(Exception):
     """Raised when votelines are missing from ABIF."""
