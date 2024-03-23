@@ -11,7 +11,7 @@ testdicts = [
         {
             "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
             "outformat": "jabmod",
-            "testdir": "testdata/preflib/vt-burlington-2009-preflib/",
+            "testdir": "downloads/preflib/",
             "filename": "burl2009-00005-00000002.toc",
             "key1": "metadata",
             "subkey1": "ballotcount",
@@ -20,7 +20,7 @@ testdicts = [
         {
             "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
             "outformat":"paircountjson",
-            "testdir": "testdata/preflib/vt-burlington-2009-preflib/",
+            "testdir": "downloads/preflib/",
             "filename": "burl2009-00005-00000002.toc",
             "key1": "AndyMontroll",
             "subkey1": "BobKiss",
@@ -29,7 +29,7 @@ testdicts = [
         {
             "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
             "outformat": "jabmod",
-            "testdir": "testdata/preflib/vt-burlington-2009-preflib/",
+            "testdir": "downloads/preflib/",
             "filename": "burl2009-00005-00000002.toi",
             "key1": "metadata",
             "subkey1": "ballotcount",
@@ -38,7 +38,7 @@ testdicts = [
         {
             "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
             "outformat": "paircountjson",
-            "testdir": "testdata/preflib/vt-burlington-2009-preflib/",
+            "testdir": "downloads/preflib/",
             "filename": "burl2009-00005-00000002.toi",
             "key1": "AndyMontroll",
             "subkey1": "BobKiss",
@@ -47,7 +47,7 @@ testdicts = [
         {
             "fetchspec": "debian-elections.preflib.fetchspec.json",
             "outformat": "jabmod",
-            "testdir": "testdata/preflib/debian-2003/",
+            "testdir": "downloads/preflib/",
             "filename": "dpl-00002-00000002.toc",
             "key1": "metadata",
             "subkey1": "ballotcount",
@@ -56,7 +56,7 @@ testdicts = [
         {
             "fetchspec": "debian-elections.preflib.fetchspec.json",
             "outformat": "paircountjson",
-            "testdir": "testdata/preflib/debian-2003/",
+            "testdir": "downloads/preflib/",
             "filename": "dpl-00002-00000002.toc",
             "key1": "MartinMichlmayr",
             "subkey1": "BdaleGarbee",
@@ -65,7 +65,7 @@ testdicts = [
         {
             "fetchspec": "debian-elections.preflib.fetchspec.json",
             "outformat": "jabmod",
-            "testdir": "testdata/preflib/debian-2003/",
+            "testdir": "downloads/preflib/",
             "filename": "dpl-00002-00000002.soi",
             "key1": "metadata",
             "subkey1": "ballotcount",
@@ -74,7 +74,7 @@ testdicts = [
         {
             "fetchspec": "debian-elections.preflib.fetchspec.json",
             "outformat": "paircountjson",
-            "testdir": "testdata/preflib/debian-2003/",
+            "testdir": "downloads/preflib/",
             "filename": "dpl-00002-00000002.soi",
             "key1": "MartinMichlmayr",
             "subkey1": "BdaleGarbee",

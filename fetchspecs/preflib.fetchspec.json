@@ -1,0 +1,47 @@
+{
+  "download_subdir": "downloads/preflib",
+  "abifloc_subdir": "localabif/preflib",
+  "srcfmt": "preflib",
+  "web_urls":
+  [
+    {
+      "url":"https://www.preflib.org/static/data/debian/00002-00000002.toc",
+      "localcopy":"dpl-00002-00000002.toc",
+      "metaurls": [
+        "https://www.preflib.org/dataset/00002",
+        "https://www.debian.org/vote/2003/vote_0001",
+        "https://electowiki.org/wiki/2003_Debian_Project_Leader_Election",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "Debian 2003 election ('.toc' file)",
+      "abifloc":"debianpl2003-toc.abif"
+    },
+    {
+      "url":"https://www.preflib.org/static/data/debian/00002-00000002.soi",
+      "localcopy":"dpl-00002-00000002.soi",
+      "metaurls": [
+        "https://www.preflib.org/dataset/00002"
+      ],
+      "desc": "Debian 2003 election ('.soi' file)",
+      "abifloc":"debianpl2003-soi.abif"
+    },
+    {
+      "url":"https://www.preflib.org/static/data/burlington/00005-00000002.toc",
+      "localcopy":"burl2009-00005-00000002.toc",
+      "metaurls": [
+        "https://www.preflib.org/dataset/00005"
+      ],
+      "desc": "2009 Burlington Mayoral Election (PrefLib '.toc' file)",
+      "abifloc": "burl2009-toc.abif"
+    },
+    {
+      "url":"https://www.preflib.org/static/data/burlington/00005-00000002.toi",
+      "localcopy":"burl2009-00005-00000002.toi",
+      "metaurls": [
+        "https://www.preflib.org/dataset/00005"
+      ],
+      "desc": "2009 Burlington Mayoral Election (PrefLib '.toi' file)",
+      "abifloc": "burl2009-toi.abif"
+    }
+  ]
+}

@@ -25,3 +25,5 @@ from abiflib.scorestar import *
 from abiflib.textoutput import *
 from abiflib.vizelect import *
 from abiflib.widjfuncs import *
+
+from abiflib.converter import *

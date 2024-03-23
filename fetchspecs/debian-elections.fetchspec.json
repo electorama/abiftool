@@ -1,22 +1,48 @@
 {
-  "subdir": "testdata/debian-elections",
-  "web_urls":
-  [
-    {
-      "url":"https://www.debian.org/vote/2022/vote_001_tally.txt",
-      "local":"2022/vote_001_tally.txt"
-    },
+  "download_subdir": "downloads/debian-elections",
+  "abifloc_subdir": "localabif/debian-elections",
+  "srcfmt": "debtally",
+  "web_urls": [
     {
       "url":"https://www.debian.org/vote/2022/vote_002_tally.txt",
-      "local":"2022/vote_002_tally.txt"
+      "localcopy":"2022/vote_002_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2022/vote_002",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "2022",
+      "abifloc":"2022_debian_pl.abif"
+    },
+    {
+      "url":"https://www.debian.org/vote/2021/vote_002_tally.txt",
+      "localcopy":"2021/vote_002_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2021/vote_002",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "2021: General Resolution: Statement regarding Richard Stallman's readmission to the FSF board",
+      "abifloc":"2021_debian_general_resolution.abif"
     },
     {
       "url":"https://www.debian.org/vote/2021/vote_001_tally.txt",
-      "local":"2021/vote_001_tally.txt"
+      "localcopy":"2021/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2021/vote_001",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "2021: vote 1",
+      "abifloc":"2021_debian_pl.abif"
     },
     {
       "url":"https://www.debian.org/vote/2003/leader2003_tally.txt",
-      "local":"2003/leader2003_tally.txt"
+      "localcopy":"2003/leader2003_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2003/vote_0001",
+        "https://electowiki.org/wiki/2003_Debian_Project_Leader_Election",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "2003",
+      "abifloc":"2003_debian_pl.abif"
     }
   ]
 }

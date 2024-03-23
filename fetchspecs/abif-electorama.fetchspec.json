@@ -1,4 +1,35 @@
 {
   "gitrepo_url": "https://github.com/electorama/abif.git",
-  "subdir": "testdata/electorama-abif"
+  "abifloc_subdir": "localabif/electorama-abif",
+  "download_subdir": "downloads/electorama-abif",
+  "extfiles":
+  [
+    {
+      "localcopy":"testfiles/potus1980test01.abif",
+      "metaurls": [
+        "https://github.com/electorama/abif/blob/main/testfiles/potus1980test01.abif"
+      ],
+      "srcfmt": "abif",
+      "desc": "electorama/abif test file; fictional results from 1980 POTUS",
+      "abifloc":"potus1980test01.abif"
+    },
+    {
+      "localcopy":"testfiles/test001.abif",
+      "metaurls": [
+        "https://github.com/electorama/abif/blob/main/testfiles/test001.abif"
+      ],
+      "srcfmt": "abif",
+      "desc": "electorama/abif test file; ",
+      "abifloc":"test001.abif"
+    },
+    {
+      "localcopy":"testfiles/test015.abif",
+      "metaurls": [
+        "https://github.com/electorama/abif/blob/main/testfiles/test015.abif"
+      ],
+      "srcfmt": "abif",
+      "desc": "electorama/abif test file; unicode test",
+      "abifloc":"test015.abif"
+    }
+  ]
 }

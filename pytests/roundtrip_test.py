@@ -10,12 +10,12 @@ mycols = ['filename', 'abif_line']
 testdicts = [
     {
         "fetchspec": "abif-electorama.fetchspec.json",
-        "filename": "testdata/electorama-abif/testfiles/potus1980test01.abif",
+        "filename": "localabif/electorama-abif/potus1980test01.abif",
         "abif_line": "20010:Carter>Anderson>Reagan"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
-        "filename": "testdata/electorama-abif/testfiles/test001.abif",
+        "filename": "localabif/electorama-abif/test001.abif",
         "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy/0=Frank/0"
     }
 ]

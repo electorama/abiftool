@@ -35,6 +35,22 @@ class ABIFVotelineException(Exception):
         super().__init__(self.message)
 
 
+class ABIFInputFormatException(Exception):
+    """Raised when votelines are missing from ABIF."""
+    def __init__(self, value, message="ABIFInputFormatException glares at you"):
+        self.value = value
+        self.message = message
+        super().__init__(self.message)
+
+
+class ABIFLoopLimitException(Exception):
+    """Raised when the LOOPLIMIT is exceeded."""
+    def __init__(self, value, message="ABIFLoopLimitException gets upset"):
+        self.value = value
+        self.message = message
+        super().__init__(self.message)
+
+
 def convert_jabmod_to_abif(abifmodel, add_ratings=False):
     """Converts electowidget JSON (widj) to a .abif string."""
     abif_string = ""
@@ -376,11 +392,12 @@ def _tokenize_abif_prefline(prefstr):
 
     while loop_prefs:
         if killcounter > LOOPLIMIT:
-            print(f'{killcounter=} (over {LOOPLIMIT=})')
-            print(f'{loop_prefs=}')
-            print(f'{prefstr=}')
-            print(f'{remainingtext=}')
-            sys.exit()
+            msg = f'{killcounter=} (over {LOOPLIMIT=})\n'
+            msg += f'{loop_prefs=}\n'
+            msg += f'{prefstr=}\n'
+            msg += f'{remainingtext=}'
+            raise ABIFLoopLimitException(value=prefstr, message=msg)
+
         killcounter += 1
 
         if loop_prefs:

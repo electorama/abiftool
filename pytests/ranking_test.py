@@ -8,7 +8,7 @@ mycols = ['fetchspec', 'filename',
 testdicts = [
     {
         "fetchspec": "abif-electorama.fetchspec.json",
-        "filename": "testdata/electorama-abif/testfiles/potus1980test01.abif",
+        "filename": "localabif/electorama-abif/potus1980test01.abif",
         "votelinenum": 0,
         "votelinecandnum": 1,
         "votelinecandtok": "Anderson",
@@ -19,7 +19,7 @@ testdicts = [
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
-        "filename": "testdata/electorama-abif/testfiles/test001.abif",
+        "filename": "localabif/electorama-abif/test001.abif",
         "votelinenum": 1,
         "votelinecandnum": 1,
         "votelinecandtok": "Allie",
@@ -30,7 +30,7 @@ testdicts = [
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
-        "filename": "testdata/electorama-abif/testfiles/test015.abif",
+        "filename": "localabif/electorama-abif/test015.abif",
         "votelinenum": 1,
         "votelinecandnum": 1,
         "votelinecandtok": "DGM",
