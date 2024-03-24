@@ -8,7 +8,7 @@ input_fmts=$(python3 <<ENDSCRIPT
 import sys
 sys.path.append("${thisdir}/..")
 from abiftool import *
-print(" ".join(INPUT_FORMATS))
+print(" ".join([list(i.keys())[0] for i in INPUT_FORMATS]))
 ENDSCRIPT
           )
 
@@ -16,7 +16,7 @@ output_fmts=$(python3 <<ENDSCRIPT
 import sys
 sys.path.append("${thisdir}/..")
 from abiftool import *
-print(" ".join(OUTPUT_FORMATS))
+print(" ".join([list(i.keys())[0] for i in OUTPUT_FORMATS]))
 ENDSCRIPT
           )
 
