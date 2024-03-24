@@ -20,17 +20,25 @@ testdicts=[
         "fetchspec":"debian-elections.fetchspec.json",
         'outformat':"paircountjson",
         'filename':"downloads/debian-elections/2003/leader2003_tally.txt",
-        'key1':"MartinMichlmayr",
-        'subkey1':"BdaleGarbee",
+        'key1':"MichlmayrMartinAAJ7",
+        'subkey1':"GarbeeBdaleMEIQ",
         'val1':228
     },
     {
         "fetchspec":"debian-elections.fetchspec.json",
         'outformat':"paircountjson",
         'filename':"downloads/debian-elections/2003/leader2003_tally.txt",
-        'key1':"BdaleGarbee",
-        'subkey1':"MartinMichlmayr",
+        'key1':"GarbeeBdaleMEIQ",
+        'subkey1':"MichlmayrMartinAAJ7",
         'val1':224
+    },
+    {
+        "fetchspec":"debian-elections.fetchspec.json",
+        'outformat':"jabmod",
+        'filename':"downloads/debian-elections/2021/vote_002_tally.txt",
+        'key1':"metadata",
+        'subkey1':"ballotcount",
+        'val1':420
     }
 ]
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 from abiflib import *
+import base64
+from hashlib import sha1
 import re
 
 def _extract_option_names_from_tally_sheet(tally_sheet):
@@ -13,6 +15,7 @@ def _extract_option_names_from_tally_sheet(tally_sheet):
 
     return option_names
 
+
 def _extract_vline_rankings_from_tally_sheet(tally_sheet):
     lines = tally_sheet.splitlines()
 
@@ -24,13 +27,32 @@ def _extract_vline_rankings_from_tally_sheet(tally_sheet):
 
     return retval
 
+
+def _short_token(longstring, max_length=20):
+    if len(longstring) <= max_length and re.match(r'^[A-Za-z0-9]+$', longstring):
+        return longstring
+
+    wordlist = []
+    for word in longstring.split():
+        wordlist.append(re.sub('[^A-Za-z0-9]+', '', word))
+    word_lengths = [len(word) for word in wordlist]
+    words_sorted = sorted(wordlist,
+                          key=lambda word: (len(word), word), reverse=True)
+    base_string = ''.join(words_sorted)[:max_length-4]
+
+    checksum = sha1(longstring.encode('utf-8')).digest()[:4]
+    checksum_encoded = base64.b32encode(checksum).decode('utf-8')
+    retval = base_string + checksum_encoded[:4]
+    return retval
+
+
 def convert_debtally_to_abif(debtallysheet):
     retval = ""
     option_names = _extract_option_names_from_tally_sheet(debtallysheet)
     short_option_names = []
     for o in option_names:
-        o2 = re.sub('None of the above', 'NOTA', o)
-        optname = re.sub(' ', '', o2)
+        o2 = re.sub('(?i)none of the above', 'NOTA', o)
+        optname = _short_token(o2)
         short_option_names.append(optname)
     for i, o in enumerate(option_names):
         retval += f'={short_option_names[i]}:[{o}]\n'

@@ -16,9 +16,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from pprint import pprint
 import copy
 import json
+from pprint import pprint
 import re
 import sys
 import urllib.parse

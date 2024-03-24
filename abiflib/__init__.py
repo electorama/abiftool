@@ -26,4 +26,6 @@ from abiflib.textoutput import *
 from abiflib.vizelect import *
 from abiflib.widjfuncs import *
 
-from abiflib.converter import *
+# Some functions in util may rely on being imported after all other
+# functions
+from abiflib.util import *
