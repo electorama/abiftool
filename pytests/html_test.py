@@ -5,51 +5,46 @@ import bs4
 import pytest
 import sys
 
-testdicts=[
+###################################################################
+# fetchspec -> json file that shows where to download test data from
+# options -> the commandline options that should be passed prior to the filename
+# filename -> the filename of the file to pass into abiftool
+# test_type -> the type of test to perform
+# test_cond -> the value to test for
+
+test_list=[
     {
         "fetchspec":"tennessee-example.fetchspec.json",
-        "in_format":"abif",
+        "options":["-f", "abif"],
         "filename":"testdata/tenn-example/tennessee-example-scores.abif",
-        "element":"tr",
-        "index":1,
+        "test_type": "regex_htmltag",
         "pattern":r"\bNash:68 -- Chat:32\s"
-    }
+    },
+    (
+        None,
+        ['-t', 'html_snippet', '--modifier', 'svg'],
+        'testdata/tenn-example/tennessee-example-simple.abif',
+        r"← Knox: 58",
+        None
+    )
 ]
 
-mycols = ('in_format', 'filename', 'element', 'index', 'pattern')
-pytestlist = []
-for testdict in testdicts:
-    myparam = get_pytest_abif_testsubkey (testdict, cols=mycols)
-    pytestlist.append(myparam)
-
-print(f"{pytestlist=}")
-
-@pytest.mark.parametrize(mycols, pytestlist)
-def test_html_find_element(in_format, filename, element, index, pattern):
-    """Test HTML for presence of text in an element"""
-    fh = open(filename, 'rb')
-    html_from_abiftool = \
-        subprocess.run(["abiftool.py",
-                        "-f", in_format,
-                        "-t", "html", filename],
-                       capture_output=True,
-                       text=True).stdout
-    soup = bs4.BeautifulSoup(html_from_abiftool, "html.parser")
-    table_rows = soup.find_all("tr")
-    second_table_row = table_rows[index]
-    table_row_contents = [td.text for td in second_table_row.find_all(True)]
-
-    haystack = table_row_contents[2]
-    assert re.search(pattern, haystack)
+# OLD test
+#@pytest.mark.parametrize(mycols, pytestlist)
+#def test_html_find_element(in_format, filename, element, index, pattern):
+#    'cmd_args, inputfile, pattern',
+#    [
+#        (['-t', 'html_snippet', '--modifier', 'svg'],
+#         'testdata/tenn-example/tennessee-example-simple.abif',
+#         r"← Knox: 58")
+#    ]
+#    )
 
 
-@pytest.mark.parametrize(
-    'cmd_args, inputfile, pattern',
-    [
-        (['-t', 'html_snippet', '--modifier', 'svg'],
-         'testdata/tenn-example/tennessee-example-simple.abif',
-         r"--- Knox: 58")
-    ]
-)
-def test_svg_output(cmd_args, inputfile, pattern):
-    assert check_regex_in_output(cmd_args, inputfile, pattern)
+@pytest.mark.parametrize("fetchspec, options, filename, test_type, test_cond", test_list)
+def test_abiftool(fetchspec, options, filename, test_type, test_cond):
+    pass
+#    print(f"{options=} {filename=}")
+#    cmd_args = options + [ filename ]
+#    output_lines = get_abiftool_output_as_string(cmd_args)
+#    assert check_regex_in_output(cmd_args, inputfile, pattern)

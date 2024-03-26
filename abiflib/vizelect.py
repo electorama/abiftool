@@ -50,7 +50,7 @@ def copecount_diagram(copecount, outformat='svg', is_inline=False):
         for lcand, wtally in wvotes.items():
             ltally = winningvotes[lcand][wcand]
             if wcand != lcand and wtally >= ltally:
-                label_text = f"<--- {wcand}: {wtally}\n{lcand}: {ltally}"
+                label_text = f"← {wcand}: {wtally}\n{lcand}: {ltally}"
                 dot.edge(wcand, lcand, label=label_text)
 
     diagram_output = dot.pipe(format=outformat).decode('utf-8')

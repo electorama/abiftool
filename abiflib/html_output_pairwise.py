@@ -118,9 +118,17 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         if ck != candnames[ck]:
             candrow_label.string += f" [\"{ck}\"]"
         candrow.append(candrow_label)
-        candrow_wlt = soup.new_tag('td')
+        candrow_wlt = soup.new_tag('td', attrs={'style': 'padding-right: 3em;'})
         candrow_wlt['colspan'] = wltcolspan
-        candrow_wlt.string = f"({wltstr(ck)})"
+        lspan = soup.new_tag('span', attrs={'style': 'float: left;'})
+        lspan.string = f"({wltstr(ck)})"
+        rspan = soup.new_tag('span', attrs={'style': 'float: right;'})
+        if wltdict[ck]['wins'] > 0:
+            rspan.string = f"{ck} wins ↴"
+
+        candrow_wlt.append(lspan)
+        candrow_wlt.append(rspan)
+
         candrow.append(candrow_wlt)
         for j, rk in enumerate(candtoks):
             thiscell = soup.new_tag('td')
@@ -138,7 +146,7 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
             candrow.append(thiscell)
         candrow_loss_point = soup.new_tag('td')
         if wltdict[ck]['losses'] > 0:
-            candrow_loss_point.string = f"<- {ck} losses"
+            candrow_loss_point.string = f"← {ck} losses"
         else:
             candrow_loss_point.string = f"{ck} is undefeated"
         candrow.append(candrow_loss_point)
