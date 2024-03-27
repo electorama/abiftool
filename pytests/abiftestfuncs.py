@@ -1,10 +1,16 @@
-# Functions for use in my tests.  The basic architecture of these tests involves
+# Functions for use in abiftool tests.  The parameter pattern that we're aspiring
+# to (as of 2024-03-26):
+#
 # fetchspec -> json file that shows where to download test data from
 # options -> the commandline options that should be passed prior to the filename
 # filename -> the filename of the file to pass into abiftool
+# test_type -> the type of test to perform
+# test_data -> generic data structure passed to the test
+#
 # html_test.py is the best place to look for guidance on the direction that the
 # testing API is heading.
 
+import bs4
 import os
 import pytest
 import re
@@ -14,23 +20,12 @@ from subprocess import run, PIPE
 
 
 def get_abiftool_output_as_string(cmd_args):
-    command = ['python3', 'abiftool.py', *cmd_args]
+    command = ['abiftool.py', *cmd_args]
     completed_process = subprocess.run(command,
                                        stdout=subprocess.PIPE, text=True)
     retval = completed_process.stdout
     return retval
 
-#def check_regex_in_string(needle, haystack):
-#    haystack.readlines
-#    retval = False
-#    for stackline in haystack:
-#        retval = re.search(needle, stackline) or retval
-#    return retval
-#def check_regex_in_output(cmd_args, inputfile, pattern):
-#    cmd_args.append(inputfile)
-#    output_lines = get_abiftool_output_as_text_array(cmd_args)
-#
-#    return check_regex_in_textarray(pattern, output_lines)
 
 def get_pytest_param_for_file(testdict):
     this_file = testdict['file']
@@ -93,32 +88,9 @@ def check_regex_in_output(cmd_args, inputfile, pattern):
     return check_regex_in_textarray(pattern, output_lines)
 
 
-if False:
-    def testme():
-        mycols = ('in_format', 'filename', 'element', 'index', 'pattern')
-        pytestlist = []
-        for testdict in testdicts:
-            myparam = get_pytest_abif_testsubkey (testdict, cols=mycols)
-            pytestlist.append(myparam)
-
-        print(f"{pytestlist=}")
-
 def html_element_search(elementname, needle, haystack):
-    soup = bs4.BeautifulSoup(html_from_abiftool, "html.parser")
-    table_rows = soup.find_all(elementname)
-    test_this_table_row = table_rows[index]
-    table_row_contents = [td.text for td in test_this_table_row.find_all(True)]
-    print(f"{table_rows=}")
-
-    haystack = table_row_contents[5]
-    assert re.search(pattern, haystack)
-
-
-    """Test HTML for presence of text in an element"""
-    fh = open(filename, 'rb')
-    html_from_abiftool = \
-        subprocess.run(["abiftool.py",
-                        "-f", in_format,
-                        "-t", "html", filename],
-                       capture_output=True,
-                       text=True).stdout
+    soup = bs4.BeautifulSoup(haystack, "html.parser")
+    elementlist = soup.find_all(elementname)
+    elemtextlist = [elem.text for elem in elementlist]
+    matchbool = any(re.search(needle, liststr) for liststr in elemtextlist)
+    return matchbool
