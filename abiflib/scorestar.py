@@ -61,12 +61,15 @@ def enhanced_score_result_from_abifmodel(abifmodel):
             rank += 1
         newscores[c]['rank'] = rank
     retval['ranklist'] = ranklist
+    retval['total_all_scores'] = sum(x['score']
+                                     for x in retval['scores'].values())
+    retval['totalvoters'] = abifmodel['metadata']['ballotcount']
     return retval
 
 
 def STAR_result_from_abifmodel(abifmodel):
     retval = enhanced_score_result_from_abifmodel(abifmodel)
-    bc = retval['totalvoters'] = abifmodel['metadata']['ballotcount']
+    bc = retval['totalvoters']
     retval['round1winners'] = retval['ranklist'][0:2]
     copecount = full_copecount_from_abifmodel(abifmodel)
 
@@ -124,28 +127,27 @@ def STAR_report(jabmod):
     return retval
 
 
-def scale_scores_to_starscale(jabmod,
-                              total_stars_to_display=50):
-    ballotcount = jabmod['metadata']['ballotcount']
-    max_rating = jabmod['metadata']['max_rating']
-    max_total_ratings = int(max_rating) * int(ballotcount)
-    scale = int(total_stars_to_display) / float(max_total_ratings)
-    #print(f"{total_stars_to_display=} / {max_total_ratings=} = {scale=}")
-    #stars = round(total_stars_to_display * scale)
-    candidates = jabmod['candidates']
+def scaled_scores(jabmod, target_scale=100):
+    retval = {}
     scores = STAR_result_from_abifmodel(jabmod)
-    star_dict = {}
-    star_total = 0
+    ballotcount = jabmod['metadata']['ballotcount']
+    retval['max_rating'] = jabmod['metadata']['max_rating']
+    retval['total_all_scores'] = scores['total_all_scores']
+    scale = target_scale / retval['total_all_scores']
+    retval['scale_factor'] = scale
+    scaled_total = 0
+    candidates = jabmod['candidates']
     for candtoken, candname in candidates.items():
         candscore = scores['scores'][candtoken]['score']
-        candstars = candscore * scale
-        star_dict[candtoken] = {
+        scaled_score = candscore * scale
+        retval[candtoken] = {
             'candname': candname,
-            'stars': candstars,
+            'scaled_score': scaled_score,
             'score': candscore
         }
-        star_total += candstars
-    return star_dict, star_total
+        scaled_total += scaled_score
+    retval['scaled_total'] = scaled_total
+    return retval
 
 
 def main():
@@ -161,19 +163,26 @@ def main():
 
     outstr = ""
     report_abif_file = True
-    report_raw_json = False
-    report_score_results = True
+    report_raw_jabmod = False
+    report_raw_score_json = False
+    report_raw_STAR_json = False
+    report_score_results = False
     report_star_results = True
-    report_star_scale = False
+    report_scaled_scores = True
     if report_abif_file:
         outstr += "======= ABIF File =======\n"
         outstr += abiftext
 
-    if report_raw_json:
+    if report_raw_jabmod:
+        outstr += "======= ABIF Model (jabmod) =======\n"
+        outstr += json.dumps(jabmod, indent=4)
+
+    if report_raw_score_json:
         outstr += "\n======= Raw Score JSON =======\n"
         scoreres = enhanced_score_result_from_abifmodel(jabmod)
         outstr += json.dumps(scoreres, indent=4)
 
+    if report_raw_STAR_json:
         outstr += "\n======= Raw STAR JSON =======\n"
         retval = STAR_result_from_abifmodel(jabmod)
         outstr += json.dumps(retval, indent=4)
@@ -186,10 +195,11 @@ def main():
         outstr += "\n======= STAR Results =======\n"
         outstr += STAR_report(jabmod)
 
-    if report_star_scale:
-        outstr += "\n======= STAR scale ========\n"
-        outstr += str(scale_scores_to_starscale(jabmod=jabmod,
-                                                total_stars_to_display=50))
+    if report_scaled_scores:
+        outstr += "\n======= Scaled Scores ========\n"
+        outstr += json.dumps(scaled_scores(jabmod=jabmod,
+                                           target_scale=50),
+                             indent=4)
     print(outstr)
 
 
