@@ -1,5 +1,7 @@
 {"title": "Tennessee capitol example"}
 {"description": "Hypothetical example of selecting capitol of Tennessee, frequently used on Wikipedia and electowiki.  This example uses theoretical STAR voting choices loosely based on distance between the cities."}
+{"min_rating": 0}
+{"max_rating": 5}
 # See https://electowiki.org/wiki/Tennessee_example for illustrations
 =Memph:[Memphis, TN]
 =Nash:[Nashville, TN]
