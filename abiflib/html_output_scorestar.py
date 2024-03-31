@@ -19,6 +19,7 @@ from abiflib import *
 from abiflib.scorestar import *
 from abiflib.html_output import *
 import argparse
+import html
 import json
 import sys
 try:
@@ -26,30 +27,39 @@ try:
 except:
     pass
 
-import html
 
-def html_score_and_star(abifmodel):
-    content = STAR_report(abifmodel)
+def html_score_and_star(jabmod):
+    retval = ""
+    content = STAR_report(jabmod)
     escaped_content = [html.escape(line) for line in content]
+
+    # FIXME: proper escaping needed for the values
+    # 2024-03-31
+    # I REALLY SHOULD JUST USE FLASK FOR THIS
+    basicstar = STAR_result_from_abifmodel(jabmod)
+    escaped_content.append(json.dumps(basicstar, indent=4))
+    scaled = scaled_scores(jabmod, target_scale=50)
+    escaped_content.append(json.dumps(scaled, indent=4))
     soup = BeautifulSoup('', 'html.parser')
     
     pre_tag = soup.new_tag('pre')
     pre_tag.string = ''.join(escaped_content)
     
     soup.append(pre_tag)
-    retval = str(soup)
+    retval += str(soup)
     return retval
 
 
 def main():
-    """Convert jabmod to html-formatted STAR results"""
+    """Convert abif to html-formatted STAR results"""
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument('input_file', help='Input jabmod')
 
     args = parser.parse_args()
 
     with open(args.input_file, "r") as f:
-        abifmodel = json.load(f)
+        inputstr = f.read()
+    abifmodel = convert_abif_to_jabmod(inputstr)
 
     abifmodel['metadata']['filename'] = args.input_file
     outstr = ""

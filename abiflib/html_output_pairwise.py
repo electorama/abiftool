@@ -130,20 +130,22 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         candrow_wlt.append(rspan)
 
         candrow.append(candrow_wlt)
-        for j, rk in enumerate(candtoks):
+        for j, rk in enumerate(reversed(candtoks)):
             thiscell = soup.new_tag('td')
             # breaking out of rendering this line if we hit
             # the blank diagonal line of the matrix where
             # candidates are matched against themselves.
             if ck == rk:
-                break
+                pass
+            elif pairdict[rk][ck] < pairdict[ck][rk]:
+                pass
             else:
                 pairstr = ""
                 pairstr += f"{rk}:{pairdict[rk][ck]}"
                 pairstr += f" -- "
                 pairstr += f"{ck}:{pairdict[ck][rk]}"
                 thiscell.string = pairstr
-            candrow.append(thiscell)
+                candrow.append(thiscell)
         candrow_loss_point = soup.new_tag('td')
         if wltdict[ck]['losses'] > 0:
             candrow_loss_point.string = f"← {ck} losses"
