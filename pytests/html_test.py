@@ -18,7 +18,7 @@ test_list=[
         "filename":"testdata/tenn-example/tennessee-example-scores.abif",
         "test_type": "regex_htmltag",
         "test_data": {"tag": "tr",
-                      "pattern": r"\bNash:68 -- Chat:32\s"}
+                      "pattern": r"\bNash:68\W{1,5}Chat:32\s"}
     },
     {
         "fetchspec":None,
@@ -46,5 +46,5 @@ def test_abiftool(test_case):
                                       testfilestr)
     elif(test_case['test_type'] == 'regex'):
         testval = re.search(test_case['test_data'], testfilestr)
-
+    print(f"{testval=} {test_case['test_data']=} {testfilestr=}")
     assert bool(testval)

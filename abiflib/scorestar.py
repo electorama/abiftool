@@ -137,16 +137,35 @@ def scaled_scores(jabmod, target_scale=100):
     retval['scale_factor'] = scale
     scaled_total = 0
     candidates = jabmod['candidates']
+    retval['canddict'] = {}
     for candtoken, candname in candidates.items():
         candscore = scores['scores'][candtoken]['score']
         scaled_score = candscore * scale
-        retval[candtoken] = {
+        retval['canddict'][candtoken] = {
             'candname': candname,
             'scaled_score': scaled_score,
             'score': candscore
         }
         scaled_total += scaled_score
     retval['scaled_total'] = scaled_total
+    retval['colordict'] = {}
+    retval['starscaled'] = {}
+    retval['colorlines'] = {}
+    colors = [
+        '#d0ffce', '#cee1ff', '#ffcece', '#ffeab9', 'black',
+        'brown', 'yellow', 'azure']
+    #FIXME: "ranklist" should be in reverse order of score
+    #ranklist = retval['canddict'].keys()
+    curstart = 1
+    for i, candtok in enumerate(scores['ranklist']):
+        retval['colordict'][candtok] = colors[i]
+        retval['starscaled'][candtok] = \
+            round(retval['canddict'][candtok]['scaled_score'])
+        selline = ", ".join(".s%02d" % j for j in range(
+            curstart, retval['starscaled'][candtok] + curstart))
+        retval['colorlines'][candtok] = \
+            f".g{i+1}, " + selline + " { color: " + colors[i] + "; }"
+        curstart += retval['starscaled'][candtok]
     return retval
 
 

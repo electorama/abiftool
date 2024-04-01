@@ -124,7 +124,8 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         lspan.string = f"({wltstr(ck)})"
         rspan = soup.new_tag('span', attrs={'style': 'float: right;'})
         if wltdict[ck]['wins'] > 0:
-            rspan.string = f"{ck} wins ↴"
+            # Create the arrow span
+            rspan.string = f"↓\u00A0\u00A0{ck} victories"
 
         candrow_wlt.append(lspan)
         candrow_wlt.append(rspan)
@@ -142,7 +143,7 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
             else:
                 pairstr = ""
                 pairstr += f"{rk}:{pairdict[rk][ck]}"
-                pairstr += f" -- "
+                pairstr += f" — "
                 pairstr += f"{ck}:{pairdict[ck][rk]}"
                 thiscell.string = pairstr
                 candrow.append(thiscell)
