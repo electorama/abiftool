@@ -1,0 +1,14 @@
+{"title": "Tennessee capitol example"}
+{"description": "This example ABIF file is contrived to cause a different score voting and STAR voting winner."}
+{"min_rating": 0}
+{"max_rating": 5}
+# See https://electowiki.org/wiki/Tennessee_example for illustrations
+=Memph:[Memphis, TN]
+=Nash:[Nashville, TN]
+=Chat:[Chattanooga, TN]
+=Knox:[Knoxville, TN]
+# -------------------------
+42:Memph/5>Nash/0>Chat/0>Knox/0
+26:Nash/5>Chat/4>Knox/4>Memph/0
+15:Chat/5>Knox/4>Nash/3>Memph/0
+17:Knox/5>Chat/4>Nash/3>Memph/0

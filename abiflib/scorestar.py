@@ -118,10 +118,8 @@ def STAR_report(jabmod):
         retval += f" (from {candinfo['votercount']} voters)"
         retval += f" -- {candinfo['candname']}\n"
     retval += f"Finalists: \n"
-    retval += f"- {sr['fin1n']
-                   } preferred by {sr['fin1votes']} of {tvot} voters\n"
-    retval += f"- {sr['fin2n']
-                   } preferred by {sr['fin2votes']} of {tvot} voters\n"
+    retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']} of {tvot} voters\n"
+    retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']} of {tvot} voters\n"
     retval += f"- {sr['final_abstentions']} abstentions\n"
     retval += f"Winner: {sr['winner']}\n"
     return retval

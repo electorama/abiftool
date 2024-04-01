@@ -30,6 +30,15 @@ from abiftestfuncs import *
         (['-t', 'text', '-m', 'STAR'],
          'testdata/tenn-example/tennessee-example-STAR.abif',
          r"Winner: Nashville, TN"),
+        (['-t', 'text', '-m', 'STAR'],
+         'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
+         r"Winner: Chattanooga, TN"),
+        (['-t', 'text', '-m', 'score'],
+         'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
+         r"Winner: Knoxville, TN"),
+        (['-t', 'text'],
+         'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
+         r"Nash \(3-0-0\)"),
     ]
 )
 
