@@ -148,24 +148,6 @@ def scaled_scores(jabmod, target_scale=100):
         }
         scaled_total += scaled_score
     retval['scaled_total'] = scaled_total
-    retval['colordict'] = {}
-    retval['starscaled'] = {}
-    retval['colorlines'] = {}
-    colors = [
-        '#d0ffce', '#cee1ff', '#ffcece', '#ffeab9', 'black',
-        'brown', 'yellow', 'azure']
-    #FIXME: "ranklist" should be in reverse order of score
-    #ranklist = retval['canddict'].keys()
-    curstart = 1
-    for i, candtok in enumerate(scores['ranklist']):
-        retval['colordict'][candtok] = colors[i]
-        retval['starscaled'][candtok] = \
-            round(retval['canddict'][candtok]['scaled_score'])
-        selline = ", ".join(".s%02d" % j for j in range(
-            curstart, retval['starscaled'][candtok] + curstart))
-        retval['colorlines'][candtok] = \
-            f".g{i+1}, " + selline + " { color: " + colors[i] + "; }"
-        curstart += retval['starscaled'][candtok]
     return retval
 
 
