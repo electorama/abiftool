@@ -48,6 +48,7 @@ MODIFIERS = [
     {'nowinlosstie': 'Remove win-loss-tie info if possible'},
     {'score': 'Provide score results'},
     {'STAR': 'Provide STAR results'},
+    {'Copeland': 'Show Copeland winner'},
     {'svg': 'Add SVG to the output if avaiable'},
     {'winlosstie': 'Add win-loss-tie info if possible (default)'}
 ]
@@ -162,16 +163,15 @@ def main():
         return
 
     outstr = ''
+    copecount = full_copecount_from_abifmodel(abifmodel)
     if (output_format == 'abif'):
         outstr += convert_jabmod_to_abif(abifmodel)
     elif (output_format == 'dot'):
-        copecount = full_copecount_from_abifmodel(abifmodel)
         outstr += copecount_diagram(copecount, outformat='dot')
     elif (output_format == 'html'):
         outstr += htmltable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'html_snippet'):
         if 'svg' in modifiers:
-            copecount = full_copecount_from_abifmodel(abifmodel)
             svg_text = copecount_diagram(copecount, outformat='svg')
         else:
             svg_text = None
@@ -187,7 +187,6 @@ def main():
         pairdict = pairwise_count_dict(abifmodel)
         outstr += json.dumps(pairdict, indent=4)
     elif (output_format == 'svg'):
-        copecount = full_copecount_from_abifmodel(abifmodel)
         outstr += copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'text'):
         if 'nopairwise' in modifiers:
@@ -203,8 +202,8 @@ def main():
             outstr += score_report(abifmodel)
         if 'STAR' in modifiers:
             outstr += STAR_report(abifmodel)
-
-
+        if 'Copeland' in modifiers:
+            outstr += Copeland_report(abifmodel['candidates'], copecount)
     elif (output_format == 'winlosstiejson'):
         pairdict = pairwise_count_dict(abifmodel)
         wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'],

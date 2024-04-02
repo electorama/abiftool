@@ -102,7 +102,7 @@ def score_report(jabmod):
 
     retval += f"Voter count: {totalvoters}\n"
     winnertok = sr['ranklist'][0]
-    retval += f"Winner: {sr['scores'][winnertok]['candname']}\n"
+    retval += f"Score Winner: {sr['scores'][winnertok]['candname']}\n"
     return retval
 
 
@@ -121,7 +121,7 @@ def STAR_report(jabmod):
     retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']} of {tvot} voters\n"
     retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']} of {tvot} voters\n"
     retval += f"- {sr['final_abstentions']} abstentions\n"
-    retval += f"Winner: {sr['winner']}\n"
+    retval += f"STAR Winner: {sr['winner']}\n"
     return retval
 
 

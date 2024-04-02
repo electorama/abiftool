@@ -50,11 +50,11 @@ def pairwise_count_dict(abifmodel):
         for atok in candtoks:
             for btok in candtoks:
                 if atok in lineprefs:
-                    arank = lineprefs[atok]['rank']
+                    arank = lineprefs[atok].get('rank')
                 else:
                     arank = maxrank
                 if btok in lineprefs:
-                    brank = lineprefs[btok]['rank']
+                    brank = lineprefs[btok].get('rank')
                 else:
                     brank = maxrank
                 # note that we're just ignoring arank > brank, since
@@ -62,6 +62,9 @@ def pairwise_count_dict(abifmodel):
                 # when atok has a higher rank (lower number) than btok
                 if atok == btok:
                     retval[atok][btok] = None
+                elif arank is None or brank is None:
+                    # FIXME: this condition was kludged in to make this run
+                    retval[atok][btok] = 0
                 elif arank < brank:
                     retval[atok][btok] += thisqty
 
@@ -109,6 +112,26 @@ def full_copecount_from_abifmodel(abifmodel):
         abifmodel['candidates'],
         copecount['winningvotes'])
     return copecount
+
+
+def calc_Copeland_scores(copecount):
+    point_totals = {}
+    for candidate, results in copecount['winlosstie'].items():
+        points = results['wins'] + (results['ties'] * 0.5)
+        point_totals[candidate] = points
+    sorted_point_tuples = sorted(point_totals.items(),
+                                 key=lambda x: x[1],
+                                 reverse=True)
+    return sorted_point_tuples
+
+
+def Copeland_report(canddict, copecount):
+    retval = ""
+    #retval += f"{canddict=}\n"
+    copescores = calc_Copeland_scores(copecount)
+    #retval += f"odlWinner: {copescores[0][0]=} {copescores[0][1]=}\n"
+    retval += f"Copeland Winner: {canddict[copescores[0][0]]} (score: {copescores[0][1]})\n"
+    return retval
 
 
 def main():
