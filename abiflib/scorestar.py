@@ -34,7 +34,7 @@ def basic_score_result_from_abifmodel(abifmodel):
     for voteline in abifmodel['votelines']:
         qty = voteline['qty']
         for cand, candval in voteline['prefs'].items():
-            rating = int(candval['rating'])
+            rating = int(candval.get('rating', 0))
             retval[cand]['score'] += rating * qty
             if rating > 0:
                 retval[cand]['votercount'] += qty

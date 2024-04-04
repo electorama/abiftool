@@ -217,12 +217,12 @@ def _add_ranks_to_jabmod_votelines(inmod):
     for vl in outmod['votelines']:
         ratingvalset = set()
         for k, v in vl['prefs'].items():
-            ratingvalset.add(v['rating'])
+            ratingvalset.add(v.get('rating', 0))
         rlist = sorted(ratingvalset, key=lambda x: int(x),
                        reverse=True)
         lookup = {rating: i + 1 for i, rating in enumerate(rlist)}
         for k, v in vl['prefs'].items():
-            v['rank'] = lookup[v['rating']]
+            v['rank'] = lookup[v.get('rating', 0)]
     return outmod
 
 
@@ -391,109 +391,6 @@ def _process_abif_candline(candtoken, canddesc, abifmodel, linecomment=None):
     else:
         abifmodel['candidates'][candtoken] = canddesc
     return abifmodel
-
-
-def _tokenize_abif_prefline(prefstr):
-    '''(DEPRECATED) Tokenize the voter pref portion for a prefline
-
-    Break up the prefstr on a prefline into a series of tokens for
-    further processing as part of _process_abif_prefline.
-
-    This function is deprecated in favor of _tokenize_abif_prefstr,
-    and will probably be removed soon (as of April 2024).  There's a
-    lot of debug cruft that was added back when the author thought it
-    might be possible to incrementally improve his code.
-    '''
-    global LOOPLIMIT, DEBUGARRAY
-    retval = []
-
-    pref_range_candpart_regexp = VOTELINE_PREFPART_REGEX
-    candpart_robj = re.compile(pref_range_candpart_regexp,
-                               re.VERBOSE)
-
-    remainingtext = prefstr
-    loop_prefs = bool(re.fullmatch(candpart_robj, remainingtext))
-    killcounter = 0
-    raiseexception = False
-
-    # 'prevlength' is an arbitrarily large number used for
-    # detecting when parsing is stuck in a loop.
-    prevlength = 999
-    while loop_prefs:
-        dbgmsg = f'{killcounter=} ({LOOPLIMIT=})\n'
-        dbgmsg += f'{loop_prefs=}\n'
-        dbgmsg += f'{prefstr=}\n'
-        dbgmsg += f'{prevlength=}\n'
-        dbgmsg += f'{remainingtext=} ({len(remainingtext)=})\n'
-        dbgmsg += "\n".join(DEBUGARRAY) + "\n"
-        dbgmsg += json.dumps(retval, indent=4)
-
-        # if killcounter > LOOPLIMIT:
-        if killcounter > LOOPLIMIT:
-            raise ABIFVotelineException(value=prefstr, message=dbgmsg)
-        if len(remainingtext) == prevlength or raiseexception:
-            raise ABIFLoopLimitException(value=prefstr, message=dbgmsg)
-
-        prevlength = len(remainingtext)
-        killcounter += 1
-
-        if loop_prefs:
-            mt = re.fullmatch(candpart_robj, remainingtext)
-            matches_new = mt
-            loopsquare = False
-        else:
-            break
-        if not matches_new or matches_new.group(0) == '':
-            break
-        candplusrate = matches_new.group('candplusrate')
-        canddict = matches_new.groupdict()
-        if 'candbare' in canddict.keys():
-            cand = matches_new.group('candbare')
-        elif 'candplusrate' in canddict.keys():
-            cand = matches_new.group('candplusrate')
-        elif 'candsqr' in canddict.keys():
-            cand = matches_new.group('candsqr')
-        elif remainingtext.startswith(('"')):
-            DEBUGARRAY.append(f"FIXMEstart: {remainingtext=}\n")
-            start_index = None
-            quoted_text = ""
-            end_index = 999
-            for i, char in enumerate(remainingtext):
-                if char == '"' and start_index is None:
-                    start_index = i
-                elif char == '"' and start_index is not None:
-                    quoted_text += remainingtext[start_index + 1:i]
-                    start_index = None
-                    end_index = i + 1
-            cand = quoted_text
-            retval.append({'cand': cand})
-            restofline = remainingtext[end_index:]
-            DEBUGARRAY.append(f"FIXMEloop: {restofline=}\n")
-            remainingtext = restofline
-            ratingregexp = \
-                r'\s*/\s*(?P<rating>\d+)\s*\b(?P<restofline>.*)$'
-            if ratemat := re.fullmatch(ratingregexp, remainingtext):
-                DEBUGARRAY.append(f"{ratemat=}")
-                DEBUGARRAY.append(f"{ratemat.group('rating')=}")
-                rating = matches_new.group('rating')
-                retval.append({'rating': rating})
-                restofline = matches_new.group('restofline')
-                remainingtext = restofline
-        else:
-            raise
-
-
-        retval.append({'cand': cand})
-        rating = matches_new.group('rating')
-        retval.append({'rating': rating})
-        restofline = matches_new.group('restofline')
-        remainingtext = restofline.lstrip()
-        if remainingtext.startswith((">", "=", ",")):
-            delimiter = remainingtext[0]
-            retval.append({'delim': delimiter})
-            remainingtext = remainingtext[1:]
-        DEBUGARRAY.append(f"{matches_new=}")
-    return retval
 
 
 def _tokenize_abif_prefstr(prefstr):

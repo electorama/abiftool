@@ -1,0 +1,13 @@
+{"title": "Comma-based TN capitol example"}
+{"description": "Strictly score-based version of Tennessee example, with scores taken out for last-place candidates on a ballot set."}
+# See https://electowiki.org/wiki/Tennessee_example for illustrations
+=Memph:[Memphis, TN]
+=Nash:[Nashville, TN]
+=Chat:[Chattanooga, TN]
+=Knox:[Knoxville, TN]
+# -------------------------
+# Ratings are 400 miles minus crow-flying mileage to city 
+42:Memph/400,Nash/200,Chat/133,Knox
+26:Memph,Nash/400,Chat/290,Knox/240
+15:Memph,Nash/290,Chat/400,Knox/296
+17:Memph,Nash/240,Chat/296,Knox/400

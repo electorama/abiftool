@@ -39,6 +39,15 @@ from abiftestfuncs import *
         (['-t', 'text'],
          'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
          r"Nash \(3-0-0\)"),
+        (['-t', 'text', '-m', 'score'],
+         'testdata/commasep/jman722-example.abif',
+         r"88 points \(from 19 voters\) -- Allie"),
+        (['-t', 'text', '-m', 'score'],
+         'testdata/commasep/tn-example-missing-scores.abif',
+         r"17480 points \(from 58 voters\) -- Knoxville"),
+        (['-t', 'text', '-m', 'score'],
+         'testdata/commasep/tn-example-scores-and-commas.abif',
+         r"19370 points \(from 100 voters\) -- Knoxville"),
     ]
 )
 
