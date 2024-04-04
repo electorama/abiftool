@@ -56,6 +56,7 @@ CANDLINE_REGEX = r'''
     '''
 
 VOTELINE_REGEX = r'^(\d+):(.*)$'
+
 VOTELINE_PREFPART_REGEX = r'''
     ^                         # start of string
     \s*                       # Optional whitespace

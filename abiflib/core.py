@@ -27,27 +27,47 @@ ABIF_VERSION = "0.1"
 LOOPLIMIT = 400
 ABIF_MODEL_LIMIT = 2500
 
+# "DEBUGARRAY" is a generic array to put debug strings in to get
+# printed if there's an exception or other debugging situations
+DEBUGARRAY = []
+
 class ABIFVotelineException(Exception):
     """Raised when votelines are missing from ABIF."""
     def __init__(self, value, message="ABIFVotelineException glares at you"):
+        global DEBUGARRAY
         self.value = value
         self.message = message
+        self.debugarray = DEBUGARRAY
         super().__init__(self.message)
 
 
 class ABIFInputFormatException(Exception):
     """Raised when votelines are missing from ABIF."""
     def __init__(self, value, message="ABIFInputFormatException glares at you"):
+        global DEBUGARRAY
         self.value = value
         self.message = message
+        self.debugarray = DEBUGARRAY
         super().__init__(self.message)
 
 
 class ABIFLoopLimitException(Exception):
     """Raised when the LOOPLIMIT is exceeded."""
     def __init__(self, value, message="ABIFLoopLimitException gets upset"):
+        global DEBUGARRAY
         self.value = value
         self.message = message
+        self.debugarray = DEBUGARRAY
+        super().__init__(self.message)
+
+
+class ABIFGenericError(Exception):
+    """Raised when the LOOPLIMIT is exceeded."""
+    def __init__(self, value, message="ABIFLoopLimitException gets upset"):
+        global DEBUGARRAY
+        self.value = value
+        self.message = message
+        self.debugarray = DEBUGARRAY
         super().__init__(self.message)
 
 
@@ -158,7 +178,7 @@ def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
         abifmodel = _add_ranks_to_jabmod_votelines(abifmodel)
 
     # Add in Borda-ish scores if ratings are not provided
-    if not firstv['rating'] and add_ratings:
+    if not firstv.get('rating') and add_ratings:
         abifmodel = _add_ratings_to_jabmod_votelines(abifmodel)
 
     cleaned_lines = _cleanup_jabmod_votelines(abifmodel["votelines"])
@@ -227,7 +247,7 @@ def _cleanup_jabmod_votelines(votelines):
 
         try:
             prefitems = sorted(voteline['prefs'].items(),
-                               key=lambda item: (-int(item[1]['rating']),
+                               key=lambda item: (-int(item[1].get('rating')),
                                                  item[0])
                                )
             has_full_ratings = True
@@ -322,7 +342,7 @@ def _get_prefstr_from_voteline(ballot):
 
     try:
         prefitems = sorted(ballot['prefs'].items(),
-                           key=lambda item: (-int(item[1]['rating']),
+                           key=lambda item: (-int(item[1].get('rating')),
                                              item[0])
                            )
         has_full_ratings = True
@@ -374,12 +394,17 @@ def _process_abif_candline(candtoken, canddesc, abifmodel, linecomment=None):
 
 
 def _tokenize_abif_prefline(prefstr):
-    '''Tokenize the voter pref portion for a prefline
+    '''(DEPRECATED) Tokenize the voter pref portion for a prefline
 
     Break up the prefstr on a prefline into a series of tokens for
-    further processing by _process_abif_prefline
+    further processing as part of _process_abif_prefline.
+
+    This function is deprecated in favor of _tokenize_abif_prefstr,
+    and will probably be removed soon (as of April 2024).  There's a
+    lot of debug cruft that was added back when the author thought it
+    might be possible to incrementally improve his code.
     '''
-    global LOOPLIMIT
+    global LOOPLIMIT, DEBUGARRAY
     retval = []
 
     pref_range_candpart_regexp = VOTELINE_PREFPART_REGEX
@@ -389,15 +414,27 @@ def _tokenize_abif_prefline(prefstr):
     remainingtext = prefstr
     loop_prefs = bool(re.fullmatch(candpart_robj, remainingtext))
     killcounter = 0
+    raiseexception = False
 
+    # 'prevlength' is an arbitrarily large number used for
+    # detecting when parsing is stuck in a loop.
+    prevlength = 999
     while loop_prefs:
-        if killcounter > LOOPLIMIT:
-            msg = f'{killcounter=} (over {LOOPLIMIT=})\n'
-            msg += f'{loop_prefs=}\n'
-            msg += f'{prefstr=}\n'
-            msg += f'{remainingtext=}'
-            raise ABIFLoopLimitException(value=prefstr, message=msg)
+        dbgmsg = f'{killcounter=} ({LOOPLIMIT=})\n'
+        dbgmsg += f'{loop_prefs=}\n'
+        dbgmsg += f'{prefstr=}\n'
+        dbgmsg += f'{prevlength=}\n'
+        dbgmsg += f'{remainingtext=} ({len(remainingtext)=})\n'
+        dbgmsg += "\n".join(DEBUGARRAY) + "\n"
+        dbgmsg += json.dumps(retval, indent=4)
 
+        # if killcounter > LOOPLIMIT:
+        if killcounter > LOOPLIMIT:
+            raise ABIFVotelineException(value=prefstr, message=dbgmsg)
+        if len(remainingtext) == prevlength or raiseexception:
+            raise ABIFLoopLimitException(value=prefstr, message=dbgmsg)
+
+        prevlength = len(remainingtext)
         killcounter += 1
 
         if loop_prefs:
@@ -416,8 +453,36 @@ def _tokenize_abif_prefline(prefstr):
             cand = matches_new.group('candplusrate')
         elif 'candsqr' in canddict.keys():
             cand = matches_new.group('candsqr')
+        elif remainingtext.startswith(('"')):
+            DEBUGARRAY.append(f"FIXMEstart: {remainingtext=}\n")
+            start_index = None
+            quoted_text = ""
+            end_index = 999
+            for i, char in enumerate(remainingtext):
+                if char == '"' and start_index is None:
+                    start_index = i
+                elif char == '"' and start_index is not None:
+                    quoted_text += remainingtext[start_index + 1:i]
+                    start_index = None
+                    end_index = i + 1
+            cand = quoted_text
+            retval.append({'cand': cand})
+            restofline = remainingtext[end_index:]
+            DEBUGARRAY.append(f"FIXMEloop: {restofline=}\n")
+            remainingtext = restofline
+            ratingregexp = \
+                r'\s*/\s*(?P<rating>\d+)\s*\b(?P<restofline>.*)$'
+            if ratemat := re.fullmatch(ratingregexp, remainingtext):
+                DEBUGARRAY.append(f"{ratemat=}")
+                DEBUGARRAY.append(f"{ratemat.group('rating')=}")
+                rating = matches_new.group('rating')
+                retval.append({'rating': rating})
+                restofline = matches_new.group('restofline')
+                remainingtext = restofline
         else:
             raise
+
+
         retval.append({'cand': cand})
         rating = matches_new.group('rating')
         retval.append({'rating': rating})
@@ -427,8 +492,37 @@ def _tokenize_abif_prefline(prefstr):
             delimiter = remainingtext[0]
             retval.append({'delim': delimiter})
             remainingtext = remainingtext[1:]
-
+        DEBUGARRAY.append(f"{matches_new=}")
     return retval
+
+
+def _tokenize_abif_prefstr(prefstr):
+    '''Tokenize the voter pref portion for a prefline
+
+    This breaks up the prefstr portion of a prefline into a series of
+    tokens.  The _process_abif_prefline function uses the tokens to
+    give semantic structure to the prefstr.  It uses a stupidly
+    complicated regex to do it, but it's not NEARLY as complicated
+    (and buggy) as the code it replaced (the old
+    _tokenize_abif_prefline function)
+
+    '''
+
+    pattern = re.compile(
+        r'(\[[^\]]+\]|"[^"]+"|[\w\-]+)(?:/(\d+))?|([>,=])'
+    )
+    tokens = []
+    for match in pattern.finditer(prefstr):
+        cand, rating, delim = match.groups()
+        if cand:
+            cand = cand.strip('"[]')
+            tokens.append({"cand": cand})
+        if rating:
+            tokens.append({"rating": rating})
+        if delim:
+            tokens.append({"delim": delim})
+
+    return tokens
 
 
 def _process_abif_prefline(qty,
@@ -457,7 +551,7 @@ def _process_abif_prefline(qty,
     votelineorder = 1
     ratingarray = {}
     orderedlist = None
-    prefline_toks = _tokenize_abif_prefline(prefstr)
+    prefline_toks = _tokenize_abif_prefstr(prefstr)
     candnum = 0
     for tok in prefline_toks:
         abifmodel['votelines'][-1]['tokens'].append(tok)
@@ -488,3 +582,21 @@ def _process_abif_prefline(qty,
     prefs[thiscand]['rank'] = candrank
     abifmodel['votelines'][-1]['prefs'] = prefs
     return abifmodel
+
+
+def main():
+    """Test core functions of abiflib
+
+    TODO: make this useful for testing more than
+    _tokenize_abif_prefstr"""
+    parser = argparse.ArgumentParser(
+        description='Test core functions of abiflib')
+    parser.add_argument('prefstr', help='The "prefstr" portion of an ABIF file')
+    args = parser.parse_args()
+
+    parseout = _tokenize_abif_prefstr(args.prefstr)
+    print(f"{parseout=}")
+
+
+if __name__ == "__main__":
+    main()

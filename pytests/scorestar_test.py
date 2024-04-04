@@ -6,12 +6,9 @@ from abiftestfuncs import *
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
     [
-        (['-t', 'jabmod'],
-         'testdata/tenn-example/tennessee-example-simple.abif',
-         r"                    \"rating\": null,"),
         (['-t', 'jabmod', '--add-scores'],
          'testdata/tenn-example/tennessee-example-simple.abif',
-         r"                    \"rating\": 3,"),
+         r"                    \"rating\": 3"),
         (['-t', 'jabmod'],
          'testdata/tenn-example/tennessee-example-scores.abif',
          r"                    \"rating\": \"133\","),

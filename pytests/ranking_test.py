@@ -38,7 +38,18 @@ testdicts = [
         "abif_line": "27:DGM/5>SBJ/2>SY/1>AM/0",
         "html_offset": 8,
         "html_line": "     Doña García Márquez [\"DGM\"]"
-    }
+    },
+    {
+        "fetchspec": None,
+        "filename": 'testdata/tenn-example/tennessee-example-simple.abif',
+        "votelinenum": 3,
+        "votelinecandnum": 2,
+        "votelinecandtok": "Nash",
+        "abif_offset": -3,
+        "abif_line": "15:Chat>Knox>Nash>Memph",
+        "html_offset": 8,
+        "html_line": "     Nash"
+    },
 ]
 
 pytestlist = []
@@ -60,6 +71,7 @@ def test_voteline_to_ranking(fetchspec, filename,
     jabmod_from_abif = json.loads(jabmodstr_from_abif)
     votelinemod = jabmod_from_abif['votelines'][votelinenum]
     ranklist = ranklist_from_jabmod_voteline(votelinemod)
+    print(f"{ranklist=}")
 
     assert ranklist[votelinecandnum] == votelinecandtok
 
@@ -68,13 +80,17 @@ def test_voteline_to_ranking(fetchspec, filename,
                        capture_output=True,
                        text=True).stdout
     abiflines = abifstr_from_abiftool.split("\n")
+    print(f"{abiflines=} abiftool.py -t abif {filename}")
 
+    print("abiflines\n--------")
+    print("\n".join(abiflines))
     assert abiflines[abif_offset] == abif_line
 
     errorobj  = \
         subprocess.run(["abiftool.py", "-t", "html_snippet", filename],
                        capture_output=True,
                        text=True)
+    print(f"Command: abiftool.py -t html_snippet {filename}")
     html_from_abiftool = errorobj.stdout
     html_lines = html_from_abiftool.split("\n")
     if False:

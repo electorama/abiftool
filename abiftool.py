@@ -93,6 +93,8 @@ def main():
     validoutfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
     validmod = get_keys_from_dict_list(MODIFIERS)
     parser.add_argument('input_file', help='Input file to convert (--help for list of options)')
+    parser.add_argument('-d', '--debug', action="store_true",
+                        help='Output debug information if available')
     parser.add_argument('-f', '--fromfmt', choices=validinfmts,
                         help='Input format (overrides file extension)')
     parser.add_argument('-t', '--to', choices=validoutfmts,
@@ -213,6 +215,9 @@ def main():
         outstr += f"Cannot convert to {output_format} yet."
 
     print(outstr)
+    if args.debug:
+        global DEBUGARRAY
+        print(f"{DEBUGARRAY=}")
 
 
 if __name__ == "__main__":
