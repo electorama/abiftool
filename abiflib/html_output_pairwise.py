@@ -106,6 +106,7 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
 
     wltcolspan = len(candtoks) + 1
     candnames = abifmodel.get('candidates', None)
+    has_ties_or_cycles = False
 
     # Soup table data rows
     # ck = column key
@@ -120,32 +121,57 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         candrow.append(candrow_label)
         candrow_wlt = soup.new_tag('td', attrs={'style': 'padding-right: 3em;'})
         candrow_wlt['colspan'] = wltcolspan
-        lspan = soup.new_tag('span', attrs={'style': 'float: left;'})
-        lspan.string = f"({wltstr(ck)})"
-        rspan = soup.new_tag('span', attrs={'style': 'float: right;'})
+        candrow_wlt.string = f"({wltstr(ck)})"
+        wincaption = \
+            soup.new_tag('td', attrs={'style': 'text-align: center;'})
         if wltdict[ck]['wins'] > 0:
-            # Create the arrow span
-            rspan.string = f"↓\u00A0\u00A0{ck} victories"
-
-        candrow_wlt.append(lspan)
-        candrow_wlt.append(rspan)
+            appendme = soup.new_tag('div')
+            appendme.string = f"{ck} victories"
+            wincaption.append(appendme)
+            #appendme = soup.new_tag('div',
+            #                        style="float: center; white-space: nowrap;")
+            #appendme.string = "victories"
+            #wincaption.append(appendme)
+            appendme = soup.new_tag('div', style="float: center;")
+            appendme.string = "↓"
+            wincaption.append(appendme)
+        else:
+            candrow_wlt['colspan'] += 1
 
         candrow.append(candrow_wlt)
+        if wltdict[ck]['wins'] > 0:
+            candrow.append(wincaption)
+
         for j, rk in enumerate(reversed(candtoks)):
-            thiscell = soup.new_tag('td')
+            thiscell = soup.new_tag('td', style='justify-content: center;')
             # breaking out of rendering this line if we hit
             # the blank diagonal line of the matrix where
             # candidates are matched against themselves.
             if ck == rk:
                 pass
-            elif pairdict[rk][ck] < pairdict[ck][rk]:
+            elif candtoks.index(ck) < candtoks.index(rk):
                 pass
             else:
-                pairstr = ""
-                pairstr += f"{rk}:{pairdict[rk][ck]}"
-                pairstr += f" — "
-                pairstr += f"{ck}:{pairdict[ck][rk]}"
-                thiscell.string = pairstr
+                rkscore = pairdict[rk][ck]
+                ckscore = pairdict[ck][rk]
+                scorespan = \
+                    soup.new_tag('div', style='text-align: right;')
+                winspan = \
+                    soup.new_tag('div', style='white-space: nowrap;')
+                winspan.string = f"{rk}: {rkscore}"
+                scorespan.append(winspan)
+                #breakspan = soup.new_tag('div')
+                #breakspan.string = " — "
+                #thiscell.append(breakspan)
+                lossspan = soup.new_tag('div', style ='white-space: nowrap;')
+                lossspan.string = f"{ck}: {ckscore}"
+                if not rkscore > ckscore:
+                    dagspan = soup.new_tag('sup')
+                    dagspan.string = "†"
+                    has_ties_or_cycles = True
+                    lossspan.append(dagspan)
+                scorespan.append(lossspan)
+                thiscell.append(scorespan)
                 candrow.append(thiscell)
         candrow_loss_point = soup.new_tag('td')
         if wltdict[ck]['losses'] > 0:
@@ -168,7 +194,12 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
                                 attrs={"class": "hscroll"})
     table_scroll.append(table)
     results_div.append(table_scroll)
-
+    if has_ties_or_cycles:
+        results_div.append(dagspan)
+        results_div.append("\"Victories\" and \"losses\" sometimes aren't " +
+                           "displayed in the expected location when there " +
+                           "are ties and/or cycles in the results, but the " +
+                           "numbers provided should be accurate.")
     if snippet:
         soup.append(results_div)
     else:

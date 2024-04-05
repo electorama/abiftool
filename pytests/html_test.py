@@ -18,7 +18,7 @@ test_list=[
         "filename":"testdata/tenn-example/tennessee-example-scores.abif",
         "test_type": "regex_htmltag",
         "test_data": {"tag": "tr",
-                      "pattern": r"\bNash:68\W{1,5}Chat:32\s"}
+                      "pattern": r"Nash: 68"}
     },
     {
         "fetchspec":None,
