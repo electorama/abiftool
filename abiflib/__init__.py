@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib.abifregex import *
+from abiflib.devtools import *
 from abiflib.core import *
 from abiflib.debtally import *
 from abiflib.html_output import *

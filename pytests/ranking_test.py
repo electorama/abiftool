@@ -12,7 +12,7 @@ testdicts = [
         "votelinenum": 0,
         "votelinecandnum": 1,
         "votelinecandtok": "Anderson",
-        "abif_offset": -7,
+        "abif_offset": -6,
         "abif_line": "20010:Carter>Anderson>Reagan",
         "html_offset": 8,
         "html_line": "     Anderson"
@@ -23,7 +23,7 @@ testdicts = [
         "votelinenum": 1,
         "votelinecandnum": 1,
         "votelinecandtok": "Allie",
-        "abif_offset": -4,
+        "abif_offset": -3,
         "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy/0=Frank/0",
         "html_offset": 8,
         "html_line": "     Allie"
@@ -34,7 +34,7 @@ testdicts = [
         "votelinenum": 1,
         "votelinecandnum": 1,
         "votelinecandtok": "DGM",
-        "abif_offset": -6,
+        "abif_offset": -5,
         "abif_line": "27:DGM/5>SBJ/2>SY/1>AM/0",
         "html_offset": 8,
         "html_line": "     Doña García Márquez [\"DGM\"]"
@@ -45,7 +45,7 @@ testdicts = [
         "votelinenum": 3,
         "votelinecandnum": 2,
         "votelinecandtok": "Nash",
-        "abif_offset": -3,
+        "abif_offset": -2,
         "abif_line": "15:Chat>Knox>Nash>Memph",
         "html_offset": 8,
         "html_line": "     Nash"
@@ -64,39 +64,20 @@ def test_voteline_to_ranking(fetchspec, filename,
                              abif_offset, abif_line, html_offset, html_line):
     fh = open(filename, 'rb')
 
-    jabmodstr_from_abif = \
-        subprocess.run(["abiftool.py", "-t", "jabmod", filename],
-                       capture_output=True,
-                       text=True).stdout
-    jabmod_from_abif = json.loads(jabmodstr_from_abif)
+    cmd_args = ["-t", "jabmod", filename]
+    abiftool_output = get_abiftool_output_as_array(cmd_args)
+    jabmod_from_abif = json.loads("\n".join(abiftool_output))
     votelinemod = jabmod_from_abif['votelines'][votelinenum]
     ranklist = ranklist_from_jabmod_voteline(votelinemod)
     print(f"{ranklist=}")
 
     assert ranklist[votelinecandnum] == votelinecandtok
 
-    abifstr_from_abiftool = \
-        subprocess.run(["abiftool.py", "-t", "abif", filename],
-                       capture_output=True,
-                       text=True).stdout
-    abiflines = abifstr_from_abiftool.split("\n")
-    print(f"{abiflines=} abiftool.py -t abif {filename}")
+    cmd_args = ["-t", "abif", filename]
+    abiflines = get_abiftool_output_as_array(cmd_args)
 
-    print("abiflines\n--------")
-    print("\n".join(abiflines))
     assert abiflines[abif_offset] == abif_line
 
-    errorobj  = \
-        subprocess.run(["abiftool.py", "-t", "html_snippet", filename],
-                       capture_output=True,
-                       text=True)
-    print(f"Command: abiftool.py -t html_snippet {filename}")
-    html_from_abiftool = errorobj.stdout
-    html_lines = html_from_abiftool.split("\n")
-    if False:
-        print(f"-2 {html_lines[html_offset - 2]}")
-        print(f"-1 {html_lines[html_offset - 1]}")
-        print(f"{html_lines[html_offset]}")
-        print(f"+1 {html_lines[html_offset + 1]}")
-        print(f"+2 {html_lines[html_offset + 2]}")
+    cmd_args = ["-t", "html_snippet", filename]
+    html_lines = get_abiftool_output_as_array(cmd_args)
     assert html_lines[html_offset] == html_line

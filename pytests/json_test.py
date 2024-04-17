@@ -30,10 +30,7 @@ print(f"{pytestlist=}")
 def test_json_key_subkey_val(outformat, filename, key1, subkey1, val1):
     """Test equality of subkey to a value"""
     fh = open(filename, 'rb')
-    abiftool_output = \
-        subprocess.run(["abiftool.py", "-t", outformat, filename],
-                       capture_output=True,
-                       text=True).stdout
-    print(abiftool_output)
-    outputdict = json.loads(abiftool_output)
+    cmd_args = ["-t", outformat, filename]
+    abiftool_output = get_abiftool_output_as_array(cmd_args)
+    outputdict = json.loads("\n".join(abiftool_output))
     assert outputdict[key1][subkey1] == val1

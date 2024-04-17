@@ -42,7 +42,7 @@ def pairwise_count_dict(abifmodel):
             else:
                 retval[atok][btok] = 0
 
-    # Now add votelline qtys for each higher ranked cand
+    # Now add voteline qtys for each higher ranked cand
     for i, line in enumerate(votelines):
         thisqty = line['qty']
         lineprefs = line['prefs']
@@ -67,7 +67,6 @@ def pairwise_count_dict(abifmodel):
                     retval[atok][btok] = 0
                 elif arank < brank:
                     retval[atok][btok] += thisqty
-
     return retval
 
 

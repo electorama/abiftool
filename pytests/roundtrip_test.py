@@ -22,6 +22,11 @@ testdicts = [
         "fetchspec": "abif-electorama.fetchspec.json",
         "filename": "downloads/electorama-abif/testfiles/test016.abif",
         "abif_line": "24:[蘇業]/5>AM/2=DGM/2>SBJ/1"
+    },
+    {
+        "fetchspec": "abif-electorama.fetchspec.json",
+        "filename": "downloads/electorama-abif/testfiles/test017.abif",
+        "abif_line": "23:[Adam #4]/5>[Sue (蘇) #3]/3>[Doña #1]/1>[Steven #2]/0"
     }
 ]
 
@@ -35,11 +40,9 @@ for testdict in testdicts:
 def test_roundtrip_conversion(filename, abif_line):
     fh = open(filename, 'rb')
 
-    roundtrip_abif_content = \
-        subprocess.run(["abiftool.py", "-t", "abif", filename],
-                       capture_output=True,
-                       text=True).stdout
-    print(f"{roundtrip_abif_content=}")
-    print(f"{abif_line=}")
+    cmd_args = ["-t", "abif", filename]
+    roundtrip_abif_content = get_abiftool_output_as_array(cmd_args)
+    abiflib_test_log(f"{roundtrip_abif_content=}")
+    abiflib_test_log(f"{abif_line=}")
     assert abif_line in roundtrip_abif_content
 

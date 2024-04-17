@@ -17,13 +17,18 @@ import re
 import subprocess
 import sys
 from subprocess import run, PIPE
+from abiflib import abiflib_test_log
 
-
-def get_abiftool_output_as_string(cmd_args):
+def get_abiftool_output_as_array(cmd_args,
+                                 log_pre="",
+                                 log_post=""):
     command = ['abiftool.py', *cmd_args]
+    commandstr = " ".join(command)
+    abiflib_test_log(f"{log_pre}{commandstr}{log_post}")
     completed_process = subprocess.run(command,
-                                       stdout=subprocess.PIPE, text=True)
-    retval = completed_process.stdout
+                                       stdout=subprocess.PIPE,
+                                       text=True)
+    retval = completed_process.stdout.splitlines()
     return retval
 
 
@@ -77,14 +82,9 @@ def check_regex_in_textarray(needle, haystack):
 
 
 def check_regex_in_output(cmd_args, inputfile, pattern):
-    command = ['python3', 'abiftool.py', *cmd_args, inputfile]
-    completed_process = subprocess.run(command,
-                                       stdout=subprocess.PIPE, text=True)
-
-    # Get the captured output and count the lines
-    output_lines = completed_process.stdout.splitlines()
+    output_lines = get_abiftool_output_as_array(cmd_args + [inputfile],
+                                                log_post=' (check_regex)')
     print(output_lines)
-
     return check_regex_in_textarray(pattern, output_lines)
 
 
@@ -94,3 +94,4 @@ def html_element_search(elementname, needle, haystack):
     elemtextlist = [elem.text for elem in elementlist]
     matchbool = any(re.search(needle, liststr) for liststr in elemtextlist)
     return matchbool
+

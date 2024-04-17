@@ -32,12 +32,11 @@ test_list=[
 
 @pytest.mark.parametrize("test_case", test_list)
 def test_abiftool(test_case):
-    launchstr = "abiftool.py"
     optstr = " ".join(test_case['options'])
     fnstr = test_case['filename']
-    print(f"{launchstr} {optstr} {fnstr}")
-    testfilestr = get_abiftool_output_as_string(test_case['options'] +
-                                                [ test_case['filename'] ])
+    testfilearray = get_abiftool_output_as_array(test_case['options'] +
+                                                 [ test_case['filename'] ])
+    testfilestr = str(testfilearray)
     testval = None
     if(test_case['test_type'] == 'regex_htmltag'):
         tdata = test_case['test_data']

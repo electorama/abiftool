@@ -16,9 +16,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from pprint import pprint
+from pprint import pprint, pformat
 import copy
+import inspect
 import json
+import os
 import re
 import sys
 import urllib.parse
@@ -27,23 +29,10 @@ ABIF_VERSION = "0.1"
 LOOPLIMIT = 400
 ABIF_MODEL_LIMIT = 2500
 
-# "DEBUGARRAY" is a generic array to put debug strings in to get
-# printed if there's an exception or other debugging situations
-DEBUGARRAY = []
 
 class ABIFVotelineException(Exception):
     """Raised when votelines are missing from ABIF."""
     def __init__(self, value, message="ABIFVotelineException glares at you"):
-        global DEBUGARRAY
-        self.value = value
-        self.message = message
-        self.debugarray = DEBUGARRAY
-        super().__init__(self.message)
-
-
-class ABIFInputFormatException(Exception):
-    """Raised when votelines are missing from ABIF."""
-    def __init__(self, value, message="ABIFInputFormatException glares at you"):
         global DEBUGARRAY
         self.value = value
         self.message = message
@@ -61,52 +50,28 @@ class ABIFLoopLimitException(Exception):
         super().__init__(self.message)
 
 
-class ABIFGenericError(Exception):
-    """Raised when the LOOPLIMIT is exceeded."""
-    def __init__(self, value, message="ABIFLoopLimitException gets upset"):
-        global DEBUGARRAY
-        self.value = value
-        self.message = message
-        self.debugarray = DEBUGARRAY
-        super().__init__(self.message)
+def corefunc_init(tag="unmarked"):
+    '''Initialization for all abiflib/core.py functions
+
+    This function was added as a place to aggregate logging
+    functionality for all functions in abiflib/core.py
+
+    '''
+    #abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
+    return {'tag': tag}
 
 
-def convert_jabmod_to_abif(abifmodel, add_ratings=False):
-    """Converts electowidget JSON (widj) to a .abif string."""
-    abif_string = ""
-    abif_string += "#------- metadata -------\n"
-
-    for field, value in abifmodel["metadata"].items():
-        jstr = json.dumps(value)
-        abif_string += f'{{{field}: {jstr}}}\n'
-
-    abif_string += "#------ candlines ------\n"
-    for candtoken in abifmodel["candidates"]:
-        candqtoken = _abif_token_quote(candtoken)
-        abif_string += f"={candqtoken}:"
-        abif_string += f"[{abifmodel['candidates'][candtoken]}]\n"
-
-    abif_string += "#------- votelines ------\n"
-    for (i, voteline) in enumerate(abifmodel["votelines"]):
-        try:
-            is_ordered = voteline["orderedlist"]
-        except KeyError:
-            is_ordered = False
-
-        abif_chunk = _get_prefstr_from_voteline(voteline)
-        abif_string += abif_chunk
-
-    return abif_string
-
+########################
+# Functions for parsing/reading abif into jabmod....
+#
 
 def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
-    abifmodel = {
-        'metadata': {
-            'ballotcount': 0
-        },
-        'candidates': {},
-        'votelines': []
-    }
+    """Converts an .abif string to JSON/jabmod
+
+    'jabmod' stands for 'JSON ABIF Model', and is the internal abiflib
+    data structure which is used throughout abiflib.
+    """
+    initval = corefunc_init(tag="f01")
     global COMMENT_REGEX, METADATA_REGEX
     global CANDLINE_REGEX, VOTELINE_REGEX
     commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
@@ -114,12 +79,13 @@ def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
     candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
     votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
 
-    abifmodel['metadata']['comments'] = []
+    newmodel = _get_emptyish_abifmodel()
 
     if len(inputstr) == 0:
         msg = f'Empty ABIF string..'
         raise ABIFVotelineException(value=inputstr, message=msg)
-
+    # 'v' is the voteline number
+    v = 0
     for i, fullline in enumerate(inputstr.splitlines()):
         matchgroup = None
         # if "--cleanws" flag is given, strip leading whitespace
@@ -135,7 +101,7 @@ def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
         else:
             strpdline = fullline
             linecomment = None
-        abifmodel = _process_abif_comment_line(abifmodelin=abifmodel,
+        abifmodel = _process_abif_comment_line(abifmodel=newmodel,
                                                linecomment=linecomment,
                                                linenum=i)
 
@@ -159,6 +125,7 @@ def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
                                                prefstr,
                                                abifmodel,
                                                linecomment)
+            v += 1
         else:
             matchgroup = 'empty'
 
@@ -170,19 +137,11 @@ def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
         msg += "Votelines (like '20:A>B>C') are required in valid ABIF files."
         raise ABIFVotelineException(value=inputstr, message=msg)
 
-    # Dive down and find if ranks are provided.  If not, calculate
-    # ranks based on ratings.
+    # Add in Borda-ish score if ratings are not provided
     firstprefs = abifmodel['votelines'][0]['prefs']
     firstk, firstv = list(firstprefs.items())[0]
-    if not firstv['rank']:
-        abifmodel = _add_ranks_to_jabmod_votelines(abifmodel)
-
-    # Add in Borda-ish scores if ratings are not provided
     if not firstv.get('rating') and add_ratings:
         abifmodel = _add_ratings_to_jabmod_votelines(abifmodel)
-
-    cleaned_lines = _cleanup_jabmod_votelines(abifmodel["votelines"])
-    abifmodel["votelines"] = cleaned_lines
 
     slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
                    reverse=True)
@@ -191,8 +150,225 @@ def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
     return abifmodel
 
 
+def _process_abif_comment_line(abifmodel=None,
+                               linecomment="",
+                               linenum=0):
+    '''Store abif comments in jabmod metadata'''
+    initval = corefunc_init(tag="f02")
+    if not abifmodel:
+        abifmodel = _get_emptyish_abifmodel()
+    commenttuple = (linenum, linecomment)
+    if linecomment:
+        abifmodel['metadata']['comments'].append(commenttuple)
+
+    return abifmodel
+
+
+def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
+    '''Simple key-value translation of metadata lines
+
+    This function handles the metadata lines that begin with "{".
+    Each metadata line should look vaguely like a line from a "JSON
+    Lines" file.
+
+    '''
+    initval = corefunc_init(tag="f03")
+    # Rename ballotcount that is passed in, since this tool is going
+    # to recount the ballots.
+    if mkey == 'ballotcount':
+        mkey = 'ballotcount_abif_metadata'
+    if 'metadata' in abifmodel:
+        abifmodel['metadata'][mkey] = mvalue
+    else:
+        abifmodel['metadata'] = {mkey: mvalue}
+    return abifmodel
+
+
+def _process_abif_candline(candtoken, canddesc, abifmodel, linecomment=None):
+    '''_process_abif_candline maps candtokens to full candidate names'''
+    initval = corefunc_init(tag="f04")
+    if not 'candidates' in abifmodel:
+        abifmodel['candidates'] = {candtoken: canddesc}
+    else:
+        abifmodel['candidates'][candtoken] = canddesc
+    return abifmodel
+
+
+def _get_emptyish_abifmodel():
+    '''Provide initialized jabmod/abifmodel'''
+    initval = corefunc_init(tag="f05")
+    retval = {}
+    retval['candidates'] = {}
+    retval['metadata'] = {}
+    retval['metadata']['ballotcount'] = 0
+    retval['metadata']['comments'] = []
+    retval['votelines'] = []
+    return retval
+
+
+def _add_ranks_to_prefjab_by_rating(inprefjab):
+    '''Use candidate ratings to provide rankings'''
+    initval = corefunc_init(tag="f06")
+    retval = inprefjab.copy()
+
+    # Sort cands by rating (descending order)
+    cands = sorted(retval,
+                   key=lambda x: int(retval[x].get("rating", 0)),
+                   reverse=True)
+    if not inprefjab.get(cands[0]).get('rating'):
+        msg = f"Invalid call to _add_ranks_to_prefjab_by_rating"
+        raise ABIFVotelineException(value=inprefjab, message=msg)
+
+    # Assign ranks
+    prevrating = None
+    thisrank = 0
+    for i, c in enumerate(cands):
+        if i == 0:
+            thisrank = 1
+        elif int(retval[c].get("rating", 0)) < prevrating:
+            thisrank += 1
+        retval[c]["rank"] = thisrank
+        prevrating = int(retval[c].get("rating", 0))
+    return retval
+
+
+def _add_ratings_to_jabmod_votelines(inmod):
+    ''' Calculate Borda-like ratings in lieu of explicit ratings '''
+    initval = corefunc_init(tag="f07")
+    numcands = len(inmod['candidates'])
+    outmod = copy.deepcopy(inmod)
+    for vl in outmod['votelines']:
+        for k, v in vl['prefs'].items():
+            v['rating'] = numcands - v['rank']
+    return outmod
+
+
+def _parse_prefstr_to_dict(prefstr, qty=0,
+                           abifmodel=None, linecomment=None):
+    '''Convert prefstr portion of .abif voteline to jabvoteline
+    structure.'''
+    initval = corefunc_init(tag="f08")
+    prefs = {}
+    rank = 1
+
+    if not abifmodel:
+        abifmodel = _get_emptyish_abifmodel()
+
+    # Split the string by commas or ranking symbols
+    candidates = re.split(r",|>|=", prefstr)
+    delimeters = [char for char in prefstr if char in ">,="]
+    if delimeters and delimeters[0] in '>=':
+        rank_or_rate = "rank"
+    elif delimeters and delimeters[0] == ",":
+        rank_or_rate = "rate"
+    else:
+        rank_or_rate = "rankone"
+    candkeys = []
+    for (i, candpref) in enumerate(candidates):
+        candpref = candpref.strip()
+        if not candpref:
+            continue
+
+        parts = candpref.split("/")
+        candidate = parts[0].strip("[]\"")
+        candkeys.append(candidate)
+        if candidate not in abifmodel['candidates']:
+            abifmodel['candidates'][candidate] = candidate
+
+        prefs[candidate] = {}
+        if i < len(candidates) - 1:
+            prefs[candidate]["nextdelim"] = delimeters[i]
+        if rank_or_rate == "rankone":
+            rank = 1
+            prefs[candidate]["rank"] = rank
+        elif rank_or_rate == "rank":
+            prefs[candidate]["rank"] = rank
+            if i < len(candidates) - 1 and delimeters[i] == ">":
+                rank += 1
+
+        if len(parts) > 1:
+            prefs[candidate]["rating"] = parts[1]
+    firstcandprefs = prefs.get(candkeys[0])
+    if firstcandprefs.get('rating') and not firstcandprefs.get('rank'):
+        prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    return {"prefs": prefs}
+
+
+def _process_abif_prefline(qty, prefstr,
+                           abifmodel=None, linecomment=None):
+    '''Add prefline with qty to the provided abifmodel/jabmod'''
+    initval = corefunc_init(tag="f09")
+    if not abifmodel:
+        abifmodel = _get_emptyish_abifmodel()
+
+    try:
+        abifmodel['metadata']['ballotcount'] += int(qty)
+    except:
+        print(f"{abifmodel['metadata']['ballotcount']=} ")
+        raise
+    linepair = {}
+    linepair['qty'] = int(qty)
+    linepair['prefs'] = \
+        _parse_prefstr_to_dict(prefstr,
+                               qty=qty,
+                               abifmodel=abifmodel,
+                               linecomment=linecomment)['prefs']
+    linepair['comment'] = linecomment
+    linepair['prefstr'] = prefstr.rstrip()
+    abifmodel['votelines'].append(linepair)
+    return abifmodel
+
+########################
+# Functions for converting jabmod out into abif....
+#
+
+def convert_jabmod_to_abif(abifmodel, add_ratings=False):
+    """Converts 'jabmod' to an .abif string.
+
+    'jabmod' stands for 'JSON ABIF Model', and is the internal abiflib
+    data structure which is used throughout abiflib.
+    """
+    initval = corefunc_init(tag="f10")
+    abif_string = ""
+    abif_string += "#------- metadata -------\n"
+
+    for field, value in abifmodel["metadata"].items():
+        jstr = json.dumps(value)
+        abif_string += f'{{{field}: {jstr}}}\n'
+
+    abif_string += "#------ candlines ------\n"
+    for candtoken in abifmodel["candidates"]:
+        candqtoken = _abif_token_quote(candtoken)
+        abif_string += f"={candqtoken}:"
+        abif_string += f"[{abifmodel['candidates'][candtoken]}]\n"
+
+    abif_string += "#------- votelines ------\n"
+    for (i, jabvoteline) in enumerate(abifmodel["votelines"]):
+        try:
+            is_ordered = jabvoteline["orderedlist"]
+        except KeyError:
+            is_ordered = False
+
+        abif_chunk = _get_votelinestr_from_jabvoteline(jabvoteline)
+        abif_string += abif_chunk
+
+    return abif_string
+
+
+def _abif_token_quote(candtoken):
+    '''Add square brackets to a candidate token if necessary'''
+    initval = corefunc_init(tag="f11")
+    quotedcand = urllib.parse.quote_plus(candtoken)
+    if quotedcand == candtoken:
+        candtoken = candtoken
+    else:
+        candtoken = f"[{candtoken}]"
+    return candtoken
+
+
 def ranklist_from_jabmod_voteline(voteline):
     """Construct list of candtoks in order of ranking"""
+    initval = corefunc_init(tag="f12")
     orderedcands = []
     toklist = list(voteline['prefs'].keys())
     firstcand = toklist[0]
@@ -211,80 +387,9 @@ def ranklist_from_jabmod_voteline(voteline):
     return orderedcands
 
 
-def _add_ranks_to_jabmod_votelines(inmod):
-    ''' Calculate rankings from scores '''
-    outmod = copy.deepcopy(inmod)
-    for vl in outmod['votelines']:
-        ratingvalset = set()
-        for k, v in vl['prefs'].items():
-            ratingvalset.add(v.get('rating', 0))
-        rlist = sorted(ratingvalset, key=lambda x: int(x),
-                       reverse=True)
-        lookup = {rating: i + 1 for i, rating in enumerate(rlist)}
-        for k, v in vl['prefs'].items():
-            v['rank'] = lookup[v.get('rating', 0)]
-    return outmod
-
-
-def _add_ratings_to_jabmod_votelines(inmod):
-    ''' Calculate Borda-like ratings in lieu of explicit ratings '''
-    numcands = len(inmod['candidates'])
-    outmod = copy.deepcopy(inmod)
-    for vl in outmod['votelines']:
-        for k, v in vl['prefs'].items():
-            v['rating'] = numcands - v['rank']
-    return outmod
-
-
-def _cleanup_jabmod_votelines(votelines):
-    """Deduplicate votelines."""
-    cln_votelines = {}
-    for (i, voteline) in enumerate(votelines):
-        try:
-            is_ordered = voteline["orderedlist"]
-        except KeyError:
-            is_ordered = False
-
-        try:
-            prefitems = sorted(voteline['prefs'].items(),
-                               key=lambda item: (-int(item[1].get('rating')),
-                                                 item[0])
-                               )
-            has_full_ratings = True
-        except TypeError:
-            prefitems = voteline['prefs'].items()
-            has_full_ratings = False
-
-        if has_full_ratings:
-            prefstr = _prefstr_from_ratings(prefitems)
-        else:
-            prefstr = _prefstr_from_ranked_line(prefitems)
-        if prefstr in cln_votelines.keys():
-            cln_votelines[prefstr]['qty'] += voteline['qty']
-        else:
-            cln_votelines[prefstr] = {}
-            cln_votelines[prefstr]['qty'] = voteline['qty']
-            cln_votelines[prefstr]['prefs'] = voteline['prefs']
-            if 'comment' in voteline.keys():
-                cln_votelines[prefstr]['comment'] = voteline['comment']
-            if 'orderedlist' in voteline.keys():
-                cln_votelines[prefstr]['orderedlist'] = voteline['orderedlist']
-    retval = []
-    for k, v in cln_votelines.items():
-        retval.append(v)
-    return retval
-
-
-def _abif_token_quote(candtoken):
-    quotedcand = urllib.parse.quote_plus(candtoken)
-    if quotedcand == candtoken:
-        candtoken = candtoken
-    else:
-        candtoken = f"[{candtoken}]"
-    return candtoken
-
-
 def _prefstr_from_ranked_line(sortedprefs):
+    '''provide .abif string from prefs in jabmod form'''
+    initval = corefunc_init(tag="f13")
     prefstrfromranks = ""
     rank = 1
 
@@ -300,6 +405,8 @@ def _prefstr_from_ranked_line(sortedprefs):
 
 
 def _prefstr_from_ratings(sortedprefs):
+    '''provide .abif string from ratings in jabmod form'''
+    initval = corefunc_init(tag="f14")
     tiered_cands = []
     current_rating = 0
     current_tier = []
@@ -337,17 +444,23 @@ def _prefstr_from_ratings(sortedprefs):
     return prefstrfromratings
 
 
-def _get_prefstr_from_voteline(ballot):
+def _get_votelinestr_from_jabvoteline(jabvoteline):
+    '''Convert voteline data structure to abif string for voteline
+
+    "jabvoteline" is the jabmod/JSON structure for a voteline
+    "votelinestr" is the .abif string representation of a voteline
+    '''
+    initval = corefunc_init(tag="f15")
     local_abif_str = ""
 
     try:
-        prefitems = sorted(ballot['prefs'].items(),
+        prefitems = sorted(jabvoteline['prefs'].items(),
                            key=lambda item: (-int(item[1].get('rating')),
                                              item[0])
                            )
         has_full_ratings = True
     except TypeError:
-        prefitems = ballot['prefs'].items()
+        prefitems = jabvoteline['prefs'].items()
         has_full_ratings = False
 
     if has_full_ratings:
@@ -355,144 +468,35 @@ def _get_prefstr_from_voteline(ballot):
     else:
         prefstr = _prefstr_from_ranked_line(prefitems)
 
-    local_abif_str += f"{ballot['qty']}:{prefstr}\n"
+    local_abif_str += f"{jabvoteline['qty']}:{prefstr}\n"
+    abiflib_test_log(f"func13: {local_abif_str=}")
     return local_abif_str
 
 
-def _process_abif_comment_line(abifmodelin={},
-                               linecomment="",
-                               linenum=0):
-    commenttuple = (linenum, linecomment)
-    if linecomment:
-        abifmodelin['metadata']['comments'].append(commenttuple)
-
-    return abifmodelin
-
-
-def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
-    '''Simple key-value translation of metadata lines
-
-    This function handles the metadata lines that begin with "{".
-    Each metadata line should look vaguely like a line from a "JSON
-    Lines" file.
-
-    '''
-    if 'metadata' in abifmodel:
-        abifmodel['metadata'][mkey] = mvalue
-    else:
-        abifmodel['metadata'] = {mkey: mvalue}
-    return abifmodel
-
-
-def _process_abif_candline(candtoken, canddesc, abifmodel, linecomment=None):
-    '''_process_abif_candline maps candtokens to full candidate names'''
-    if not 'candidates' in abifmodel:
-        abifmodel['candidates'] = {candtoken: canddesc}
-    else:
-        abifmodel['candidates'][candtoken] = canddesc
-    return abifmodel
-
-
-def _tokenize_abif_prefstr(prefstr):
-    '''Tokenize the voter pref portion for a prefline
-
-    This breaks up the prefstr portion of a prefline into a series of
-    tokens.  The _process_abif_prefline function uses the tokens to
-    give semantic structure to the prefstr.  It uses a stupidly
-    complicated regex to do it, but it's not NEARLY as complicated
-    (and buggy) as the code it replaced (the old
-    _tokenize_abif_prefline function)
-
-    '''
-
-    pattern = re.compile(
-        r'(\[[^\]]+\]|"[^"]+"|[\w\-]+)(?:/(\d+))?|([>,=])'
-    )
-    tokens = []
-    for match in pattern.finditer(prefstr):
-        cand, rating, delim = match.groups()
-        if cand:
-            cand = cand.strip('"[]')
-            tokens.append({"cand": cand})
-        if rating:
-            tokens.append({"rating": rating})
-        if delim:
-            tokens.append({"delim": delim})
-
-    return tokens
-
-
-def _process_abif_prefline(qty,
-                           prefstr,
-                           abifmodel,
-                           linecomment=None):
-    '''process vote bundles
-
-    preflines are the heart of ABIF.  Each line describes batch of
-    ballots in the following form:
-
-    <qty>: <cand1>(/<rating1>) ">"/"="/"," <cand2>(/<rating2>) [...]
-
-    '''
-    abifmodel['metadata']['ballotcount'] += int(qty)
-    linepair = {}
-    linepair['qty'] = int(qty)
-    linepair['prefs'] = {}
-    linepair['comment'] = linecomment
-    linepair['prefstr'] = prefstr.rstrip()
-
-    abifmodel['votelines'].append(linepair)
-    abifmodel['votelines'][-1]['tokens'] = []
-    prefs = {}
-    candrank = 1
-    votelineorder = 1
-    ratingarray = {}
-    orderedlist = None
-    prefline_toks = _tokenize_abif_prefstr(prefstr)
-    candnum = 0
-    for tok in prefline_toks:
-        abifmodel['votelines'][-1]['tokens'].append(tok)
-        if 'cand' in tok:
-            candnum += 1
-            thiscand = tok['cand']
-            prefs[thiscand] = {}
-            if not thiscand in abifmodel['candidates']:
-                abifmodel['candidates'][thiscand] = thiscand
-        if 'rating' in tok:
-            thisrating = tok['rating']
-            prefs[thiscand]['rating'] = thisrating
-            if len(ratingarray) == 0:
-                ratingarray = {candrank: thisrating}
-            else:
-                ratingarray[candrank] = thisrating
-        if 'delim' in tok:
-            thisdelim = tok['delim']
-            prefs[thiscand]['nextdelim'] = thisdelim
-            if thisdelim == '>':
-                prefs[thiscand]['rank'] = candrank
-                candrank += 1
-            elif thisdelim == '=':
-                prefs[thiscand]['rank'] = candrank
-            elif thisdelim == ",":
-                # FIXME - use ratings when comma is delimiter
-                prefs[thiscand]['rank'] = None
-    prefs[thiscand]['rank'] = candrank
-    abifmodel['votelines'][-1]['prefs'] = prefs
-    return abifmodel
-
-
 def main():
-    """Test core functions of abiflib
+    """core functions of abiflib
 
-    TODO: make this useful for testing more than
-    _tokenize_abif_prefstr"""
+    This script allows for testing of core functions of abiflib"""
+    initval = corefunc_init(tag="main")
     parser = argparse.ArgumentParser(
         description='Test core functions of abiflib')
-    parser.add_argument('prefstr', help='The "prefstr" portion of an ABIF file')
+    parser.add_argument('-f', '--func',
+                        help='stub function to run',
+                        default='pref_to_dict',
+                        choices=['pref_to_dict',
+                                 'emptyish'])
+    parser.add_argument('string', help='string for optional parsing',
+                        default=None, nargs='?')
     args = parser.parse_args()
 
-    parseout = _tokenize_abif_prefstr(args.prefstr)
-    print(f"{parseout=}")
+    if args.func == 'pref_to_dict':
+        if not args.string:
+            parser.error("pref_to_dict requires string")
+        parseout = _parse_prefstr_to_dict(f"{args.string}")
+        print(json.dumps(parseout, indent=4))
+    elif args.func == 'emptyish':
+        emptyish = _get_emptyish_abifmodel()
+        print(json.dumps(emptyish, indent=4))
 
 
 if __name__ == "__main__":

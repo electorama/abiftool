@@ -47,3 +47,5 @@ def convert_text_to_abif(fromfmt, inputstr, cleanws=False, add_ratings=False):
                                     message=f"Cannot convert from {fromfmt} yet.")
     retval = convert_jabmod_to_abif(abifmodel, add_ratings=False)
     return retval
+
+
