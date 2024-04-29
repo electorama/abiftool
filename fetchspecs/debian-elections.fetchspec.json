@@ -43,6 +43,16 @@
       ],
       "desc": "2003",
       "abifloc":"2003_debian_pl.abif"
+    },
+    {
+      "url":"https://www.debian.org/vote/2002/tally.txt",
+      "localcopy":"2002/tally2002.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2002/vote_001",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "2002: vote 1",
+      "abifloc":"2002_debian_pl.abif"
     }
   ]
 }

@@ -147,12 +147,15 @@ def main():
         help="Generate ABIF files from downloaded election data")
     parser.add_argument(
         "fetchspec",
-        nargs="+",
+        nargs="*",
         default=None,
         help="JSON file(s) describing fetch locations and mappings to local dirs",
     )
 
     args = parser.parse_args()
+    if len(args.fetchspec) < 1:
+        print("Please provide at least one fetchspec (see fetchspecs/*)")
+        sys.exit(1)
     for fetchspec_fn in args.fetchspec:
         process_fetchspec(fetchspec_fn)
 
