@@ -27,6 +27,7 @@ except:
     pass
 
 def htmltable_pairwise_and_winlosstie(abifmodel,
+                                      add_desc = True,
                                       snippet = False,
                                       validate = False,
                                       clean = False,
@@ -89,12 +90,13 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         h1 = soup.new_tag('h1')
         h1.string = get_title_for_html(abifmodel)
         body.append(h1)
-    desc = soup.new_tag('p')
-    desc.string = f'{get_abif_desc(abifmodel)}'
-    if snippet:
-        soup.append(desc)        
-    else:
-        body.append(desc)
+    if add_desc:
+        desc = soup.new_tag('p')
+        desc.string = f'{get_abif_desc(abifmodel)}'
+        if snippet:
+            soup.append(desc)
+        else:
+            body.append(desc)
 
     # Soup table
     table = soup.new_tag('table')
