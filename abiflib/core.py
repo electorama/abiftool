@@ -26,23 +26,12 @@ import sys
 import urllib.parse
 
 ABIF_VERSION = "0.1"
-LOOPLIMIT = 400
 ABIF_MODEL_LIMIT = 2500
 
 
 class ABIFVotelineException(Exception):
     """Raised when votelines are missing from ABIF."""
     def __init__(self, value, message="ABIFVotelineException glares at you"):
-        global DEBUGARRAY
-        self.value = value
-        self.message = message
-        self.debugarray = DEBUGARRAY
-        super().__init__(self.message)
-
-
-class ABIFLoopLimitException(Exception):
-    """Raised when the LOOPLIMIT is exceeded."""
-    def __init__(self, value, message="ABIFLoopLimitException gets upset"):
         global DEBUGARRAY
         self.value = value
         self.message = message
@@ -65,7 +54,10 @@ def corefunc_init(tag="unmarked"):
 # Functions for parsing/reading abif into jabmod....
 #
 
-def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
+def convert_abif_to_jabmod(inputstr,
+                           cleanws=False,
+                           add_ratings=False,
+                           extradata=None):
     """Converts an .abif string to JSON/jabmod
 
     'jabmod' stands for 'JSON ABIF Model', and is the internal abiflib
@@ -146,6 +138,8 @@ def convert_abif_to_jabmod(inputstr, cleanws=False, add_ratings=False):
     slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
                    reverse=True)
     abifmodel["votelines"] = slist
+    if extradata:
+        abiflib_test_log(f"Ignoring {extradata=}")
 
     return abifmodel
 
@@ -319,7 +313,7 @@ def _process_abif_prefline(qty, prefstr,
     return abifmodel
 
 ########################
-# Functions for converting jabmod out into abif....
+# Functions for converting jabmod into abif....
 #
 
 def convert_jabmod_to_abif(abifmodel, add_ratings=False):
@@ -469,8 +463,26 @@ def _get_votelinestr_from_jabvoteline(jabvoteline):
         prefstr = _prefstr_from_ranked_line(prefitems)
 
     local_abif_str += f"{jabvoteline['qty']}:{prefstr}\n"
-    abiflib_test_log(f"func13: {local_abif_str=}")
+    #abiflib_test_log(f"func13: {local_abif_str=}")
     return local_abif_str
+
+
+def _modify_jabmod(jabmod, modtuple):
+    """Modify jabmod structure with list of tuples
+
+    The tuples provided provide two things:
+    1) A list which represents the path to the value being modified
+    2) The new value for this key/index/whatever.
+    """
+    def _modify_jabmod_internal(this_jabmod, path):
+        if len(path) == 1:
+            this_jabmod[path[0]] = new_value
+        else:
+            next_key = path[0]
+            _modify_jabmod_internal(this_jabmod[next_key], path[1:])
+
+    path, new_value = modtuple
+    _modify_jabmod_internal(jabmod, path)
 
 
 def main():
@@ -479,24 +491,30 @@ def main():
     This script allows for testing of core functions of abiflib"""
     initval = corefunc_init(tag="main")
     parser = argparse.ArgumentParser(
-        description='Test core functions of abiflib')
+        description='Core functions of abiflib (and some cli stuff)')
     parser.add_argument('-f', '--func',
                         help='stub function to run',
                         default='pref_to_dict',
                         choices=['pref_to_dict',
-                                 'emptyish'])
-    parser.add_argument('string', help='string for optional parsing',
-                        default=None, nargs='?')
+                                 'emptyish',
+                                 'modify_jabmod'])
+    parser.add_argument('string', help='string(s) to pass to function',
+                        default=None, nargs='+')
     args = parser.parse_args()
 
     if args.func == 'pref_to_dict':
         if not args.string:
-            parser.error("pref_to_dict requires string")
-        parseout = _parse_prefstr_to_dict(f"{args.string}")
+            parser.error("pref_to_dict requires prefline as string[0]")
+        parseout = _parse_prefstr_to_dict(f"{args.string[0]}")
         print(json.dumps(parseout, indent=4))
     elif args.func == 'emptyish':
         emptyish = _get_emptyish_abifmodel()
         print(json.dumps(emptyish, indent=4))
+    elif args.func == 'modify_jabmod':
+        if not args.string:
+            parser.error("modify_jabmod requires filename as string[0]")
+        else:
+            print(f"FIXME: need to load jabmod file {args.string}")
 
 
 if __name__ == "__main__":

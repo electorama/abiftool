@@ -26,7 +26,6 @@ import sys
 import urllib.parse
 
 ABIF_VERSION = "0.1"
-LOOPLIMIT = 400
 ABIF_MODEL_LIMIT = 2500
 
 # "DEBUGARRAY" is a generic array to put debug strings in to get
@@ -40,7 +39,7 @@ class LogfileSingleton:
     _filehandle = None
     devtoolmsgs = []
 
-    def __new__(cls):
+    def __new__(cls, force_log=False):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             # If ABIFLIB_LOG isn't set, silently eat all msgs
@@ -60,6 +59,9 @@ class LogfileSingleton:
                 msg = f"ABIFLIB_LOG set to {filename}.  "
                 msg += "Amending additional debugging output there."
                 cls.devtoolmsgs.append(msg)
+            elif force_log:
+                msg = f"ABIFLIB_LOG isn't set, and {force_log=}"
+                raise ValueError(msg)
             else:
                 msg = "ABIFLIB_LOG not set, so no extra logging will be done."
                 cls.devtoolmsgs.append(msg)
@@ -106,6 +108,10 @@ def main():
     parser = argparse.ArgumentParser(
         description='Dev tools for abif (e.g. logging)')
     args = parser.parse_args()
+
+    teststr = "hello werld"
+    devobj = LogfileSingleton(force_log=True, verbose=True)
+    devobj.log(teststr)
 
 
 if __name__ == "__main__":

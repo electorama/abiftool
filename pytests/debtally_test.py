@@ -68,4 +68,8 @@ def test_filename(outformat, filename, key1, subkey1, val1):
     abiftool_output = get_abiftool_output_as_array(cmd_args)
     outputdict = json.loads("\n".join(abiftool_output))
 
+    import abiflib
+    devobj = abiflib.LogfileSingleton()
+    devobj.log(json.dumps(outputdict, indent=4))
+
     assert outputdict[key1][subkey1] == val1

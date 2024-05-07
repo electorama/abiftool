@@ -10,7 +10,7 @@
         "https://www.debian.org/vote/2022/vote_002",
         "https://www.debian.org/vote/"
       ],
-      "desc": "2022",
+      "desc": "2022 Debian Project Leader election, won by Jonathan Carter.",
       "abifloc":"2022_debian_pl.abif"
     },
     {
@@ -30,7 +30,7 @@
         "https://www.debian.org/vote/2021/vote_001",
         "https://www.debian.org/vote/"
       ],
-      "desc": "2021: vote 1",
+      "desc": "2021 Debian Project Leader election, won by Jonathan Carter.",
       "abifloc":"2021_debian_pl.abif"
     },
     {
@@ -41,17 +41,17 @@
         "https://electowiki.org/wiki/2003_Debian_Project_Leader_Election",
         "https://www.debian.org/vote/"
       ],
-      "desc": "2003",
+      "desc": "2003 Debian Project Leader election, won by Martin Michlmayr.",
       "abifloc":"2003_debian_pl.abif"
     },
     {
       "url":"https://www.debian.org/vote/2002/tally.txt",
       "localcopy":"2002/tally2002.txt",
       "metaurls": [
-        "https://www.debian.org/vote/2002/vote_001",
+        "https://www.debian.org/vote/2002/vote_0001",
         "https://www.debian.org/vote/"
       ],
-      "desc": "2002: vote 1",
+      "desc": "2002 Debian Project Leader election, won by Bdale Garbee.",
       "abifloc":"2002_debian_pl.abif"
     }
   ]

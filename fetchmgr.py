@@ -65,7 +65,7 @@ def fetch_web_items(fetchspec):
     for urldict in fetchspec['web_urls']:
         localpath = os.path.join(subdir, urldict['localcopy'])
         if os.path.exists(localpath):
-            sys.stderr.write(f"Skipping existing {localpath}\n")
+            sys.stderr.write(f"Skipping download of existing {localpath}\n")
             continue
         response = fetch_url_to_subdir(url=urldict['url'],
                                        subdir=subdir,
@@ -75,20 +75,22 @@ def fetch_web_items(fetchspec):
     return True
 
 
-def convert_file_to_abif(fromfmt, input_file, output_file):
+def convert_file_to_abif(fromfmt, input_file, output_file, fetchdesc=None):
     try:
         inputstr = Path(input_file).read_text()
     except FileNotFoundError:
         print(f"Error: Input file '{input_file}' not found.")
         sys.exit(1)
-    try:
-        abiftext = abiflib.convert_text_to_abif(fromfmt, inputstr)
-        Path(output_file).parent.mkdir(parents=True, exist_ok=True)
-        Path(output_file).write_text(abiftext)
-    except abiflib.ABIFLoopLimitException:
-        sys.stderr.write(f"Failure reading {input_file} due to loop limit exception\n")
-        pass
+    if fetchdesc:
+        metadata = {"description": fetchdesc}
+    else:
+        metadata = {}
+    abiftext = abiflib.convert_text_to_abif(fromfmt, inputstr,
+                                            metadata=metadata)
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
+    Path(output_file).write_text(abiftext)
     return True
+
 
 def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt=None):
     if not os.path.exists(abifsubdir):
@@ -97,6 +99,7 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
         infile = os.path.join(dlsubdir, extfile['localcopy'])
         outfile = os.path.join(abifsubdir, extfile['abifloc'])
         srcfmt = extfile.get('srcfmt') or srcfmt
+        fetchdesc = extfile.get('desc') or None
         if srcfmt == 'abif':
             sys.stderr.write(f"Linking from {outfile} to {infile}\n")
             symlinkval = os.path.relpath(infile, start=abifsubdir)
@@ -109,7 +112,8 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             sys.stderr.write(f"Converting {infile} ({srcfmt}) to {outfile}\n")
             convert_file_to_abif(fromfmt=srcfmt,
                                  input_file=infile,
-                                 output_file=outfile)
+                                 output_file=outfile,
+                                 fetchdesc=fetchdesc)
     return True
 
 

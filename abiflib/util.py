@@ -23,7 +23,8 @@ import re
 import sys
 import urllib.parse
 
-def convert_text_to_abif(fromfmt, inputstr, cleanws=False, add_ratings=False):
+def convert_text_to_abif(fromfmt, inputstr, cleanws=False, add_ratings=False, metadata={}):
+
     if (fromfmt == 'abif'):
         try:
             abifmodel = convert_abif_to_jabmod(inputstr,
@@ -33,7 +34,7 @@ def convert_text_to_abif(fromfmt, inputstr, cleanws=False, add_ratings=False):
             print(f"ERROR: {e.message}")
             sys.exit()
     elif (fromfmt == 'debtally'):
-        rawabifstr = convert_debtally_to_abif(inputstr)
+        rawabifstr = convert_debtally_to_abif(inputstr, metadata=metadata)
         abifmodel = convert_abif_to_jabmod(rawabifstr)
     elif (fromfmt == 'jabmod'):
         abifmodel = json.loads(inputstr)
@@ -47,5 +48,3 @@ def convert_text_to_abif(fromfmt, inputstr, cleanws=False, add_ratings=False):
                                     message=f"Cannot convert from {fromfmt} yet.")
     retval = convert_jabmod_to_abif(abifmodel, add_ratings=False)
     return retval
-
-

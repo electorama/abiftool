@@ -55,7 +55,6 @@ MODIFIERS = [
 
 ABIF_VERSION = "0.1"
 ABIFMODEL_LIMIT = 2500
-LOOPLIMIT = 400
 
 def gen_epilog():
     ''' Generate format list for --help '''

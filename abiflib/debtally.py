@@ -28,7 +28,7 @@ def _extract_vline_rankings_from_tally_sheet(tally_sheet):
     return retval
 
 
-def _short_token(longstring, max_length=20):
+def _short_token(longstring, max_length=20, add_sha1=True):
     if len(longstring) <= max_length and re.match(r'^[A-Za-z0-9]+$', longstring):
         return longstring
 
@@ -46,10 +46,16 @@ def _short_token(longstring, max_length=20):
     return retval
 
 
-def convert_debtally_to_abif(debtallysheet):
+def convert_debtally_to_abif(debtallysheet, metadata={}):
     retval = ""
     option_names = _extract_option_names_from_tally_sheet(debtallysheet)
     short_option_names = []
+
+    devobj = LogfileSingleton()
+    devobj.log(f"{metadata=}\n")
+
+    for k in metadata.keys():
+        retval += '{' + f'"{k}": "{metadata[k]}"' + '}\n'
     for o in option_names:
         o2 = re.sub('(?i)none of the above', 'NOTA', o)
         optname = _short_token(o2)
@@ -87,7 +93,7 @@ def main():
 
     outstr = ""
     outstr += convert_debtally_to_abif(debtallysheet)
-        
+
     print(outstr)
 
 
