@@ -4,8 +4,8 @@
   "srcfmt": "debtally",
   "web_urls": [
     {
-      "url":"https://www.debian.org/vote/2022/vote_002_tally.txt",
-      "localcopy":"2022/vote_002_tally.txt",
+      "url": "https://www.debian.org/vote/2022/vote_002_tally.txt",
+      "localcopy": "2022/vote_002_tally.txt",
       "metaurls": [
         "https://www.debian.org/vote/2022/vote_002",
         "https://www.debian.org/vote/"
@@ -14,18 +14,18 @@
       "abifloc":"2022_debian_pl.abif"
     },
     {
-      "url":"https://www.debian.org/vote/2021/vote_002_tally.txt",
-      "localcopy":"2021/vote_002_tally.txt",
+      "url": "https://www.debian.org/vote/2021/vote_002_tally.txt",
+      "localcopy": "2021/vote_002_tally.txt",
       "metaurls": [
         "https://www.debian.org/vote/2021/vote_002",
         "https://www.debian.org/vote/"
       ],
       "desc": "2021: General Resolution: Statement regarding Richard Stallman's readmission to the FSF board",
-      "abifloc":"2021_debian_general_resolution.abif"
+      "abifloc": "2021_debian_general_resolution.abif"
     },
     {
-      "url":"https://www.debian.org/vote/2021/vote_001_tally.txt",
-      "localcopy":"2021/vote_001_tally.txt",
+      "url": "https://www.debian.org/vote/2021/vote_001_tally.txt",
+      "localcopy": "2021/vote_001_tally.txt",
       "metaurls": [
         "https://www.debian.org/vote/2021/vote_001",
         "https://www.debian.org/vote/"
@@ -34,25 +34,212 @@
       "abifloc":"2021_debian_pl.abif"
     },
     {
-      "url":"https://www.debian.org/vote/2003/leader2003_tally.txt",
-      "localcopy":"2003/leader2003_tally.txt",
+      "url": "https://www.debian.org/vote/2020/vote_001_tally.txt",
+      "localcopy": "2020/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2020/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2020 Debian Project Leader election, won by Jonathan Carter.",
+      "abifloc": "dpl2020.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2019/vote_001_tally.txt",
+      "localcopy": "2019/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2019/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2019 Debian Project Leader election, won by Sam Hartman",
+      "abifloc": "dpl2019.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2018/vote_001_tally.txt",
+      "localcopy": "2018/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2018/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2018 Debian Project Leader election, won by Chris Lamb",
+      "abifloc": "dpl2018.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2017/vote_001_tally.txt",
+      "localcopy": "2017/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2017/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2017 Debian Project Leader election, won by Chris Lamb",
+      "abifloc": "dpl2017.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2016/vote_001_tally.txt",
+      "localcopy": "2016/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2016/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2016 Debian Project Leader election, won by Mehdi Dogguy",
+      "abifloc": "dpl2016.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2015/vote_001_tally.txt",
+      "localcopy": "2015/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2015/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2015 Debian Project Leader election, won by Neil McGovern",
+      "abifloc": "dpl2015.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2014/vote_001_tally.txt",
+      "localcopy": "2014/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2014/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2014 Debian Project Leader election, won by Lucas Nussbaum",
+      "abifloc": "dpl2014.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2013/vote_001_tally.txt",
+      "localcopy": "2013/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2013/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2013 Debian Project Leader election, won by Lucas Nussbaum",
+      "abifloc": "dpl2013.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2012/vote_001_tally.txt",
+      "localcopy": "2012/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2012/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2012 Debian Project Leader election, won by Stefano Zacchiroli",
+      "abifloc": "dpl2012.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2011/vote_001_tally.txt",
+      "localcopy": "2011/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2011/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2011 Debian Project Leader election, won by Stefano Zacchiroli",
+      "abifloc": "dpl2011.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2010/vote_001_tally.txt",
+      "localcopy": "2010/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2010/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2010 Debian Project Leader election, won by Stefano Zacchiroli",
+      "abifloc": "dpl2010.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2009/vote_001_tally.txt",
+      "localcopy": "2009/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2009/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2009 Debian Project Leader election, won by Steve McIntyre",
+      "abifloc": "dpl2009.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2008/vote_001_tally.txt",
+      "localcopy": "2008/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2008/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2008 Debian Project Leader election, won by Steve McIntyre",
+      "abifloc": "dpl2008.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2007/vote_001_tally.txt",
+      "localcopy": "2007/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2007/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2007 Debian Project Leader election, won by Sam Hocevar",
+      "abifloc": "dpl2007.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2006/vote_002_tally.txt",
+      "localcopy": "2006/vote_002_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2006/vote_002",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2006 Debian Project Leader election, won by Anthony Towns",
+      "abifloc": "dpl2006.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2005/leader2005_tally.txt",
+      "localcopy": "2005/leader2005_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2005/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2005 Debian Project Leader election, won by Branden Robinson",
+      "abifloc": "dpl2005.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2004/leader2004_tally.txt",
+      "localcopy": "2004/leader2004_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2004/vote_001",
+        "https://www.debian.org/vote/",
+        ""
+      ],
+      "desc": "2004 Debian Project Leader election, won by Martin Michlmayr",
+      "abifloc": "dpl2004.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2003/leader2003_tally.txt",
+      "localcopy": "2003/leader2003_tally.txt",
       "metaurls": [
         "https://www.debian.org/vote/2003/vote_0001",
         "https://electowiki.org/wiki/2003_Debian_Project_Leader_Election",
         "https://www.debian.org/vote/"
       ],
       "desc": "2003 Debian Project Leader election, won by Martin Michlmayr.",
-      "abifloc":"2003_debian_pl.abif"
+      "abifloc": "2003_debian_pl.abif"
     },
     {
-      "url":"https://www.debian.org/vote/2002/tally.txt",
-      "localcopy":"2002/tally2002.txt",
+      "url": "https://www.debian.org/vote/2002/tally.txt",
+      "localcopy": "2002/tally2002.txt",
       "metaurls": [
         "https://www.debian.org/vote/2002/vote_0001",
         "https://www.debian.org/vote/"
       ],
       "desc": "2002 Debian Project Leader election, won by Bdale Garbee.",
-      "abifloc":"2002_debian_pl.abif"
+      "abifloc": "2002_debian_pl.abif"
     }
   ]
 }
