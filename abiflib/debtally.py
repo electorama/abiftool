@@ -4,6 +4,7 @@ import base64
 from hashlib import sha1
 import re
 
+
 def _extract_option_names_from_tally_sheet(tally_sheet):
     lines = tally_sheet.splitlines()
 
@@ -28,38 +29,50 @@ def _extract_vline_rankings_from_tally_sheet(tally_sheet):
     return retval
 
 
-def _short_token(longstring, max_length=20, add_sha1=True):
-    if len(longstring) <= max_length and re.match(r'^[A-Za-z0-9]+$', longstring):
+def _trunc_sha_str(basestr, trunclen=4):
+    checksum = sha1(basestr.encode('utf-8')).digest()[:trunclen]
+    checksum_encoded = base64.b32encode(checksum).decode('utf-8')
+    return checksum_encoded[:trunclen]
+
+
+def _short_token(longstring, max_length=20, add_sha1=False):
+    if len(longstring) <= max_length and \
+       re.match(r'^[A-Za-z0-9]+$', longstring):
         return longstring
 
     wordlist = []
     for word in longstring.split():
         wordlist.append(re.sub('[^A-Za-z0-9]+', '', word))
-    word_lengths = [len(word) for word in wordlist]
-    words_sorted = sorted(wordlist,
-                          key=lambda word: (len(word), word), reverse=True)
-    base_string = ''.join(words_sorted)[:max_length-4]
 
-    checksum = sha1(longstring.encode('utf-8')).digest()[:4]
-    checksum_encoded = base64.b32encode(checksum).decode('utf-8')
-    retval = base_string + checksum_encoded[:4]
+    if add_sha1:
+        base_string = ''.join(wordlist)[:max_length-4]
+        retval = base_string + _trunc_sha_str(longstring)
+    else:
+        retval = ''.join(wordlist)[:max_length]
+    return retval
+
+
+def _get_short_option_names(option_names):
+    retval = []
+    tokset = set()
+    for o in option_names:
+        o2 = re.sub('(?i)none of the above', 'NOTA', o)
+        optname = _short_token(o2)
+        if optname in tokset:
+            optname = _short_token(o2, add_sha1=True)
+        tokset.add(optname)
+        retval.append(optname)
     return retval
 
 
 def convert_debtally_to_abif(debtallysheet, metadata={}):
     retval = ""
     option_names = _extract_option_names_from_tally_sheet(debtallysheet)
-    short_option_names = []
-
-    devobj = LogfileSingleton()
-    devobj.log(f"{metadata=}\n")
 
     for k in metadata.keys():
         retval += '{' + f'"{k}": "{metadata[k]}"' + '}\n'
-    for o in option_names:
-        o2 = re.sub('(?i)none of the above', 'NOTA', o)
-        optname = _short_token(o2)
-        short_option_names.append(optname)
+    short_option_names = _get_short_option_names(option_names)
+
     for i, o in enumerate(option_names):
         retval += f'={short_option_names[i]}:[{o}]\n'
     retval += f'# ---------------\n'
@@ -72,7 +85,7 @@ def convert_debtally_to_abif(debtallysheet, metadata={}):
         for r in range(numopt):
             strrank = str(r + 1)
             crs = [i for i, ir in enumerate(v) if ir == strrank]
-            if(crs):
+            if (crs):
                 names = [short_option_names[i] for i in crs]
                 tiers.append(f'{"=".join(names)}')
         tierstr = ">".join(tiers)
