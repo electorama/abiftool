@@ -66,7 +66,6 @@ def IRV_count_from_jabmod(jabmod):
 def IRV_report(jabmod):
     (winner, rounds) = IRV_count_from_jabmod(jabmod)
     output = ""
-    results = {}
 
     for round_num, round_results in enumerate(rounds, start=1):
         output += f"\nRound {round_num}:\n"
@@ -81,7 +80,7 @@ def IRV_report(jabmod):
             output += f"  Eliminated: {eliminated}\n"
 
     output += f"The IRV winner is {winner}\n"
-    return (output, results)
+    return output
 
 
 def main():

@@ -44,11 +44,12 @@ OUTPUT_FORMATS = [
 ]
 
 MODIFIERS = [
+    {'Copeland': 'Show Copeland winner'},
+    {'IRV': 'Provide IRV results'},
     {'nopairwise': 'Remove any pairwise tables if possible'},
     {'nowinlosstie': 'Remove win-loss-tie info if possible'},
     {'score': 'Provide score results'},
     {'STAR': 'Provide STAR results'},
-    {'Copeland': 'Show Copeland winner'},
     {'svg': 'Add SVG to the output if avaiable'},
     {'winlosstie': 'Add win-loss-tie info if possible (default)'}
 ]
@@ -199,6 +200,8 @@ def main():
                 tablelabel='   Loser ->\nv Winner')
         else:
             outstr += texttable_pairwise_and_winlosstie(abifmodel)
+        if 'IRV' in modifiers:
+            outstr += IRV_report(abifmodel)
         if 'score' in modifiers:
             outstr += score_report(abifmodel)
         if 'STAR' in modifiers:
