@@ -3,9 +3,8 @@ from abiflib import *
 import argparse
 from copy import deepcopy
 import pathlib
-from pprint import pprint
+from pprint import pprint, pformat
 import sys
-
 
 def _eliminate_cands_from_votelines(candlist, votelines):
     retval = deepcopy(votelines)
@@ -22,10 +21,12 @@ def _get_ranked_cands_from_voteline(voteline):
     return retval
 
 
-def _irv_count_internal(candlist, votelines, rounds=[]):
+def _irv_count_internal(candlist, votelines, rounds=None):
     """
     IRV count of given votelines
     """
+    if rounds is None:
+        rounds = []
     roundcount = {cand: 0 for cand in candlist}
     for (ckey, vln) in enumerate(votelines):
         rlist = _get_ranked_cands_from_voteline(vln)
@@ -58,23 +59,37 @@ def _irv_count_internal(candlist, votelines, rounds=[]):
 
 
 def IRV_count_from_jabmod(jabmod):
-    candlist = jabmod['candidates']
-    votelines = jabmod['votelines']
-    return _irv_count_internal(candlist, votelines)
+    retval = {}
+    candlist = deepcopy(jabmod['candidates'])
+    votelines = deepcopy(jabmod['votelines'])
+    (retval['winner'], retval['rounds']) = \
+        _irv_count_internal(candlist, votelines)
+    retval['eliminated'] = []
+
+    for round_num, round_results in enumerate(retval['rounds'], start=1):
+        # Find the eliminated candidate(s) (not present in the next round)
+        if round_num < len(retval['rounds']):
+            remainingset = set(retval['rounds'][round_num])
+            eliminated = list(set(round_results) - remainingset)
+            retval['eliminated'].append([eliminated, round_num])
+        else:
+            eliminated = list(round_results)
+            retval['eliminated'].append(eliminated)
+    return retval
 
 
-def IRV_report(jabmod):
-    (winner, rounds) = IRV_count_from_jabmod(jabmod)
+def get_IRV_report(jabmod):
+    IRV_dict = IRV_count_from_jabmod(jabmod)
+    winner = IRV_dict['winner']
+    rounds = IRV_dict['rounds']
     output = ""
 
     for round_num, round_results in enumerate(rounds, start=1):
         output += f"\nRound {round_num}:\n"
-
-        # Provide vote counts...
+        # TODO: replace all of this duplicated calculation with
+        #       results calculated in IRV_count_from_jabmod
         for candidate, votes in round_results.items():
             output += f"  {candidate}: {votes}\n"
-
-        # Find the eliminated candidate (not present in the next round)
         if round_num < len(rounds):
             eliminated = set(round_results) - set(rounds[round_num])
             output += f"  Eliminated: {eliminated}\n"
@@ -90,8 +105,7 @@ def main():
     args = parser.parse_args()
     abiftext = pathlib.Path(args.input_file).read_text()
     jabmod = convert_abif_to_jabmod(abiftext)
-
-    (output, results) = IRV_report(jabmod)
+    output = get_IRV_report(jabmod)
     print(output)
 
 

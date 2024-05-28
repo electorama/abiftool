@@ -201,7 +201,7 @@ def main():
         else:
             outstr += texttable_pairwise_and_winlosstie(abifmodel)
         if 'IRV' in modifiers:
-            outstr += IRV_report(abifmodel)
+            outstr += get_IRV_report(abifmodel)
         if 'score' in modifiers:
             outstr += score_report(abifmodel)
         if 'STAR' in modifiers:
