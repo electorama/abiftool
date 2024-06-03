@@ -1,11 +1,14 @@
+import abiflib
 from abiftestfuncs import *
 import json
 import subprocess
+from subprocess import run, PIPE
 import os
 import re
 import glob
 import sys
 import pytest
+
 
 testdicts=[
     {
@@ -39,6 +42,14 @@ testdicts=[
         'key1':"metadata",
         'subkey1':"ballotcount",
         'val1':420
+    },
+    {
+        "fetchspec":"debian-elections.fetchspec.json",
+        'outformat':"paircountjson",
+        'filename':"downloads/debian-elections/2006/vote_002_tally.txt",
+        'key1':"JeroenvanWolffelaar",
+        'subkey1':"AriPollak",
+        'val1':310
     }
 ]
 
@@ -49,12 +60,13 @@ for testdict in testdicts:
     myparam = get_pytest_abif_testsubkey(testdict, cols=mycols)
     pytestlist.append(myparam)
 
-
-print(f"{pytestlist=}")
+LOGOBJ = abiflib.LogfileSingleton()
 
 @pytest.mark.parametrize(mycols, pytestlist)
-def test_filename(outformat, filename, key1, subkey1, val1):
-    """Testing debtally"""
+def test_debtally_cli_json(outformat, filename, key1, subkey1, val1):
+    """Testing debtally using json output from abiftool.py"""
+    # TODO: turn this into a generic test function for testing JSON
+    #    output
     try:
         fh = open(filename, 'rb')
     except:
@@ -68,8 +80,28 @@ def test_filename(outformat, filename, key1, subkey1, val1):
     abiftool_output = get_abiftool_output_as_array(cmd_args)
     outputdict = json.loads("\n".join(abiftool_output))
 
-    import abiflib
-    devobj = abiflib.LogfileSingleton()
-    devobj.log(json.dumps(outputdict, indent=4))
+    #LOGOBJ.log(json.dumps(outputdict, indent=4) + "\n")
+    LOGOBJ.log(f'===============\n')
+    LOGOBJ.log(f'{outputdict[key1][subkey1]=} {key1=} {subkey1=}\n')
+    testcond = (outputdict[key1][subkey1] == val1)
+    LOGOBJ.log(f'{val1=} {testcond=}\n')
+    assert testcond
+    return None
 
-    assert outputdict[key1][subkey1] == val1
+
+@pytest.mark.parametrize(
+    'cmd_args, inputfile, pattern',
+    [
+        (["-f", "debtally", "-t", "csvrank"],
+         "downloads/debian-elections/2006/vote_002_tally.txt",
+         r"1ccb15e79dc5734b217fb8e3fb296b9d,1,4,2,1,2,6,3,5"),
+    ]
+)
+def test_grep_output_for_regexp(cmd_args, inputfile, pattern):
+    """Testing debtally using text output from abiftool.py"""
+    # TODO: turn this into a generic test function for testing text
+    #    output
+    abiftool_output = get_abiftool_output_as_array(cmd_args)
+    LOGOBJ.log(f"LOGOBJ test_grep_... {inputfile=} {pattern=}\n")
+    assert check_regex_in_output(cmd_args, inputfile, pattern)
+    return None

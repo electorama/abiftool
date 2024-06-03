@@ -33,6 +33,7 @@ INPUT_FORMATS = [
 
 OUTPUT_FORMATS = [
     {'abif': 'ABIF format'},
+    {'csvrank': 'CSV rank format used by the online RCV tool by Dan Eckam'},
     {'dot': 'Graphviz DOT format showing pairwise matchups'},
     {'html': 'Full HTML output from <html> to </html>'},
     {'html_snippet': 'HTML snippet that does not includes the <head> elements'},
@@ -168,6 +169,8 @@ def main():
     copecount = full_copecount_from_abifmodel(abifmodel)
     if (output_format == 'abif'):
         outstr += convert_jabmod_to_abif(abifmodel)
+    elif (output_format == 'csvrank'):
+        outstr += get_ranking_output_csv(abifmodel)
     elif (output_format == 'dot'):
         outstr += copecount_diagram(copecount, outformat='dot')
     elif (output_format == 'html'):

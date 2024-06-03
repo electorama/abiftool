@@ -18,7 +18,9 @@
 from abiflib import *
 from pprint import pprint, pformat
 import copy
+import csv
 import inspect
+import io
 import json
 import os
 import re
@@ -80,6 +82,8 @@ def convert_abif_to_jabmod(inputstr,
     v = 0
     for i, fullline in enumerate(inputstr.splitlines()):
         matchgroup = None
+        linecomment = None
+        cparts = None
         # if "--cleanws" flag is given, strip leading whitespace
         if cleanws:
             fullline = re.sub(r"^\s+", "", fullline)
@@ -291,6 +295,13 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
 def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
+    voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
+    voterid = None
+    if linecomment is not None:
+        if (match := voteridregexp.match(linecomment)):
+            cparts = match.groupdict()
+            voterid = cparts['voterid']
+
     initval = corefunc_init(tag="f09")
     if not abifmodel:
         abifmodel = _get_emptyish_abifmodel()
@@ -309,6 +320,8 @@ def _process_abif_prefline(qty, prefstr,
                                linecomment=linecomment)['prefs']
     linepair['comment'] = linecomment
     linepair['prefstr'] = prefstr.rstrip()
+    if voterid is not None:
+        linepair['voterid'] = voterid
     abifmodel['votelines'].append(linepair)
     return abifmodel
 
@@ -483,6 +496,29 @@ def _modify_jabmod(jabmod, modtuple):
 
     path, new_value = modtuple
     _modify_jabmod_internal(jabmod, path)
+
+
+########################
+# Functions for converting jabmod into other formats (e.g. csv)....
+#
+
+def get_ranking_output_csv(abifmodel):
+    # Use keys as field names
+    outputhandle = io.StringIO()
+    fieldnames = ['voterid']
+    fieldnames.extend(abifmodel['candidates'])
+    csvwriter = csv.DictWriter(outputhandle, fieldnames=fieldnames)
+    csvwriter.writeheader()
+    for vln in abifmodel['votelines']:
+        if vln['qty'] > 1:
+            print("ERROR: can't handle multivoter votelines yet")
+            print(f"{vln=}")
+            sys.exit()
+        rlinedict={ckey: vln['prefs'][ckey]['rank'] for ckey in vln['prefs'].keys()}
+        rlinedict['voterid'] = vln['voterid']
+        csvwriter.writerow(rlinedict)
+    retval = outputhandle.getvalue()
+    return retval
 
 
 def main():

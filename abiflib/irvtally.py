@@ -66,8 +66,8 @@ def IRV_count_from_jabmod(jabmod):
         _irv_count_internal(candlist, votelines)
     retval['eliminated'] = []
 
+    # Find the eliminated candidate(s) in each round
     for round_num, round_results in enumerate(retval['rounds'], start=1):
-        # Find the eliminated candidate(s) (not present in the next round)
         if round_num < len(retval['rounds']):
             remainingset = set(retval['rounds'][round_num])
             eliminated = list(set(round_results) - remainingset)
@@ -75,6 +75,7 @@ def IRV_count_from_jabmod(jabmod):
         else:
             eliminated = list(round_results)
             retval['eliminated'].append(eliminated)
+    abiflib_test_log(f"IRV_count_from_jabmod {retval=}")
     return retval
 
 
@@ -86,13 +87,16 @@ def get_IRV_report(jabmod):
 
     for round_num, round_results in enumerate(rounds, start=1):
         output += f"\nRound {round_num}:\n"
-        # TODO: replace all of this duplicated calculation with
-        #       results calculated in IRV_count_from_jabmod
         for candidate, votes in round_results.items():
             output += f"  {candidate}: {votes}\n"
+        # REMOVE ME
+        # TODO: replace all of this duplicated calculation with
+        #       results calculated in IRV_count_from_jabmod
         if round_num < len(rounds):
             eliminated = set(round_results) - set(rounds[round_num])
+            abiflib_test_log(f"{eliminated=}")
             output += f"  Eliminated: {eliminated}\n"
+        # REMOVE COMMENT ABOVE
 
     output += f"The IRV winner is {winner}\n"
     return output

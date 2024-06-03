@@ -20,13 +20,20 @@ def _extract_option_names_from_tally_sheet(tally_sheet):
 def _extract_vline_rankings_from_tally_sheet(tally_sheet):
     lines = tally_sheet.splitlines()
 
-    retval = []
-    regex = r"^V: ([-\d]+)\s+"
+    votelines = []
+    regex = r"^V: ([-\d]+)\s+(\S+).*$"
     for line in lines:
         if mg := re.search(regex, line):
-            retval.extend([list(mg.group(1))])
-
-    return retval
+            voterid = mg.group(2)
+            rankarray = [ voterid ]
+            rankarray.extend(list(mg.group(1)))
+            votelines.extend([rankarray])
+        #else:
+        #    voterid = None
+        #abiflib_test_log(f"LINE: {line}")
+        #abiflib_test_log(f"{votelines=}")
+        #abiflib_test_log(f"{voterid=}")
+    return votelines
 
 
 def _trunc_sha_str(basestr, trunclen=4):
@@ -77,19 +84,22 @@ def convert_debtally_to_abif(debtallysheet, metadata={}):
         retval += f'={short_option_names[i]}:[{o}]\n'
     retval += f'# ---------------\n'
 
-    votes = _extract_vline_rankings_from_tally_sheet(debtallysheet)
+    votelist = _extract_vline_rankings_from_tally_sheet(debtallysheet)
 
     numopt = len(option_names)
-    for v in votes:
+    for vote in votelist:
         tiers = []
+        voterid = vote[0]
+        pref = vote[1:]
         for r in range(numopt):
             strrank = str(r + 1)
-            crs = [i for i, ir in enumerate(v) if ir == strrank]
+            crs = [i for i, ir in enumerate(pref) if ir == strrank]
             if (crs):
                 names = [short_option_names[i] for i in crs]
                 tiers.append(f'{"=".join(names)}')
         tierstr = ">".join(tiers)
-        retval += f'1:{tierstr}\n'
+        retval += f'1:{tierstr}'
+        retval += f"  ##VID:{voterid}\n"
     return retval
 
 

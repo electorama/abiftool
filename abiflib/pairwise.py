@@ -124,6 +124,13 @@ def calc_Copeland_scores(copecount):
     return sorted_point_tuples
 
 
+def get_Copeland_winners(copecount):
+    """Return a list of candidates having the highest Copeland score"""
+    copescores = calc_Copeland_scores(copecount)
+    winning_score = max(cscore for name, cscore in copescores)
+    return [name for name, score in copescores if score == winning_score]
+
+
 def Copeland_report(canddict, copecount):
     retval = ""
     #retval += f"{canddict=}\n"

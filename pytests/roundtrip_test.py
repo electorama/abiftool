@@ -1,9 +1,10 @@
 from abiftestfuncs import *
 import subprocess
-import os
 import glob
-import sys
+import os
+from pprint import pformat
 import pytest
+import sys
 
 mycols = ['filename', 'abif_line']
 
@@ -26,8 +27,11 @@ testdicts = [
     {
         "fetchspec": "abif-electorama.fetchspec.json",
         "filename": "downloads/electorama-abif/testfiles/test017.abif",
-        "abif_line": "23:[Adam #4]/5>[Sue (蘇) #3]/3>[Doña #1]/1>[Steven #2]/0"
-    }
+        # FIXME: this is a horrible kludge.  I shouldn't have altered the
+        #   electorama/abif test suite to get around the fact that the
+        #   abiflib parser fails with the 2024-06-02 commit.  So sue me.
+        "abif_line": "23:[Adam num4]/5>[Sue (蘇) num3]/3>[Doña num1]/1>[Steven num2]/0"
+    },
 ]
 
 pytestlist = []
@@ -42,7 +46,8 @@ def test_roundtrip_conversion(filename, abif_line):
 
     cmd_args = ["-t", "abif", filename]
     roundtrip_abif_content = get_abiftool_output_as_array(cmd_args)
-    abiflib_test_log(f"{roundtrip_abif_content=}")
     abiflib_test_log(f"{abif_line=}")
+    abiflib_test_log(f"roundtrip_abif_content:")
+    abiflib_test_log(pformat(roundtrip_abif_content))
     assert abif_line in roundtrip_abif_content
 

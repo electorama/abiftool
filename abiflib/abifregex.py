@@ -15,14 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-COMMENT_REGEX =  r'''
+COMMENT_REGEX = r'''
     ^                       # beginning of line
     (?P<beforesep>[^\#]*)   # before the comment separator
     (?P<comsep>\#+)         # # or ## comment separator
-    (?P<whitespace>\s+)     # optional whitespace
+    (?P<whitespace>\s*)     # optional whitespace
     (?P<aftersep>.*)        # after the # separator/whitespace
     $                       # end of line
     '''
+
+VOTERID_REGEX = r'''
+    (?P<vidprefix>\#\#VID:) # portion to match exactly to co-opt comment
+    (?P<voterid>\S+)        # voter id (with no spaces)
+'''
 
 METADATA_REGEX = r'''
     ^\{                     # abif metadata lines always start with '{'
