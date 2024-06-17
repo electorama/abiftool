@@ -509,14 +509,22 @@ def get_ranking_output_csv(abifmodel):
     fieldnames.extend(abifmodel['candidates'])
     csvwriter = csv.DictWriter(outputhandle, fieldnames=fieldnames)
     csvwriter.writeheader()
-    for vln in abifmodel['votelines']:
-        if vln['qty'] > 1:
-            print("ERROR: can't handle multivoter votelines yet")
-            print(f"{vln=}")
-            sys.exit()
-        rlinedict={ckey: vln['prefs'][ckey]['rank'] for ckey in vln['prefs'].keys()}
-        rlinedict['voterid'] = vln['voterid']
-        csvwriter.writerow(rlinedict)
+    i = 0
+    for y, vln in enumerate(abifmodel['votelines']):
+        if vln['qty'] > 0:
+            for z in range(vln['qty']):
+                i += 1
+                rlinedict={ckey:
+                           vln['prefs'][ckey]['rank']
+                           for ckey in vln['prefs'].keys()}
+                if vln.get('voterid'):
+                    rlinedict['voterid'] = vln['voterid']
+                else:
+                    rlinedict['voterid'] = f"voter{i:06d}"
+                csvwriter.writerow(rlinedict)
+        else:
+            msg = f"Invalid voteline: {vln}\n"
+            raise ABIFVotelineException(value=vln, message=msg)
     retval = outputhandle.getvalue()
     return retval
 

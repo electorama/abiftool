@@ -35,7 +35,7 @@ def test_IRV_text_output(cmd_args, inputfile, pattern):
 from abiflib import (
     convert_abif_to_jabmod,
     get_IRV_report,
-    IRV_count_from_jabmod
+    IRV_dict_from_jabmod
     )
 
 
@@ -48,8 +48,8 @@ from abiflib import (
 def test_IRV_multiple_calls(abif_filename):
     abiftext = pathlib.Path(abif_filename).read_text()
     jabmod = convert_abif_to_jabmod(abiftext)
-    call001 = IRV_count_from_jabmod(jabmod)
-    call002 = IRV_count_from_jabmod(jabmod)
+    call001 = IRV_dict_from_jabmod(jabmod)
+    call002 = IRV_dict_from_jabmod(jabmod)
     outstr = f"{len(call001['rounds'])=}\n"
     outstr += f"{len(call002['rounds'])=}\n"
     abiflib_test_log(outstr)
