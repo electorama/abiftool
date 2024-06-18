@@ -59,7 +59,8 @@ def corefunc_init(tag="unmarked"):
 def convert_abif_to_jabmod(inputstr,
                            cleanws=False,
                            add_ratings=False,
-                           extradata=None):
+                           extradata=None,
+                           storecomments=False):
     """Converts an .abif string to JSON/jabmod
 
     'jabmod' stands for 'JSON ABIF Model', and is the internal abiflib
@@ -99,7 +100,8 @@ def convert_abif_to_jabmod(inputstr,
             linecomment = None
         abifmodel = _process_abif_comment_line(abifmodel=newmodel,
                                                linecomment=linecomment,
-                                               linenum=i)
+                                               linenum=i,
+                                               storecomments=storecomments)
 
         # now to deal with the substance
         if (match := candlineregexp.match(strpdline)):
@@ -150,15 +152,17 @@ def convert_abif_to_jabmod(inputstr,
 
 def _process_abif_comment_line(abifmodel=None,
                                linecomment="",
-                               linenum=0):
+                               linenum=0,
+                               storecomments=False):
     '''Store abif comments in jabmod metadata'''
     initval = corefunc_init(tag="f02")
     if not abifmodel:
         abifmodel = _get_emptyish_abifmodel()
     commenttuple = (linenum, linecomment)
-    if linecomment:
+    if linecomment and storecomments:
+        if not 'comments' in abifmodel['metadata']:
+            abifmodel['metadata']['comments'] = []
         abifmodel['metadata']['comments'].append(commenttuple)
-
     return abifmodel
 
 
@@ -199,7 +203,6 @@ def _get_emptyish_abifmodel():
     retval['candidates'] = {}
     retval['metadata'] = {}
     retval['metadata']['ballotcount'] = 0
-    retval['metadata']['comments'] = []
     retval['votelines'] = []
     return retval
 

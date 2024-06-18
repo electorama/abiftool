@@ -47,6 +47,7 @@ OUTPUT_FORMATS = [
 MODIFIERS = [
     {'Copeland': 'Show Copeland winner'},
     {'IRV': 'Provide IRV results'},
+    {'jcomments': 'Put comments in jabmod output if available'},
     {'nopairwise': 'Remove any pairwise tables if possible'},
     {'nowinlosstie': 'Remove win-loss-tie info if possible'},
     {'score': 'Provide score results'},
@@ -136,11 +137,13 @@ def main():
     add_STAR = 'STAR' in modifiers
     add_scores = 'scores' in modifiers
     add_ratings = args.add_scores or add_STAR or add_scores
+    storecomments = 'jcomments' in modifiers
     if (input_format == 'abif'):
         try:
             abifmodel = convert_abif_to_jabmod(inputstr,
                                                cleanws=args.cleanws,
-                                               add_ratings=add_ratings)
+                                               add_ratings=add_ratings,
+                                               storecomments=storecomments)
         except ABIFVotelineException as e:
             print(f"ERROR: {e.message}")
             sys.exit()
