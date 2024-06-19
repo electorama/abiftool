@@ -135,7 +135,7 @@ def IRV_dict_from_jabmod(jabmod):
             remainingset = set(retval['rounds'][round_num+1].keys())
             eliminated = list(set(round_results.keys()) - remainingset)
         else:
-            winnerset = set([retval['winner']])
+            winnerset = set(list(retval['winner']))
             eliminated = list(set(round_results.keys()) - winnerset)
         retval['eliminated'].append(eliminated)
     abiflib_test_log('IRV_dict_from_jabmod retval:')
@@ -160,7 +160,10 @@ def get_IRV_report(IRV_dict):
             output += f"    {candidate}: {votes}\n"
         output += f"  Eliminated: {', '.join(eliminated[round_num])}\n"
 
-    output += f"The IRV winner is {winner}\n"
+    if type(winner) == str:
+        output += f"The IRV winner is {winner}\n"
+    else:
+        output += f"The IRV winners are {' and '.join(winner)}"
     return output
 
 

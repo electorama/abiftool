@@ -22,9 +22,11 @@ from abiftestfuncs import *
         (['-t', 'text', '-m', 'IRV'],
          'testdata/burl2009/burl2009.abif',
          r"The IRV winner is Kiss"),
+        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+         'testdata/commasep/jman722-example.abif',
+         r"The IRV winners are Candace and Georgie"),
     ]
 )
-
 def test_IRV_text_output(cmd_args, inputfile, pattern):
     print(inputfile)
     from pathlib import Path
