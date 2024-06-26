@@ -163,7 +163,7 @@ def get_IRV_report(IRV_dict):
     if type(winner) == str:
         output += f"The IRV winner is {winner}\n"
     else:
-        output += f"The IRV winners are {' and '.join(winner)}"
+        output += f"The IRV winners are {' and '.join(sorted(winner))}"
     return output
 
 

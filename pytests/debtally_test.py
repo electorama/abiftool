@@ -101,6 +101,13 @@ def test_grep_output_for_regexp(cmd_args, inputfile, pattern):
     """Testing debtally using text output from abiftool.py"""
     # TODO: turn this into a generic test function for testing text
     #    output
+    try:
+        fh = open(inputfile, 'rb')
+    except:
+        msg = f'Missing file: {inputfile}'
+        msg += "Please run './fetchmgr.py *.fetchspec.json' "
+        msg += "if you haven't already"
+        pytest.skip(msg)
     abiftool_output = get_abiftool_output_as_array(cmd_args)
     LOGOBJ.log(f"LOGOBJ test_grep_... {inputfile=} {pattern=}\n")
     assert check_regex_in_output(cmd_args, inputfile, pattern)

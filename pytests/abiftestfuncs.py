@@ -19,10 +19,20 @@ import sys
 from subprocess import run, PIPE
 from abiflib import abiflib_test_log
 
+
+def get_abiftool_scriptloc():
+    '''Infer abiftool.py location from the location of abiftestfuncs.py'''
+    pytest_directory = os.path.dirname(__file__)
+    abiftool_directory = os.path.dirname(pytest_directory)
+    abiftool_path = os.path.join(abiftool_directory, "abiftool.py")
+    abiflib_test_log(f"{abiftool_path=}")
+    return abiftool_path
+
+
 def get_abiftool_output_as_array(cmd_args,
                                  log_pre="",
                                  log_post=""):
-    command = ['abiftool.py', *cmd_args]
+    command = [get_abiftool_scriptloc(), *cmd_args]
     commandstr = " ".join(command)
     abiflib_test_log(f"{log_pre}{commandstr}{log_post}")
     completed_process = subprocess.run(command,
@@ -94,4 +104,3 @@ def html_element_search(elementname, needle, haystack):
     elemtextlist = [elem.text for elem in elementlist]
     matchbool = any(re.search(needle, liststr) for liststr in elemtextlist)
     return matchbool
-

@@ -1,7 +1,10 @@
+import abiflib
 import pytest
 import re
 from subprocess import run, PIPE
 from abiftestfuncs import *
+
+LOGOBJ = abiflib.LogfileSingleton()
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
@@ -51,8 +54,18 @@ from abiftestfuncs import *
     ]
 )
 
-def test_score_extrapolation(cmd_args, inputfile, pattern):
-    print(inputfile)
-    from pathlib import Path
-    print(Path(inputfile).read_text())
+def test_grep_output_for_regexp(cmd_args, inputfile, pattern):
+    """Testing text output from abiftool.py for regexp"""
+    # TODO: merge this with the version in debtally_test.py
+    try:
+        fh = open(inputfile, 'rb')
+    except:
+        msg = f'Missing file: {inputfile}'
+        msg += "Please run './fetchmgr.py *.fetchspec.json' "
+        msg += "if you haven't already"
+        pytest.skip(msg)
+    abiftool_output = get_abiftool_output_as_array(cmd_args)
+    LOGOBJ.log("LOGOBJ test_grep_for_regexp/scorestar" +
+               f"{inputfile=} {pattern=}\n")
     assert check_regex_in_output(cmd_args, inputfile, pattern)
+    return None

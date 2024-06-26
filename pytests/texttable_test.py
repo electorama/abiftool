@@ -33,7 +33,7 @@ def test_pattern_match(filename, pattern, options):
     fh = open(filename, 'rb')
 
     texttable_content = \
-        subprocess.run(["abiftool.py", *options, filename],
+        subprocess.run([get_abiftool_scriptloc(), *options, filename],
                        capture_output=True,
                        text=True).stdout
 
