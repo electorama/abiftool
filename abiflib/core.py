@@ -33,6 +33,7 @@ ABIF_MODEL_LIMIT = 2500
 
 class ABIFVotelineException(Exception):
     """Raised when votelines are missing from ABIF."""
+
     def __init__(self, value, message="ABIFVotelineException glares at you"):
         global DEBUGARRAY
         self.value = value
@@ -48,7 +49,7 @@ def corefunc_init(tag="unmarked"):
     functionality for all functions in abiflib/core.py
 
     '''
-    #abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
+    # abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
     return {'tag': tag}
 
 
@@ -332,6 +333,7 @@ def _process_abif_prefline(qty, prefstr,
 # Functions for converting jabmod into abif....
 #
 
+
 def convert_jabmod_to_abif(abifmodel, add_ratings=False):
     """Converts 'jabmod' to an .abif string.
 
@@ -502,8 +504,26 @@ def _modify_jabmod(jabmod, modtuple):
 
 
 ########################
-# Functions for converting jabmod into other formats (e.g. csv)....
+#  Misc functions for data cleaning and conversion
 #
+
+
+def clean_dict(data):
+    '''Recursive function for converting sets to lists in a dict
+
+    This function makes is intended to make it easier to convert
+    arbitrary Python datastructures to something that works for JSON
+    output.  As of June 2024, it only converts sets to lists.
+    '''
+    if isinstance(data, set):
+        return list(data)
+    elif isinstance(data, dict):
+        return {k: clean_dict(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [clean_dict(item) for item in data]
+    else:
+        return data
+
 
 def get_ranking_output_csv(abifmodel):
     # Use keys as field names
@@ -517,9 +537,9 @@ def get_ranking_output_csv(abifmodel):
         if vln['qty'] > 0:
             for z in range(vln['qty']):
                 i += 1
-                rlinedict={ckey:
-                           vln['prefs'][ckey]['rank']
-                           for ckey in vln['prefs'].keys()}
+                rlinedict = {ckey:
+                             vln['prefs'][ckey]['rank']
+                             for ckey in vln['prefs'].keys()}
                 if vln.get('voterid'):
                     rlinedict['voterid'] = vln['voterid']
                 else:

@@ -6,6 +6,7 @@ import pathlib
 from pprint import pprint, pformat
 import sys
 
+
 def _eliminate_cands_from_votelines(candlist, votelines):
     '''Returns copy of votelines without candidate(s) in candlist'''
     retval = deepcopy(votelines)
@@ -16,17 +17,50 @@ def _eliminate_cands_from_votelines(candlist, votelines):
     return retval
 
 
+def _discard_toprank_overvotes(votelines):
+    retval = deepcopy(votelines)
+    overvotes = 0
+    return (overvotes, retval)
+    for i, vln in enumerate(retval):
+        prefs = vln['prefs']
+        rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
+        print(f"{rlist=}")
+        if len(rlist) > 0:
+            x = 0
+            xtok = rlist[x]
+            xrank = prefs[xtok]['rank']
+            y = len(rlist)
+            yrank = 9999999999  # close enough to infinity
+            # this technique should find the index of the last candidate
+            # in the rlist array that has the same rank as the first
+            # candidate in rlist.
+            while yrank > xrank:
+                y += -1
+                ytok = rlist[y]
+                yrank = prefs[ytok]['rank']
+            # if x < y, this means there is two or more elements in the
+            # rlist array with the same rank
+            if x == y:
+                rcand = rlist[x]
+            else:
+                overvotes += vln['qty']
+                del retval[i]
+        else:
+            rcand = prefs
+
+    return (overvotes, retval)
+
+
 def _get_valid_topcand_qty(voteline):
     prefs = voteline['prefs']
     rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
-    overvote = 0
 
     if len(rlist) > 0:
         x = 0
         xtok = rlist[x]
         xrank = prefs[xtok]['rank']
         y = len(rlist)
-        yrank = 9999999999 # close enough to infinity
+        yrank = 9999999999  # close enough to infinity
         # this technique should find the index of the last candidate
         # in the rlist array that has the same rank as the first
         # candidate in rlist.
@@ -39,105 +73,125 @@ def _get_valid_topcand_qty(voteline):
         if x == y:
             rcand = rlist[x]
         else:
-            overvote += voteline['qty']
             klist = rlist[y+1:]
             nextprefs = {k: prefs[k] for k in klist if k in prefs}
             nextvln = {
                 'qty': voteline['qty'],
                 'prefs': nextprefs
             }
-            (rcand, rqty, nextov) = _get_valid_topcand_qty(nextvln)
-            overvote += nextov
+            (rcand, rqty) = _get_valid_topcand_qty(nextvln)
     else:
         rcand = prefs
     rqty = voteline['qty']
-    return (rcand, rqty, overvote)
+    return (rcand, rqty)
 
 
 def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
     """
     IRV count of given votelines
+
+    This returns the following triple:
+    * winner - the winner(s) of this round, if there are any
+    * rounds - round-by-round votecounts
+    * roundmeta - metadata associated with all rounds
     """
+    abiflib_test_log("1. looking for all_eliminated in roundmeta:")
+    abiflib_test_log(pformat(roundmeta))
     if rounds is None:
         rounds = []
     if roundmeta is None:
         roundmeta = []
     roundcount = {cand: 0 for cand in candlist}
+
+    # initializing mymeta, which will eventually be appended to roundmeta
     mymeta = {}
-    # FIXME: stop resetting the baseline exhausted ballots to zero
-    # every round.  As of this writing in June 2024, the full ballot
-    # set is passed to _eliminate_cands_from_votelines in every round
-    # (regardless of prior eliminations).  Since tied rankings are not
-    # allowed in IRV, these rankings are supposed to be skipped.
-    # HOWEVER, when a candidate is eliminated who shows up as a tie on
-    # some ballots, these ranking tiers magically become valid in
-    # _irv_count_internal, since the remaining candidate in the tied
-    # ranking tier may not have been eliminated yet.  I'm pretty sure
-    # that in most IRV implementations, once an invalid ranking tier
-    # is encountered, the entire list of voter preferences is
-    # eliminated from consideration.
     mymeta['exhaustedqty'] = 0
     mymeta['overvoteqty'] = 0
     mymeta['ballotcount'] = 0
-    for (ckey, vln) in enumerate(votelines):
-        (rcand, rqty, overvote) = _get_valid_topcand_qty(vln)
+    mymeta['starting_cands'] = candlist
+
+    (ov, prunedvlns) = _discard_toprank_overvotes(votelines)
+    mymeta['overvoteqty'] += ov
+    for (i, vln) in enumerate(prunedvlns):
+        # (rcand, rqty, overvote) = _get_valid_topcand_qty(vln)
+        (rcand, rqty) = _get_valid_topcand_qty(vln)
+
         mymeta['ballotcount'] += rqty
         if rcand:
             roundcount[rcand] += rqty
         else:
             mymeta['exhaustedqty'] += rqty
-        if overvote:
-            mymeta['overvoteqty'] += overvote
 
-
-    # Check for majority of unexhausted votelines
     total_votes = sum(roundcount.values())
     mymeta['remainingqty'] = total_votes
     winner = None
-    for cand, votes in roundcount.items():
-        if votes > total_votes / 2:
-            winner = cand
     rounds.append(roundcount)
     roundmeta.append(mymeta)
-    if winner:
+    abiflib_test_log(f"line 134 {len(roundmeta)=}")
+    min_votes = min(roundcount.values())
+    max_votes = max(roundcount.values())
+    roundmeta[-1]['top_voteqty'] = min(roundcount.values())
+    roundmeta[-1]['bottom_voteqty'] = max(roundcount.values())
+    bottomcands = [c for c, v in roundcount.items() if v <= min_votes]
+    if "all_eliminated" not in roundmeta[-1]:
+        roundmeta[-1]['all_eliminated'] = set()
+    if len(roundmeta) > 1:
+        roundmeta[-1]['all_eliminated'].update(roundmeta[-2]['all_eliminated'])
+    abiflib_test_log("3. looking for all_eliminated in roundmeta:")
+    abiflib_test_log(pformat(roundmeta))
+
+    if (len(roundmeta) > 1):
+        roundmeta[-1]['all_eliminated'].update(
+            list(roundmeta[-2]['eliminated']))
+        try:
+            roundmeta[-1]['all_eliminated'].update(
+                list(roundmeta[-2]['eliminated']))
+        except TypeError:
+            print(roundmeta[-2]['eliminated'])
+            print(pformat(roundmeta))
+            sys.exit()
+    try:
+        roundmeta[-1]['all_eliminated'].update(bottomcands)
+    except TypeError:
+        print(f"{bottomcands=}")
+        sys.exit()
+    roundmeta[-1]['eliminated'] = bottomcands
+    abiflib_test_log("4. looking for all_eliminated in roundmeta:")
+    abiflib_test_log(pformat(roundmeta))
+    abiflib_test_log(f"line 152 {len(roundmeta)=}")
+    if min_votes == max_votes:
+        # This should be reached only if there's a tie between candidates
+        winner = [c for c, v in roundcount.items() if v == max_votes]
         retval = (winner, rounds, roundmeta)
+        roundmeta[-1]['winner'] = winner
+    elif max_votes > total_votes / 2:
+        # This is the normal end of the IRV elimination cycle
+        winner = [c for c, v in roundcount.items() if v == max_votes]
+        retval = (winner, rounds, roundmeta)
+        roundmeta[-1]['winner'] = winner
     else:
-        min_votes = min(roundcount.values())
-        max_votes = max(roundcount.values())
-        if min_votes == max_votes:
-            winner = [c for c, v in roundcount.items() if v == max_votes]
-            retval = (winner, rounds, roundmeta)
-        else:
-            bottomcands = [c for c, v in roundcount.items() if v <= min_votes]
-            nextcands = list(set(candlist) - set(bottomcands))
-            nextvotelines = \
-                _eliminate_cands_from_votelines(bottomcands, votelines)
-            (winner, nextrounds, nextmeta) = \
-                _irv_count_internal(nextcands,
-                                    nextvotelines,
-                                    rounds=rounds,
-                                    roundmeta=roundmeta)
-            retval = (winner, rounds, roundmeta)
+        # We need another round, hence recursion
+        roundmeta[-1]['eliminated'] = bottomcands
+        nextcands = list(set(candlist) - set(bottomcands))
+        nextvotelines = \
+            _eliminate_cands_from_votelines(bottomcands, prunedvlns)
+        (winner, nextrounds, nextmeta) = \
+            _irv_count_internal(nextcands,
+                                nextvotelines,
+                                rounds=rounds,
+                                roundmeta=roundmeta)
+        retval = (winner, rounds, roundmeta)
     return retval
 
 
 def IRV_dict_from_jabmod(jabmod):
     retval = {}
-    candlist = deepcopy(jabmod['candidates'])
+    retval['canddict'] = jabmod['candidates']
+    candlist = list(jabmod['candidates'].keys())
     votelines = deepcopy(jabmod['votelines'])
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
         _irv_count_internal(candlist, votelines)
-    retval['eliminated'] = []
 
-    # Find the eliminated candidate(s) in each round
-    for round_num, round_results in enumerate(retval['rounds']):
-        if round_num < len(retval['rounds']) - 1:
-            remainingset = set(retval['rounds'][round_num+1].keys())
-            eliminated = list(set(round_results.keys()) - remainingset)
-        else:
-            winnerset = set(list(retval['winner']))
-            eliminated = list(set(round_results.keys()) - winnerset)
-        retval['eliminated'].append(eliminated)
     abiflib_test_log('IRV_dict_from_jabmod retval:')
     abiflib_test_log(pformat(retval))
     return retval
@@ -146,24 +200,32 @@ def IRV_dict_from_jabmod(jabmod):
 def get_IRV_report(IRV_dict):
     winner = IRV_dict['winner']
     rounds = IRV_dict['rounds']
-    eliminated = IRV_dict['eliminated']
+    canddict = IRV_dict['canddict']
     output = ""
+    output += "Candidates:\n"
+    for k, v in sorted(canddict.items()):
+        output += f"  {k}: {v}\n"
 
     for round_num, round_results in enumerate(rounds):
         thisroundmeta = IRV_dict['roundmeta'][round_num]
+        eliminated = thisroundmeta.get('eliminated')
+        starting_cands_str = ", ".join(
+            sorted(thisroundmeta.get('starting_cands')))
         output += f"\nRound {round_num + 1}:\n"
+        output += f"  Starting cands: {starting_cands_str}\n"
         output += f"  Total unexhausted votes: {thisroundmeta['remainingqty']}\n"
         output += f"  Exhausted votes: {thisroundmeta['exhaustedqty']}\n"
         output += f"  Overvotes: {thisroundmeta['overvoteqty']}\n"
         output += f"  Votes by candidate:\n"
         for candidate, votes in round_results.items():
             output += f"    {candidate}: {votes}\n"
-        output += f"  Eliminated: {', '.join(eliminated[round_num])}\n"
+        # output += f"  Eliminated: {eliminated=}\n"
+        output += f"  Eliminated this round: {', '.join(eliminated)}\n"
 
-    if type(winner) == str:
-        output += f"The IRV winner is {winner}\n"
+    if len(winner) > 1:
+        output += f"The IRV winners are {' and '.join(sorted(winner))}\n"
     else:
-        output += f"The IRV winners are {' and '.join(sorted(winner))}"
+        output += f"The IRV winner is {winner[0]}\n"
     return output
 
 
@@ -178,7 +240,7 @@ def main():
     jabmod = convert_abif_to_jabmod(abiftext)
     IRV_dict = IRV_dict_from_jabmod(jabmod)
     if args.json:
-        output = json.dumps(IRV_dict, indent=4)
+        output = json.dumps(clean_dict(IRV_dict), indent=4)
     else:
         output = get_IRV_report(IRV_dict)
     print(output)

@@ -1,8 +1,14 @@
+from abiflib import (
+    convert_abif_to_jabmod,
+    get_IRV_report,
+    IRV_dict_from_jabmod
+)
 import pathlib
 import pytest
 import re
 from subprocess import run, PIPE
 from abiftestfuncs import *
+
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
@@ -12,7 +18,7 @@ from abiftestfuncs import *
          r"Chat: 15"),
         (['-t', 'text', '-m', 'IRV'],
          'testdata/tenn-example/tennessee-example-STAR.abif',
-         r"The IRV winner is Knox"),
+         r'The IRV winner is Knox'),
         (['-t', 'text', '-m', 'IRV'],
          'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
          r"Knox: 17"),
@@ -21,10 +27,13 @@ from abiftestfuncs import *
          r"Knox: 58"),
         (['-t', 'text', '-m', 'IRV'],
          'testdata/burl2009/burl2009.abif',
-         r"The IRV winner is Kiss"),
+         r'The IRV winner is Kiss'),
         (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
          'testdata/commasep/jman722-example.abif',
-         r"The IRV winners are Candace and Georgie"),
+         r'The IRV winners are Candace and Georgie'),
+        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+         'testdata/tenn-example/tennessee-example-overvote-02.abif',
+         r"Memph: 59"),
     ]
 )
 def test_IRV_text_output(cmd_args, inputfile, pattern):
@@ -32,13 +41,6 @@ def test_IRV_text_output(cmd_args, inputfile, pattern):
     from pathlib import Path
     print(Path(inputfile).read_text())
     assert check_regex_in_output(cmd_args, inputfile, pattern)
-
-
-from abiflib import (
-    convert_abif_to_jabmod,
-    get_IRV_report,
-    IRV_dict_from_jabmod
-    )
 
 
 @pytest.mark.parametrize(
