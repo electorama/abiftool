@@ -45,15 +45,14 @@ OUTPUT_FORMATS = [
 ]
 
 MODIFIERS = [
-    {'Copeland': 'Show Copeland winner'},
+    {'Copeland': 'Show pairwise table and Copeland winner (default)'},
     {'IRV': 'Provide IRV results'},
     {'jcomments': 'Put comments in jabmod output if available'},
-    {'nopairwise': 'Remove any pairwise tables if possible'},
-    {'nowinlosstie': 'Remove win-loss-tie info if possible'},
+    {'pairwise': 'Show pairwise table (possibly without winlosstie info)'},
     {'score': 'Provide score results'},
     {'STAR': 'Provide STAR results'},
     {'svg': 'Add SVG to the output if avaiable'},
-    {'winlosstie': 'Add win-loss-tie info if possible (default)'}
+    {'winlosstie': 'Provide win-loss-tie table (default)'}
 ]
 
 ABIF_VERSION = "0.1"
@@ -101,7 +100,7 @@ def main():
                         help='Input format (overrides file extension)')
     parser.add_argument('-t', '--to', choices=validoutfmts,
                         required=True, help='Output format (--help for list of options)')
-    parser.add_argument("-m", "--modifier", default=['winlosstie'], action='append',
+    parser.add_argument("-m", "--modifier", action='append',
                         choices=validmod, help='Catch-all for modified output specifiers.')
     parser.add_argument('--cleanws', action="store_true",
                         help='Clean whitespace in ABIF file')
@@ -109,7 +108,6 @@ def main():
                         help='Add scores to votelines when only rankings are provided')
 
     args = parser.parse_args()
-    modifiers = set(args.modifier)
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
@@ -133,7 +131,10 @@ def main():
     else:
         with open(args.input_file, "r") as f:
             inputstr = f.read()
-
+    if args.modifier:
+        modifiers = set(args.modifier)
+    else:
+        modifiers = set(['winlosstie', 'Copeland'])
     add_STAR = 'STAR' in modifiers
     add_scores = 'scores' in modifiers
     add_ratings = args.add_scores or add_STAR or add_scores
@@ -197,15 +198,13 @@ def main():
     elif (output_format == 'svg'):
         outstr += copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'text'):
-        if 'nopairwise' in modifiers:
-            pass
-        elif 'nowinlosstie' in modifiers:
+        if 'winlosstie' in modifiers:
+            outstr += texttable_pairwise_and_winlosstie(abifmodel)
+        if 'pairwise' in modifiers:
             pairdict = pairwise_count_dict(abifmodel)
             outstr += textgrid_for_2D_dict(
                 twodimdict=pairdict,
                 tablelabel='   Loser ->\nv Winner')
-        else:
-            outstr += texttable_pairwise_and_winlosstie(abifmodel)
         if 'IRV' in modifiers:
             irvdict = IRV_dict_from_jabmod(abifmodel)
             outstr += get_IRV_report(irvdict)

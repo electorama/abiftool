@@ -9,8 +9,14 @@ testdicts = [
     {
         "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
         "filename":"testdata/burl2009/burl2009.abif",
-        "pattern":r"Montroll[^\d]+4067",
-        "options": ["-t", "text", "--modifier", "nowinlosstie"]
+        "pattern":r"Copeland Winner: Andy Montroll",
+        "options": ["-t", "text"]
+    },
+    {
+        "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
+        "filename":"testdata/burl2009/burl2009.abif",
+        "pattern":r"Montroll",
+        "options": ["-t", "text", "-m", "winlosstie", "-m", "score"]
     },
     {
         "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
@@ -38,6 +44,9 @@ def test_pattern_match(filename, pattern, options):
                        text=True).stdout
 
     if not re.search(pattern, texttable_content):
+        print(f"{pattern=}")
+        print("texttable_content:")
+        print(texttable_content)
         raise AssertionError(
             f"No match for {pattern=} in '{filename}'.\n"
             f"abiftool.py {' '.join(options)} {filename}"
