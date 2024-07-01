@@ -45,6 +45,7 @@ OUTPUT_FORMATS = [
 ]
 
 MODIFIERS = [
+    {'candlist': 'List all candidates at the beginning of output'},
     {'Copeland': 'Show pairwise table and Copeland winner (default)'},
     {'IRV': 'Provide IRV results'},
     {'jcomments': 'Put comments in jabmod output if available'},
@@ -74,7 +75,7 @@ def gen_epilog():
     retval += help_text(caption="Output formats", bullet="--to",
                         dictlist=OUTPUT_FORMATS)
     retval += f"\n"
-    retval += help_text(caption="Modifiers (preface with 'no' to remove)",
+    retval += help_text(caption="Modifiers",
                         bullet="--modifier", dictlist=MODIFIERS)
     return retval
 
@@ -134,7 +135,7 @@ def main():
     if args.modifier:
         modifiers = set(args.modifier)
     else:
-        modifiers = set(['winlosstie', 'Copeland'])
+        modifiers = set(['candlist', 'Copeland', 'winlosstie'])
     add_STAR = 'STAR' in modifiers
     add_scores = 'scores' in modifiers
     add_ratings = args.add_scores or add_STAR or add_scores
@@ -198,6 +199,8 @@ def main():
     elif (output_format == 'svg'):
         outstr += copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'text'):
+        if 'candlist' in modifiers:
+            outstr += candlist_text_from_abif(abifmodel)
         if 'winlosstie' in modifiers:
             outstr += texttable_pairwise_and_winlosstie(abifmodel)
         if 'pairwise' in modifiers:

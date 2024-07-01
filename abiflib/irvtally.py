@@ -202,9 +202,6 @@ def get_IRV_report(IRV_dict):
     rounds = IRV_dict['rounds']
     canddict = IRV_dict['canddict']
     output = ""
-    output += "Candidates:\n"
-    for k, v in sorted(canddict.items()):
-        output += f"  {k}: {v}\n"
 
     for round_num, round_results in enumerate(rounds):
         thisroundmeta = IRV_dict['roundmeta'][round_num]
@@ -239,10 +236,12 @@ def main():
     abiftext = pathlib.Path(args.input_file).read_text()
     jabmod = convert_abif_to_jabmod(abiftext)
     IRV_dict = IRV_dict_from_jabmod(jabmod)
+    output = ""
     if args.json:
-        output = json.dumps(clean_dict(IRV_dict), indent=4)
+        output += json.dumps(clean_dict(IRV_dict), indent=4)
     else:
-        output = get_IRV_report(IRV_dict)
+        output += candlist_text_from_abif(jabmod)
+        output += get_IRV_report(IRV_dict)
     print(output)
 
 

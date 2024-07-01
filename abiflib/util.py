@@ -48,3 +48,12 @@ def convert_text_to_abif(fromfmt, inputstr, cleanws=False, add_ratings=False, me
                                     message=f"Cannot convert from {fromfmt} yet.")
     retval = convert_jabmod_to_abif(abifmodel, add_ratings=False)
     return retval
+
+
+def candlist_text_from_abif(jabmod):
+    canddict = jabmod['candidates']
+    output = ""
+    output += "Candidates:\n"
+    for k, v in sorted(canddict.items()):
+        output += f"  {k}: {v}\n"
+    return output

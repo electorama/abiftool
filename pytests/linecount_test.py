@@ -6,7 +6,7 @@ from subprocess import run, PIPE
     [
         ('testdata/widjexample/widjexample.jabmod', ['-t', 'abif'], 22),
         ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 8650),
-        ('testdata/burl2009/burl2009.abif', ['-t', 'text'], 19)
+        ('testdata/burl2009/burl2009.abif', ['-t', 'text'], 26)
     ]
 )
 
