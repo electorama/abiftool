@@ -20,11 +20,9 @@ def _eliminate_cands_from_votelines(candlist, votelines):
 def _discard_toprank_overvotes(votelines):
     retval = deepcopy(votelines)
     overvotes = 0
-    return (overvotes, retval)
     for i, vln in enumerate(retval):
         prefs = vln['prefs']
         rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
-        print(f"{rlist=}")
         if len(rlist) > 0:
             x = 0
             xtok = rlist[x]
@@ -109,6 +107,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
     mymeta['overvoteqty'] = 0
     mymeta['ballotcount'] = 0
     mymeta['starting_cands'] = candlist
+    mymeta['startingqty'] = sum(vln['qty'] for vln in votelines)
 
     (ov, prunedvlns) = _discard_toprank_overvotes(votelines)
     mymeta['overvoteqty'] += ov
@@ -123,11 +122,10 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
             mymeta['exhaustedqty'] += rqty
 
     total_votes = sum(roundcount.values())
-    mymeta['remainingqty'] = total_votes
+    mymeta['countedqty'] = total_votes - mymeta['exhaustedqty']
     winner = None
     rounds.append(roundcount)
     roundmeta.append(mymeta)
-    abiflib_test_log(f"line 134 {len(roundmeta)=}")
     min_votes = min(roundcount.values())
     max_votes = max(roundcount.values())
     roundmeta[-1]['top_voteqty'] = min(roundcount.values())
@@ -137,8 +135,6 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
         roundmeta[-1]['all_eliminated'] = set()
     if len(roundmeta) > 1:
         roundmeta[-1]['all_eliminated'].update(roundmeta[-2]['all_eliminated'])
-    abiflib_test_log("3. looking for all_eliminated in roundmeta:")
-    abiflib_test_log(pformat(roundmeta))
 
     if (len(roundmeta) > 1):
         roundmeta[-1]['all_eliminated'].update(
@@ -155,20 +151,18 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
     except TypeError:
         print(f"{bottomcands=}")
         sys.exit()
-    roundmeta[-1]['eliminated'] = bottomcands
-    abiflib_test_log("4. looking for all_eliminated in roundmeta:")
-    abiflib_test_log(pformat(roundmeta))
-    abiflib_test_log(f"line 152 {len(roundmeta)=}")
     if min_votes == max_votes:
         # This should be reached only if there's a tie between candidates
         winner = [c for c, v in roundcount.items() if v == max_votes]
         retval = (winner, rounds, roundmeta)
         roundmeta[-1]['winner'] = winner
+        roundmeta[-1]['eliminated'] = set(mymeta['starting_cands']) - set(winner)
     elif max_votes > total_votes / 2:
         # This is the normal end of the IRV elimination cycle
         winner = [c for c, v in roundcount.items() if v == max_votes]
         retval = (winner, rounds, roundmeta)
         roundmeta[-1]['winner'] = winner
+        roundmeta[-1]['eliminated'] = set(mymeta['starting_cands']) - set(winner)
     else:
         # We need another round, hence recursion
         roundmeta[-1]['eliminated'] = bottomcands
@@ -210,14 +204,14 @@ def get_IRV_report(IRV_dict):
             sorted(thisroundmeta.get('starting_cands')))
         output += f"\nRound {round_num + 1}:\n"
         output += f"  Starting cands: {starting_cands_str}\n"
-        output += f"  Total unexhausted votes: {thisroundmeta['remainingqty']}\n"
+        output += f"  Total starting votes: {thisroundmeta['startingqty']}\n"
         output += f"  Exhausted votes: {thisroundmeta['exhaustedqty']}\n"
         output += f"  Overvotes: {thisroundmeta['overvoteqty']}\n"
+        output += f"  Total counted votes: {thisroundmeta['countedqty']}\n"
         output += f"  Votes by candidate:\n"
         for candidate, votes in round_results.items():
             output += f"    {candidate}: {votes}\n"
-        # output += f"  Eliminated: {eliminated=}\n"
-        output += f"  Eliminated this round: {', '.join(eliminated)}\n"
+        output += f"  Eliminated this round: {', '.join(sorted(eliminated))}\n"
 
     if len(winner) > 1:
         output += f"The IRV winners are {' and '.join(sorted(winner))}\n"
