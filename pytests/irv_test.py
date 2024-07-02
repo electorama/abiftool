@@ -49,6 +49,15 @@ from abiftestfuncs import *
         (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
          'testdata/commasep/jman722-example.abif',
          r'Total starting votes: 24'),
+        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+         'testdata/tenn-example/tennessee-example-irv-tie.abif',
+         r'The IRV winners are Knox and Memph'),
+        (['-f', 'abif', '-t', 'irvjson'],
+         'testdata/tenn-example/tennessee-example-irv-tie.abif',
+         r'Knoxville, TN and Memphis, TN'),
+        (['-f', 'abif', '-t', 'irvjson'],
+         'testdata/burl2009/burl2009.abif',
+         r'Bob Kiss \(Progressive\)'),
     ]
 )
 def test_IRV_text_output(cmd_args, inputfile, pattern):

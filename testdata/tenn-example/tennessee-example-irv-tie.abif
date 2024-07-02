@@ -1,0 +1,11 @@
+{"title": "Tennessee capitol example"}
+{"description": "Hypothetical example of selecting capitol of Tennessee, only this time representing a tie election rather than an outright win."}
+=Memph:[Memphis, TN]
+=Nash:[Nashville, TN]
+=Chat:[Chattanooga, TN]
+=Knox:[Knoxville, TN]
+# -------------------------
+42:Memph>Nash>Chat/133>Knox/45
+20:Nash>Chat>Knox/240>Memph/200
+10:Chat>Knox>Nash/290>Memph/133
+12:Knox>Chat>Nash/240>Memph/45

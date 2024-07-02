@@ -180,11 +180,18 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
 
 def IRV_dict_from_jabmod(jabmod):
     retval = {}
-    retval['canddict'] = jabmod['candidates']
+    canddict = retval['canddict'] = jabmod['candidates']
     candlist = list(jabmod['candidates'].keys())
     votelines = deepcopy(jabmod['votelines'])
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
         _irv_count_internal(candlist, votelines)
+
+    winner = retval['winner']
+    if len(winner) > 1:
+        winnerstr = " and ".join(canddict[w] for w in sorted(winner))
+    else:
+        winnerstr = canddict[winner[0]]
+    retval['winnerstr'] = winnerstr
 
     abiflib_test_log('IRV_dict_from_jabmod retval:')
     abiflib_test_log(pformat(retval))
