@@ -37,6 +37,7 @@ OUTPUT_FORMATS = [
     {'dot': 'Graphviz DOT format showing pairwise matchups'},
     {'html': 'Full HTML output from <html> to </html>'},
     {'html_snippet': 'HTML snippet that does not includes the <head> elements'},
+    {'irvjson': 'JSON format representing IRV election results'},
     {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
     {'paircountjson': 'Pairwise ballot counts'},
     {'svg': 'SVG output showing pairwise matchups and Copeland wins/losses/ties'},
@@ -191,6 +192,9 @@ def main():
                                                    modlimit = ABIFMODEL_LIMIT,
                                                    svg_text = svg_text,
                                                    modifiers = modifiers)
+    elif (output_format == 'irvjson'):
+        IRV_dict = IRV_dict_from_jabmod(abifmodel)
+        outstr += json.dumps(clean_dict(IRV_dict), indent=4)
     elif (output_format == 'jabmod'):
         outstr += json.dumps(abifmodel, indent=4)
     elif (output_format == 'paircountjson'):
