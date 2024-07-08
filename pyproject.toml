@@ -1,7 +1,36 @@
 [project]
 name = "abiftool"
-version = "0.1"
+version = "0.1.0"
+description = "abiftool parses, converts and analyzes Aggregated Ballot Information File (ABIF)."
+readme = "README.md"
+requires-python =  ">=3.8"
+license = {text = "GPL-3.0"}
+authors = [
+    { name = "Rob Lanphier", email = "robla@robla.net" }
+]
 dependencies = [
+    "BeautifulSoup4",
+    "graphviz",
     "requests",
     "Texttable"
 ]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Sociology :: History"
+]
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm.scripts]
+abiftool = "abiftool:main"
+
+[tool.pdm]
+distribution = true
+
+
+
