@@ -14,13 +14,18 @@ To try `abiftool.py`, perform the following steps:
 git clone https://github.com/electorama/abiftool.git
 cd abiftool
 ```
-3. Run an example command (see below)
+3. Install the dependencies
+```
+pip install -r requirements.txt
+```
+
+4. Run an example command (see below)
 
 ## Examples
 ### Burlington 2009
 The following command runs with test data checked into this repository:
 ```
-./abiftool.py -t texttable testdata/burl2009/burl2009.abif
+./abiftool.py -t text testdata/burl2009/burl2009.abif
 ```
 
 The expected output is a table with the pairwise output from the election described in ```burl2009.abif```:
