@@ -64,6 +64,9 @@ def test_grep_output_for_regexp(cmd_args, inputfile, pattern):
         msg += "Please run './fetchmgr.py *.fetchspec.json' "
         msg += "if you haven't already"
         pytest.skip(msg)
+    # 2024-08-06 - I'm not sure what the get_abiftool_output_as_array
+    # call is doing in this context, and I'm pretty sure I can/should
+    # eliminate it:
     abiftool_output = get_abiftool_output_as_array(cmd_args)
     LOGOBJ.log("LOGOBJ test_grep_for_regexp/scorestar" +
                f"{inputfile=} {pattern=}\n")

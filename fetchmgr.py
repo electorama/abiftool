@@ -13,7 +13,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-
+from pprint import pprint
 
 def checkout_repository(gitrepo_url, subdir):
     if os.path.exists(subdir):
@@ -62,30 +62,55 @@ def fetch_web_items(fetchspec):
     if not os.path.exists(subdir):
         os.makedirs(subdir)
 
+    response = False
+    localpaths = []
     for urldict in fetchspec['web_urls']:
-        localpath = os.path.join(subdir, urldict['localcopy'])
-        if os.path.exists(localpath):
-            sys.stderr.write(f"Skipping download of existing {localpath}\n")
-            continue
-        response = fetch_url_to_subdir(url=urldict['url'],
-                                       subdir=subdir,
-                                       localpath=localpath,
-                                       metaurl=urldict['metaurls'][0],
-                                       desc=urldict['desc'])
-    return True
+        if 'localcopies' in urldict.keys():
+            for i, l in enumerate(urldict['localcopies']):
+                localpaths.append("REPLACETHIS")
+                localpaths[i] = os.path.join(subdir, urldict['localcopies'][i])
+
+        else:
+            localpath = os.path.join(subdir, urldict['localcopy'])
+
+        if 'urls' in urldict.keys():
+            for i, suburl in enumerate(urldict['urls']):
+                #print(f"{i=} {suburl=}")
+                if not os.path.exists(localpaths[i]):
+                    response = fetch_url_to_subdir(url=suburl,
+                                                   subdir=subdir,
+                                                   localpath=localpaths[i],
+                                                   metaurl=urldict['metaurls'][0],
+                                                   desc=urldict['desc'])
+                else:
+                    sys.stderr.write(f"Skipping download of existing {localpaths[i]}\n")
+        else:
+            if not os.path.exists(localpath):
+                response = fetch_url_to_subdir(url=urldict['url'],
+                                               subdir=subdir,
+                                               localpath=localpath,
+                                               metaurl=urldict['metaurls'][0],
+                                               desc=urldict['desc'])
+            else:
+                sys.stderr.write(f"Skipping download of existing {localpath}\n")
+    return response
 
 
-def convert_file_to_abif(fromfmt, input_file, output_file, fetchdesc=None):
-    try:
-        inputstr = Path(input_file).read_text()
-    except FileNotFoundError:
-        print(f"Error: Input file '{input_file}' not found.")
-        sys.exit(1)
+def convert_files_to_abif(fromfmt, input_files, output_file, fetchdesc=None):
     if fetchdesc:
         metadata = {"description": fetchdesc}
     else:
         metadata = {}
-    abiftext = abiflib.convert_text_to_abif(fromfmt, inputstr,
+
+    inputblobs = []
+    for i, f in enumerate(input_files):
+        try:
+            inputblobs.append(Path(f).read_text())
+        except FileNotFoundError:
+            print(f"Error: Input file '{input_file}' not found.")
+            sys.exit(1)
+
+    abiftext = abiflib.convert_text_to_abif(fromfmt, inputblobs,
                                             metadata=metadata)
     Path(output_file).parent.mkdir(parents=True, exist_ok=True)
     Path(output_file).write_text(abiftext)
@@ -96,24 +121,30 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
     if not os.path.exists(abifsubdir):
         os.makedirs(abifsubdir)
     for extfile in extfilelist:
-        infile = os.path.join(dlsubdir, extfile['localcopy'])
+        if 'localcopies' in extfile.keys():
+            infiles = [os.path.join(dlsubdir, x) for x in extfile['localcopies']]
+            # infile = os.path.join(dlsubdir, extfile['localcopies'][0])
+            # infile = infiles[0]
+        else:
+            infiles = [os.path.join(dlsubdir, extfile['localcopy'])]
         outfile = os.path.join(abifsubdir, extfile['abifloc'])
         srcfmt = extfile.get('srcfmt') or srcfmt
         fetchdesc = extfile.get('desc') or None
         if srcfmt == 'abif':
-            sys.stderr.write(f"Linking from {outfile} to {infile}\n")
-            symlinkval = os.path.relpath(infile, start=abifsubdir)
+            sys.stderr.write(f"Linking from {outfile} to {infiles[0]}\n")
+            symlinkval = os.path.relpath(infiles[0], start=abifsubdir)
             try:
                 os.symlink(src=symlinkval, dst=outfile)
             except FileExistsError:
                 os.remove(outfile)
                 os.symlink(src=symlinkval, dst=outfile)
         else:
-            sys.stderr.write(f"Converting {infile} ({srcfmt}) to {outfile}\n")
-            convert_file_to_abif(fromfmt=srcfmt,
-                                 input_file=infile,
-                                 output_file=outfile,
-                                 fetchdesc=fetchdesc)
+            infilestr = " ".join(infiles)
+            sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile}\n")
+            convert_files_to_abif(fromfmt=srcfmt,
+                                  input_files=infiles,
+                                  output_file=outfile,
+                                  fetchdesc=fetchdesc)
     return True
 
 

@@ -28,6 +28,7 @@ INPUT_FORMATS = [
     {'debtally': 'Election output format used by the Debian Project'},
     {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
     {'preflib': 'Files downloaded from preflib.org'},
+    {'sftxt': 'Text files published by the City and County of San Francisco'},
     {'widj': 'Legacy format from Electowidget'}
 ]
 
@@ -48,6 +49,7 @@ OUTPUT_FORMATS = [
 MODIFIERS = [
     {'candlist': 'List all candidates at the beginning of output'},
     {'Copeland': 'Show pairwise table and Copeland winner (default)'},
+    {'consolidate': 'Consolidate votelines if possible'},
     {'IRV': 'Provide IRV results'},
     {'jcomments': 'Put comments in jabmod output if available'},
     {'pairwise': 'Show pairwise table (possibly without winlosstie info)'},
@@ -95,7 +97,8 @@ def main():
     validinfmts = get_keys_from_dict_list(INPUT_FORMATS)
     validoutfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
     validmod = get_keys_from_dict_list(MODIFIERS)
-    parser.add_argument('input_file', help='Input file to convert (--help for list of options)')
+    parser.add_argument('input_file', nargs='+',
+                        help='Input file(s) to convert (--help for list of options)')
     parser.add_argument('-d', '--debug', action="store_true",
                         help='Output debug information if available')
     parser.add_argument('-f', '--fromfmt', choices=validinfmts,
@@ -118,15 +121,24 @@ def main():
     elif args.input_file == '-':
         parser.error("The -f parameter is required with '-'")
     else:
-        _, file_extension = args.input_file.rsplit('.', 1)
+        _, file_extension = args.input_file[0].rsplit('.', 1)
         input_format = file_extension
     if input_format not in validinfmts:
         print(f"Error: Unsupported input format '{input_format}'")
         return
 
     inputstr = ""
+    inputblobs = []
     if args.input_file == '-':
         inputstr = sys.stdin.read()
+    elif type(args.input_file) == list:
+        for i, infile in enumerate(args.input_file):
+            if not os.path.exists(infile):
+                print(f"The file '{infile}' doesn't exist.")
+                sys.exit()
+            with open(infile, "r") as f:
+                inputstr = f.read()
+            inputblobs.append(inputstr)
     elif not os.path.exists(args.input_file):
         print(f"The file '{args.input_file}' doesn't exist.")
         sys.exit()
@@ -158,12 +170,18 @@ def main():
     elif (input_format == 'preflib'):
         rawabifstr = convert_preflib_str_to_abif(inputstr)
         abifmodel = convert_abif_to_jabmod(rawabifstr)
+    elif (input_format == 'sftxt'):
+        abifmodel = convert_sftxt_to_jabmod(inputblobs[0], inputblobs[1])
     elif (input_format == 'widj'):
         abifmodel = convert_widj_to_jabmod(inputstr)
     else:
         outstr = f"Cannot convert from {input_format} yet."
         print(outstr)
         sys.exit()
+
+    # global modifiers
+    if 'consolidate' in modifiers:
+        abifmodel =  consolidate_jabmod_voteline_objects(abifmodel)
 
     # the "-t/--to" option
     output_format = args.to

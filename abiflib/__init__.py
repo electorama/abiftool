@@ -24,6 +24,7 @@ from abiflib.irvtally import *
 from abiflib.pairwise import *
 from abiflib.preflib import *
 from abiflib.scorestar import *
+from abiflib.sftxt import *
 from abiflib.textoutput import *
 from abiflib.vizelect import *
 from abiflib.widjfuncs import *

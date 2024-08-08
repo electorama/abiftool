@@ -1,0 +1,192 @@
+{
+    "candidates": {
+        "(none)": null,
+        "MICHELLE_BRAVO": "MICHELLE BRAVO",
+        "JEFF_SHEEHY": "JEFF SHEEHY",
+        "LONDON_BREED": "LONDON BREED",
+        "LAWRENCE_STARK_DAGES": "LAWRENCE ''STARK'' DAGESSE",
+        "MARK_LENO": "MARK LENO",
+        "RAFAEL_MANDELMAN": "RAFAEL MANDELMAN",
+        "WRITE_IN": "WRITE-IN",
+        "JANE_KIM": "JANE KIM",
+        "RICHIE_GREENBERG": "RICHIE GREENBERG",
+        "ANGELA_ALIOTO": "ANGELA ALIOTO",
+        "AMY_FARAH_WEISS": "AMY FARAH WEISS",
+        "ELLEN_LEE_ZHOU": "ELLEN LEE ZHOU",
+        "wi_ANTOINE_R_ROGERS": "WRITE-IN ANTOINE R. ROGERS"
+    },
+    "metadata": {
+        "ballotcount": 0,
+        "contestid": "0000020"
+    },
+    "votelines": [
+        {
+            "prefs": {
+                "LONDON_BREED": {
+                    "rank": 1
+                },
+                "JANE_KIM": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "LONDON_BREED": {
+                    "rank": 1
+                },
+                "JANE_KIM": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "LONDON_BREED": {
+                    "rank": 1
+                },
+                "JANE_KIM": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "LONDON_BREED": {
+                    "rank": 1
+                },
+                "JANE_KIM": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "LONDON_BREED": {
+                    "rank": 1
+                },
+                "JANE_KIM": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "MARK_LENO": {
+                    "rank": 1
+                },
+                "LONDON_BREED": {
+                    "rank": 2
+                },
+                "JANE_KIM": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "MARK_LENO": {
+                    "rank": 1
+                },
+                "LONDON_BREED": {
+                    "rank": 2
+                },
+                "JANE_KIM": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "MARK_LENO": {
+                    "rank": 1
+                },
+                "LONDON_BREED": {
+                    "rank": 2
+                },
+                "JANE_KIM": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "MARK_LENO": {
+                    "rank": 1
+                },
+                "LONDON_BREED": {
+                    "rank": 2
+                },
+                "JANE_KIM": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "JANE_KIM": {
+                    "rank": 1
+                },
+                "ELLEN_LEE_ZHOU": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "JANE_KIM": {
+                    "rank": 1
+                },
+                "ELLEN_LEE_ZHOU": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        },
+        {
+            "prefs": {
+                "JANE_KIM": {
+                    "rank": 1
+                },
+                "ELLEN_LEE_ZHOU": {
+                    "rank": 2
+                },
+                "MARK_LENO": {
+                    "rank": 3
+                }
+            },
+            "qty": 1
+        }
+    ]
+}

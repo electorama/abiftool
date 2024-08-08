@@ -4,6 +4,26 @@
   "srcfmt": "debtally",
   "web_urls": [
     {
+      "url": "https://www.debian.org/vote/2024/vote_001_tally.txt",
+      "localcopy": "2024/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2024/vote_001",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "2024 Debian Project Leader election, won by Andreas Tille.",
+      "abifloc":"2024_debian_pl.abif"
+    },
+    {
+      "url": "https://www.debian.org/vote/2023/vote_001_tally.txt",
+      "localcopy": "2023/vote_001_tally.txt",
+      "metaurls": [
+        "https://www.debian.org/vote/2023/vote_001",
+        "https://www.debian.org/vote/"
+      ],
+      "desc": "2023 Debian Project Leader election, won by Jonathan Carter.",
+      "abifloc":"2023_debian_pl.abif"
+    },
+    {
       "url": "https://www.debian.org/vote/2022/vote_002_tally.txt",
       "localcopy": "2022/vote_002_tally.txt",
       "metaurls": [

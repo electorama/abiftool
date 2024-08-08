@@ -23,28 +23,32 @@ import re
 import sys
 import urllib.parse
 
-def convert_text_to_abif(fromfmt, inputstr, cleanws=False, add_ratings=False, metadata={}):
-
+def convert_text_to_abif(fromfmt, inputblobs, cleanws=False, add_ratings=False, metadata={}):
     if (fromfmt == 'abif'):
         try:
-            abifmodel = convert_abif_to_jabmod(inputstr,
+            abifmodel = convert_abif_to_jabmod(inputblobs[0],
                                                cleanws=cleanws,
                                                add_ratings=add_ratings)
         except ABIFVotelineException as e:
             print(f"ERROR: {e.message}")
             sys.exit()
     elif (fromfmt == 'debtally'):
-        rawabifstr = convert_debtally_to_abif(inputstr, metadata=metadata)
+        rawabifstr = convert_debtally_to_abif(inputblobs[0], metadata=metadata)
         abifmodel = convert_abif_to_jabmod(rawabifstr)
     elif (fromfmt == 'jabmod'):
-        abifmodel = json.loads(inputstr)
+        abifmodel = json.loads(inputblobs[0])
     elif (fromfmt == 'preflib'):
-        rawabifstr = convert_preflib_str_to_abif(inputstr)
+        rawabifstr = convert_preflib_str_to_abif(inputblobs[0])
         abifmodel = convert_abif_to_jabmod(rawabifstr)
+    elif (fromfmt == 'sftxt'):
+        abifmodel = get_emptyish_jabmod()
+        abifmodel['metadata']['title'] = "FIXME 2024-07-15"
+        print(f"util.py {inputblobs[0][0:100]=}")
+        print(f"util.py {inputblobs[1][0:100]=}")
     elif (fromfmt == 'widj'):
-        abifmodel = convert_widj_to_jabmod(inputstr)
+        abifmodel = convert_widj_to_jabmod(inputblobs[0])
     else:
-        raise ABIFVotelineException(value=inputstr,
+        raise ABIFVotelineException(value=inputblobs[0],
                                     message=f"Cannot convert from {fromfmt} yet.")
     retval = convert_jabmod_to_abif(abifmodel, add_ratings=False)
     return retval

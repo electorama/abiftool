@@ -208,6 +208,9 @@ def _get_emptyish_abifmodel():
     return retval
 
 
+def get_emptyish_jabmod():
+    return _get_emptyish_abifmodel()
+
 def _add_ranks_to_prefjab_by_rating(inprefjab):
     '''Use candidate ratings to provide rankings'''
     initval = corefunc_init(tag="f06")
@@ -290,9 +293,12 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
 
         if len(parts) > 1:
             prefs[candidate]["rating"] = parts[1]
-    firstcandprefs = prefs.get(candkeys[0])
-    if firstcandprefs.get('rating') and not firstcandprefs.get('rank'):
-        prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    if len(candkeys) > 0:
+        firstcandprefs = prefs.get(candkeys[0])
+        if firstcandprefs.get('rating') and not firstcandprefs.get('rank'):
+            prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    else:
+        prefs = {}
     return {"prefs": prefs}
 
 
@@ -404,8 +410,21 @@ def _prefstr_from_ranked_line(sortedprefs):
     initval = corefunc_init(tag="f13")
     prefstrfromranks = ""
     rank = 1
+    lastrank = 1
+    add_delim = False
 
     for name, data in sortedprefs:
+        if 'rank' in data:
+            rank = data['rank']
+        if add_delim:
+            if rank > lastrank:
+                prefstrfromranks += '>'
+            elif rank == lastrank:
+                prefstrfromranks += '='
+            else:
+                pprint(sortedprefs)
+                raise(ValueError("Ranking error in jabmod"))
+
         prefstrfromranks += _abif_token_quote(name)
         if 'rating' in data and data['rating'] is not None:
             prefstrfromranks += f"/{data['rating']}"
@@ -413,6 +432,10 @@ def _prefstr_from_ranked_line(sortedprefs):
             if data['nextdelim'] == '>':
                 rank += 1
             prefstrfromranks += data['nextdelim']
+            add_delim = False
+        else:
+            add_delim = True
+        lastrank = rank
     return prefstrfromranks
 
 
@@ -478,8 +501,8 @@ def _get_votelinestr_from_jabvoteline(jabvoteline):
     if has_full_ratings:
         prefstr = _prefstr_from_ratings(prefitems)
     else:
-        prefstr = _prefstr_from_ranked_line(prefitems)
-
+        prefstr = _prefstr_from_ranked_line(sorted(prefitems,
+                                                   key=lambda x: x[1]['rank']))
     local_abif_str += f"{jabvoteline['qty']}:{prefstr}\n"
     #abiflib_test_log(f"func13: {local_abif_str=}")
     return local_abif_str
@@ -550,6 +573,21 @@ def get_ranking_output_csv(abifmodel):
             raise ABIFVotelineException(value=vln, message=msg)
     retval = outputhandle.getvalue()
     return retval
+
+
+def consolidate_jabmod_voteline_objects(jabmod):
+    retval_votelines = []
+    prefs_to_voteline = {}
+
+    for voteline in jabmod["votelines"]:
+        prefs = json.dumps(voteline["prefs"], sort_keys=True)
+        if prefs not in prefs_to_voteline:
+            prefs_to_voteline[prefs] = {"prefs": voteline["prefs"], "qty": 0}
+        prefs_to_voteline[prefs]["qty"] += voteline["qty"]
+
+    retval_votelines.extend(prefs_to_voteline.values())
+    jabmod["votelines"] = retval_votelines
+    return jabmod
 
 
 def main():

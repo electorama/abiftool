@@ -104,3 +104,11 @@ def html_element_search(elementname, needle, haystack):
     elemtextlist = [elem.text for elem in elementlist]
     matchbool = any(re.search(needle, liststr) for liststr in elemtextlist)
     return matchbool
+
+
+def get_value_from_obj(obj, keylist):
+    '''Pluck value from data struct by keylist path'''
+    for k in keylist:
+        obj = obj[k]
+    return obj
+
