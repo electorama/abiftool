@@ -324,8 +324,12 @@ def convert_sftxt_to_jabmod(sftxt_master_blob, sftxt_ballot_blob, verbose=False)
             if candtok != "(none)" or verbose:
                 vljson['prefs'][candtok] = {}
                 vljson['prefs'][candtok]['rank'] = p['rank']
+        retval['metadata']['ballotcount'] += 1
 
         retval['votelines'].append(vljson)
+
+    if not verbose:
+        retval = consolidate_jabmod_voteline_objects(retval)
 
     return retval
 

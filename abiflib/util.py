@@ -41,10 +41,7 @@ def convert_text_to_abif(fromfmt, inputblobs, cleanws=False, add_ratings=False, 
         rawabifstr = convert_preflib_str_to_abif(inputblobs[0])
         abifmodel = convert_abif_to_jabmod(rawabifstr)
     elif (fromfmt == 'sftxt'):
-        abifmodel = get_emptyish_jabmod()
-        abifmodel['metadata']['title'] = "FIXME 2024-07-15"
-        print(f"util.py {inputblobs[0][0:100]=}")
-        print(f"util.py {inputblobs[1][0:100]=}")
+        abifmodel = convert_sftxt_to_jabmod(inputblobs[0], inputblobs[1])
     elif (fromfmt == 'widj'):
         abifmodel = convert_widj_to_jabmod(inputblobs[0])
     else:
