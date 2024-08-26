@@ -15,10 +15,26 @@ import sys
 from pathlib import Path
 from pprint import pprint
 
+def update_repository(gitrepo_url, subdir):
+    if not os.path.exists(subdir):
+        print(f"Directory '{subdir}' isn't there.")
+        return
+
+    startdir = os.getcwd()
+    os.chdir(subdir)
+    try:
+        subprocess.run(["git", "pull"])
+        print(f"Updating repository {subdir} from {gitrepo_url} (git pull)")
+    except subprocess.CalledProcessError as e:
+        print(f"Could not update repository {gitrepo_url}")
+        print("Error:", e)
+    os.chdir(startdir)
+
+
 def checkout_repository(gitrepo_url, subdir):
     if os.path.exists(subdir):
-        print(f"Directory '{subdir}' already exists.")
-        return
+        print(f"Directory '{subdir}' exists.")
+        return update_repository(gitrepo_url, subdir)
 
     try:
         subprocess.run(["git", "clone", gitrepo_url, subdir])
