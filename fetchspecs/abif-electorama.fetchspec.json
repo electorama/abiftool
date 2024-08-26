@@ -30,6 +30,15 @@
       "srcfmt": "abif",
       "desc": "electorama/abif test file; unicode test",
       "abifloc":"test015.abif"
+    },
+    {
+      "localcopy":"testfiles/test018.abif",
+      "metaurls": [
+        "https://github.com/electorama/abif/blob/main/testfiles/test018.abif"
+      ],
+      "srcfmt": "abif",
+      "desc": "electorama/abif test file; RCV/IRV tiebreaker butterfly effect",
+      "abifloc":"test018.abif"
     }
   ]
 }
