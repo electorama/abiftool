@@ -1,8 +1,7 @@
 #------- metadata -------
-{ballotcount: 0}
+{ballotcount: 254016}
 {contestid: "0000020"}
 #------ candlines ------
-=cand0:[None]
 =MICHELLE_BRAVO:[MICHELLE BRAVO]
 =JEFF_SHEEHY:[JEFF SHEEHY]
 =LONDON_BREED:[LONDON BREED]
@@ -555,4 +554,3 @@
 2:LONDON_BREED>wi_ANTOINE_R_ROGERS
 2:LONDON_BREED>wi_ANTOINE_R_ROGERS>ANGELA_ALIOTO
 3:MARK_LENO>JANE_KIM>wi_ANTOINE_R_ROGERS
-

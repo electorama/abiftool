@@ -4,6 +4,7 @@ import argparse
 from copy import deepcopy
 import pathlib
 from pprint import pprint, pformat
+import random
 import sys
 
 
@@ -131,26 +132,36 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
     roundmeta[-1]['top_voteqty'] = min(roundcount.values())
     roundmeta[-1]['bottom_voteqty'] = max(roundcount.values())
     bottomcands = [c for c, v in roundcount.items() if v <= min_votes]
+    has_tie = False
+    if len(bottomcands) > 1:
+        roundmeta[-1]['bottomtie'] = bottomcands
+        has_tie = True
+        roundmeta[-1]['tiecandlist'] = bottomcands
+        # FIXME - develop better logic to calculate what happens with each possible
+        #         advancing candidate than selecting the next candidate randomly
+        unluckycand = random.choice(bottomcands)
+        roundmeta[-1]['eliminated'] = [ unluckycand ]
+        nextcands = list(set(candlist) - set([unluckycand]))
+        nextvotelines = \
+            _eliminate_cands_from_votelines([unluckycand], deepcopy(prunedvlns))
+    else:
+        roundmeta[-1]['eliminated'] = bottomcands
+        nextcands = list(set(candlist) - set(bottomcands))
+        nextvotelines = \
+            _eliminate_cands_from_votelines(bottomcands, prunedvlns)
+
     if "all_eliminated" not in roundmeta[-1]:
         roundmeta[-1]['all_eliminated'] = set()
     if len(roundmeta) > 1:
         roundmeta[-1]['all_eliminated'].update(roundmeta[-2]['all_eliminated'])
 
     if (len(roundmeta) > 1):
-        roundmeta[-1]['all_eliminated'].update(
-            list(roundmeta[-2]['eliminated']))
-        try:
-            roundmeta[-1]['all_eliminated'].update(
-                list(roundmeta[-2]['eliminated']))
-        except TypeError:
-            print(roundmeta[-2]['eliminated'])
-            print(pformat(roundmeta))
-            sys.exit()
-    try:
+        for cand in roundmeta[-2]['eliminated']:
+            roundmeta[-2]['all_eliminated'].add(cand)
+    if has_tie:
+        roundmeta[-1]['all_eliminated'].update([unluckycand])
+    else:
         roundmeta[-1]['all_eliminated'].update(bottomcands)
-    except TypeError:
-        print(f"{bottomcands=}")
-        sys.exit()
     if min_votes == max_votes:
         # This should be reached only if there's a tie between candidates
         winner = [c for c, v in roundcount.items() if v == max_votes]
@@ -165,10 +176,6 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
         roundmeta[-1]['eliminated'] = set(mymeta['starting_cands']) - set(winner)
     else:
         # We need another round, hence recursion
-        roundmeta[-1]['eliminated'] = bottomcands
-        nextcands = list(set(candlist) - set(bottomcands))
-        nextvotelines = \
-            _eliminate_cands_from_votelines(bottomcands, prunedvlns)
         (winner, nextrounds, nextmeta) = \
             _irv_count_internal(nextcands,
                                 nextvotelines,
@@ -193,10 +200,12 @@ def IRV_dict_from_jabmod(jabmod):
         winnerstr = canddict[winner[0]]
     retval['winnerstr'] = winnerstr
 
+    retval['has_tie'] = any(
+        "bottomtie" in rm for rm in retval.get("roundmeta", []))
+
     abiflib_test_log('IRV_dict_from_jabmod retval:')
     abiflib_test_log(pformat(retval))
     return retval
-
 
 def get_IRV_report(IRV_dict):
     winner = IRV_dict['winner']
