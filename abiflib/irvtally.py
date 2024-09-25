@@ -85,7 +85,7 @@ def _get_valid_topcand_qty(voteline):
     return (rcand, rqty)
 
 
-def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
+def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundnum=None):
     """
     IRV count of given votelines
 
@@ -94,26 +94,33 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
     * rounds - round-by-round votecounts
     * roundmeta - metadata associated with all rounds
     """
-    abiflib_test_log("1. looking for all_eliminated in roundmeta:")
+    # 1. initializing/calculating rounds, roundmeta, and roundcount
+    abiflib_test_log("1. initializing/calculating rounds, roundmeta, and roundcount")
+    # 1a. rounds, roundmeta, and roundnum are passed in recursively; init if needed
     abiflib_test_log(pformat(roundmeta))
     if rounds is None:
         rounds = []
     if roundmeta is None:
         roundmeta = []
+    # 1b. populating roundcount, which contains all remaining candidates in this round
     roundcount = {cand: 0 for cand in candlist}
 
-    # initializing mymeta, which will eventually be appended to roundmeta
+    # 2. initializing mymeta, which will eventually be appended to roundmeta
+    abiflib_test_log("2. Initializing mymeta")
     mymeta = {}
+    if roundnum is None:
+        roundnum = mymeta['roundnum'] = roundmeta[-1]['roundnum'] + 1
+    else:
+        mymeta['roundnum'] = roundnum
+    mymeta['startingqty'] = sum(vln['qty'] for vln in votelines)
     mymeta['exhaustedqty'] = 0
     mymeta['overvoteqty'] = 0
     mymeta['ballotcount'] = 0
-    mymeta['starting_cands'] = candlist
-    mymeta['startingqty'] = sum(vln['qty'] for vln in votelines)
 
+    # 3. Overvote pruning and counting remaining ballots
     (ov, prunedvlns) = _discard_toprank_overvotes(votelines)
     mymeta['overvoteqty'] += ov
     for (i, vln) in enumerate(prunedvlns):
-        # (rcand, rqty, overvote) = _get_valid_topcand_qty(vln)
         (rcand, rqty) = _get_valid_topcand_qty(vln)
 
         mymeta['ballotcount'] += rqty
@@ -121,47 +128,96 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None):
             roundcount[rcand] += rqty
         else:
             mymeta['exhaustedqty'] += rqty
-
     total_votes = sum(roundcount.values())
     mymeta['countedqty'] = total_votes - mymeta['exhaustedqty']
+
+    # 4. Other mymeta stuff
     winner = None
+    min_votes = mymeta['bottom_votes_percand'] = min(roundcount.values())
+    max_votes = mymeta['leading_votes_percand'] = max(roundcount.values())
+    if min_votes == max_votes:
+        mymeta['penultimate_votes_percand'] = penultvotesper = max_votes
+    else:
+        mymeta['penultimate_votes_percand'] = penultvotesper = \
+            min(votes for cand, votes in roundcount.items() if votes > min_votes)
+    mymeta['starting_cands'] = candlist
+    mymeta['top_voteqty'] = min(roundcount.values())
+    mymeta['bottom_voteqty'] = max(roundcount.values())
+    abiflib_test_log("votelines=")
+    abiflib_test_log(json.dumps(votelines, indent=4))
+
+    # 5. Adding newly created "mymeta" to larger "roundmeta" variable
     rounds.append(roundcount)
     roundmeta.append(mymeta)
-    min_votes = min(roundcount.values())
-    max_votes = max(roundcount.values())
-    roundmeta[-1]['top_voteqty'] = min(roundcount.values())
-    roundmeta[-1]['bottom_voteqty'] = max(roundcount.values())
     bottomcands = [c for c, v in roundcount.items() if v <= min_votes]
     has_tie = False
+
+    abiflib_test_log(f"{roundnum=}")
+    abiflib_test_log(f"{roundcount=}")
+    abiflib_test_log(f"{roundcount.items()=}")
+
+    # * penultvotestot -- total topvotes among second-to-last-place
+    #                     candidates
+    # * penultvotesper -- per candidate topvotes among
+    #                     second-to-last-place candidates
+    # * bottomvotestot -- total topvotes among last-place candidates
+    # * bottomvotesper -- per candidate topvotes among last-place
+    #                     candidates
+
+    bottomvotestot = sum(roundcount[c] for c in bottomcands if c in
+                         roundcount)
+    bottomvotesper = mbv = max(roundcount[cand] for cand in
+                               bottomcands if cand in roundcount)
+    abiflib_test_log(f"{bottomvotestot=}")
+    abiflib_test_log(f"{bottomvotesper=}")
+
     if len(bottomcands) > 1:
         roundmeta[-1]['bottomtie'] = bottomcands
         has_tie = True
         roundmeta[-1]['tiecandlist'] = bottomcands
-        # FIXME - develop better logic to calculate what happens with each possible
-        #         advancing candidate than selecting the next candidate randomly
-        unluckycand = random.choice(bottomcands)
-        roundmeta[-1]['eliminated'] = [ unluckycand ]
-        nextcands = list(set(candlist) - set([unluckycand]))
-        nextvotelines = \
-            _eliminate_cands_from_votelines([unluckycand], deepcopy(prunedvlns))
+        ntc = [cand for cand, votes in roundcount.items() \
+               if bottomvotesper < votes <= penultvotesper]
+
+        penultvotestot = sum(roundcount[cand] for cand in ntc)
+
+        # Batch elimination: Eliminate all candidates if the total top
+        # score for all tied candidates in this round is less than the
+        # total of any one candidate in subsequently higher total top
+        # vote counts.
+        if bottomvotestot <= penultvotesper:
+            roundmeta[-1]['batch_elim'] = True
+            roundmeta[-1]['eliminated'] = bottomcands
+            unluckycand = None
+            nextcands = list(set(candlist) - set(bottomcands))
+            nextvotelines = \
+                _eliminate_cands_from_votelines(bottomcands, deepcopy(prunedvlns))
+        else:
+            # FIXME - develop better logic to calculate what happens
+            #         with each possible advancing candidate than
+            #         selecting the next candidate randomly
+            roundmeta[-1]['random_elim'] = True
+            unluckycand = random.choice(bottomcands)
+            roundmeta[-1]['eliminated'] = [ unluckycand ]
+            nextcands = list(set(candlist) - set([unluckycand]))
+            nextvotelines = \
+                _eliminate_cands_from_votelines([unluckycand], deepcopy(prunedvlns))
+        thisroundloserlist = [ unluckycand ]
     else:
         roundmeta[-1]['eliminated'] = bottomcands
         nextcands = list(set(candlist) - set(bottomcands))
         nextvotelines = \
             _eliminate_cands_from_votelines(bottomcands, prunedvlns)
-
+        thisroundloserlist = bottomcands
+    # now populate 'all_eliminated'
     if "all_eliminated" not in roundmeta[-1]:
         roundmeta[-1]['all_eliminated'] = set()
     if len(roundmeta) > 1:
         roundmeta[-1]['all_eliminated'].update(roundmeta[-2]['all_eliminated'])
-
     if (len(roundmeta) > 1):
         for cand in roundmeta[-2]['eliminated']:
             roundmeta[-2]['all_eliminated'].add(cand)
-    if has_tie:
-        roundmeta[-1]['all_eliminated'].update([unluckycand])
-    else:
-        roundmeta[-1]['all_eliminated'].update(bottomcands)
+    if thisroundloserlist != [None]:
+        roundmeta[-1]['all_eliminated'].update(thisroundloserlist)
     if min_votes == max_votes:
         # This should be reached only if there's a tie between candidates
         winner = [c for c, v in roundcount.items() if v == max_votes]
@@ -191,7 +247,7 @@ def IRV_dict_from_jabmod(jabmod):
     candlist = list(jabmod['candidates'].keys())
     votelines = deepcopy(jabmod['votelines'])
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
-        _irv_count_internal(candlist, votelines)
+        _irv_count_internal(candlist, votelines, roundnum = 1)
 
     winner = retval['winner']
     if len(winner) > 1:

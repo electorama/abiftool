@@ -61,6 +61,12 @@ testlist = [
         'testdata/california/sf2018special-results.abif',
         ["rounds", -1, "LONDON_BREED"],
         116020
+    ),
+    (
+        (['-f', 'abif', '-t', 'irvjson'],
+         'testdata/california/sf2018special-results.abif',
+         ["roundmeta", 0, "eliminated", 3],
+         r'WRITE_IN')
     )
 ]
 
