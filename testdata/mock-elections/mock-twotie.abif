@@ -1,0 +1,23 @@
+# Case 19 - RCV/IRV tiebreaker with only two ties
+#
+# This test file is a second demonstration of RCV/IRV's tiebreaking
+# butterfly effect, where this one just shows two ties rather than a
+# long string of ties.  This still results in ripple effects in later
+# rounds.
+
+2:A>B>C>D>E>F>G>H
+12:B>C>D>E>F>G>H
+102:C>D>E>F>G>H
+1001:D>E>F>G>H
+10001:E>F>G>H
+100001:F>G>H
+1000002:G>H
+10000001:H
+10000002:S
+1000001:T>S
+100002:U>T>S
+10002:V>U>T>S
+1002:W>V>U>T>S
+101:X>W>V>U>T>S
+11:Y>X>W>V>U>T>S
+1:Z>Y>X>W>V>U>T>S

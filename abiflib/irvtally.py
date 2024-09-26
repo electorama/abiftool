@@ -214,10 +214,12 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     if len(roundmeta) > 1:
         roundmeta[-1]['all_eliminated'].update(roundmeta[-2]['all_eliminated'])
     if (len(roundmeta) > 1):
-        for cand in roundmeta[-2]['eliminated']:
-            roundmeta[-2]['all_eliminated'].add(cand)
+        for cand in roundmeta[-1]['eliminated']:
+            roundmeta[-1]['all_eliminated'].add(cand)
     if thisroundloserlist != [None]:
         roundmeta[-1]['all_eliminated'].update(thisroundloserlist)
+
+    # This is where we determine if we need to add another layer of recursion
     if min_votes == max_votes:
         # This should be reached only if there's a tie between candidates
         winner = [c for c, v in roundcount.items() if v == max_votes]
