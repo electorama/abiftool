@@ -27,6 +27,7 @@ INPUT_FORMATS = [
     {'abif': 'ABIF format'},
     {'debtally': 'Election output format used by the Debian Project'},
     {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
+    {'nameq': 'Brian Olson\'s format which URL-encoded version of the raw ballots'},
     {'preflib': 'Files downloaded from preflib.org'},
     {'sftxt': 'Text files published by the City and County of San Francisco'},
     {'widj': 'Legacy format from Electowidget'}
@@ -167,6 +168,8 @@ def main():
         abifmodel = convert_abif_to_jabmod(rawabifstr)
     elif (input_format == 'jabmod'):
         abifmodel = json.loads(inputstr)
+    elif (input_format == 'nameq'):
+        abifmodel = convert_nameq_to_jabmod(inputstr)
     elif (input_format == 'preflib'):
         rawabifstr = convert_preflib_str_to_abif(inputstr)
         abifmodel = convert_abif_to_jabmod(rawabifstr)
@@ -190,16 +193,17 @@ def main():
         return
 
     outstr = ''
-    copecount = full_copecount_from_abifmodel(abifmodel)
     if (output_format == 'abif'):
         outstr += convert_jabmod_to_abif(abifmodel)
     elif (output_format == 'csvrank'):
         outstr += get_ranking_output_csv(abifmodel)
     elif (output_format == 'dot'):
+        copecount = full_copecount_from_abifmodel(abifmodel)
         outstr += copecount_diagram(copecount, outformat='dot')
     elif (output_format == 'html'):
         outstr += htmltable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'html_snippet'):
+        copecount = full_copecount_from_abifmodel(abifmodel)
         if 'svg' in modifiers:
             svg_text = copecount_diagram(copecount, outformat='svg')
         else:
@@ -219,6 +223,7 @@ def main():
         pairdict = pairwise_count_dict(abifmodel)
         outstr += json.dumps(pairdict, indent=4)
     elif (output_format == 'svg'):
+        copecount = full_copecount_from_abifmodel(abifmodel)
         outstr += copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'text'):
         if 'candlist' in modifiers:
@@ -238,6 +243,7 @@ def main():
         if 'STAR' in modifiers:
             outstr += STAR_report(abifmodel)
         if 'Copeland' in modifiers:
+            copecount = full_copecount_from_abifmodel(abifmodel)
             outstr += Copeland_report(abifmodel['candidates'], copecount)
     elif (output_format == 'winlosstiejson'):
         pairdict = pairwise_count_dict(abifmodel)
