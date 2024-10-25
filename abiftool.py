@@ -41,6 +41,7 @@ OUTPUT_FORMATS = [
     {'html_snippet': 'HTML snippet that does not includes the <head> elements'},
     {'irvjson': 'JSON format representing IRV election results'},
     {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
+    {'nameq': 'Brian Olson\'s format which URL-encoded version of the raw ballots'},
     {'paircountjson': 'Pairwise ballot counts'},
     {'svg': 'SVG output showing pairwise matchups and Copeland wins/losses/ties'},
     {'text': 'Text table showing pairwise matchups and Copeland wins/losses/ties'},
@@ -219,6 +220,8 @@ def main():
         outstr += json.dumps(clean_dict(IRV_dict), indent=4)
     elif (output_format == 'jabmod'):
         outstr += json.dumps(abifmodel, indent=4)
+    elif (output_format == 'nameq'):
+        outstr += convert_jabmod_to_nameq(abifmodel)
     elif (output_format == 'paircountjson'):
         pairdict = pairwise_count_dict(abifmodel)
         outstr += json.dumps(pairdict, indent=4)

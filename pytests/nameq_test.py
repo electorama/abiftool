@@ -64,6 +64,9 @@ texttestlist = [
     (['-f', 'nameq', '-t', 'text', '-m', 'IRV'],
      'testdata/bolson-nameq/tennessee-example-simple.nameq',
      r"The IRV winner is Knox"),
+    (['-f', 'abif', '-t', 'nameq'],
+     'testdata/mock-elections/tennessee-example-simple.abif',
+     r'Memph=1&Nash=2&Chat=3&Knox=4'),
 ]
 
 @pytest.mark.parametrize(

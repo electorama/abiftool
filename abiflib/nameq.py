@@ -16,11 +16,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib.core import ABIF_VERSION
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, quote_plus
 
 
 def convert_nameq_to_jabmod(inputstr):
-    """Converts electowidget JSON (widj) to the JSON ABIF model (jabmod)."""
+    """Converts Brian Olson's .nameq format to jabmod (JSON ABIF model)."""
 
     abifmodel = {}
     abifmodel["metadata"] = {}
@@ -48,3 +48,18 @@ def convert_nameq_to_jabmod(inputstr):
     abifmodel["metadata"]["ballotcount"] = ballotcount
 
     return abifmodel
+
+
+def convert_jabmod_to_nameq(abifmodel):
+    """Converts jabmod (JSON ABIF model) to Brian Olson's .nameq format."""
+
+    retval = ""
+    for vl in abifmodel['votelines']:
+        for i in range(vl['qty']):
+            nqarray = []
+            for prefkey, pv in vl['prefs'].items():
+                pk = quote_plus(prefkey)
+                nqarray.append(f"{pk}={pv['rank']}")
+            retval += "&".join(nqarray)
+            retval += "\n"
+    return retval
