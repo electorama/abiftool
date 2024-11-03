@@ -83,7 +83,14 @@ testlist = [
          'contains',
          ["roundmeta", 13, "all_eliminated"],
          r'F')
-    )
+    ),
+    (
+        (['-f', 'abif', '-t', 'jabmod'],
+         'testdata/AlaskaSpecial2022.abif',
+         'length',
+         ["candidates"],
+         4)
+    ),
 ]
 
 @pytest.mark.parametrize(
@@ -99,5 +106,7 @@ def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
         assert get_value_from_obj(outputdict, keylist) == value
     elif testtype == 'contains':
         assert value in get_value_from_obj(outputdict, keylist)
+    elif testtype == 'length':
+        assert len(get_value_from_obj(outputdict, keylist)) == value
     else:
-        assert testtype in ['is_equal', 'contains']
+        assert testtype in ['is_equal', 'contains', 'length']

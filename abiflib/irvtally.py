@@ -23,7 +23,12 @@ def _discard_toprank_overvotes(votelines):
     overvotes = 0
     for i, vln in enumerate(retval):
         prefs = vln['prefs']
-        rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
+        try:
+            rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
+        except:
+            import json
+            print(json.dumps(prefs, indent=2))
+            raise
         if len(rlist) > 0:
             x = 0
             xtok = rlist[x]
@@ -118,6 +123,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     mymeta['ballotcount'] = 0
 
     # 3. Overvote pruning and counting remaining ballots
+    #print(f"{candlist=}")
     (ov, prunedvlns) = _discard_toprank_overvotes(votelines)
     mymeta['overvoteqty'] += ov
     for (i, vln) in enumerate(prunedvlns):

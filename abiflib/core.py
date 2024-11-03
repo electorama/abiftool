@@ -248,6 +248,57 @@ def _add_ratings_to_jabmod_votelines(inmod):
     return outmod
 
 
+def _extract_candidates_from_prefstr(prefstr):
+    '''Extract candidate tokens from prefstr portion of line'''
+    retval = []
+    tokenlist = re.split(r"(\[|\]|\>|\=|\,)", prefstr)
+    inbrackets = False
+    inquotes = False
+    quotetok = ""
+    for tok in tokenlist:
+        if inbrackets or inquotes:
+            if re.match(r"^\[", tok) and not inbrackets:
+                inbrackets = True
+                quotetok = ""
+                continue
+            elif re.match(r"^\]", tok) and inbrackets:
+                inbrackets = False
+                retval.append(quotetok) 
+                quotetok = ""
+                continue
+            elif re.match(r"^\"", tok):
+                if not inquotes:
+                    # this must be the starting quote
+                    quotetok = ""
+                else:
+                    # this must be the ending quote
+                    retval.append(quotetok)
+                    quotetok = ""
+                inquotes = ( not inquotes )
+                continue
+            elif len(tok)>0:
+                quotetok += tok
+            else:
+                raise Exception
+        else:
+            subchars = r'<>='
+            # replace subchars with nothing ("") at the beginning of the token:
+            tok = re.sub(r'^[' + subchars + r']', '', tok)
+            # replace subchars with nothing ("") at the end of the token:
+            tok = re.sub(r'[' + subchars + r']$', '', tok)
+            if re.match(r"^[^\[\]\>\=\,]", tok):
+                tok = re.sub(r"/\d+$", '', tok)
+                if not re.match(r"^\s*$", tok):
+                    retval.append(f"{tok}")
+            elif re.match(r"^\[", tok):
+                inbrackets = True
+            elif re.match(r"^\"", tok):
+                inquotes = True
+            else:
+                pass
+    return retval
+
+
 def _parse_prefstr_to_dict(prefstr, qty=0,
                            abifmodel=None, linecomment=None):
     '''Convert prefstr portion of .abif voteline to jabvoteline
@@ -260,7 +311,6 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         abifmodel = _get_emptyish_abifmodel()
 
     # Split the string by commas or ranking symbols
-    candidates = re.split(r",|>|=", prefstr)
     delimeters = [char for char in prefstr if char in ">,="]
     if delimeters and delimeters[0] in '>=':
         rank_or_rate = "rank"
@@ -268,6 +318,8 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         rank_or_rate = "rate"
     else:
         rank_or_rate = "rankone"
+
+    candidates =  _extract_candidates_from_prefstr(prefstr)
     candkeys = []
     for (i, candpref) in enumerate(candidates):
         candpref = candpref.strip()
@@ -282,7 +334,13 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
 
         prefs[candidate] = {}
         if i < len(candidates) - 1:
-            prefs[candidate]["nextdelim"] = delimeters[i]
+            try:
+                prefs[candidate]["nextdelim"] = delimeters[i]
+            except:
+                print(f"{prefstr=}")
+                print(f"{delimeters=} {i=}")
+                print(f"{candidates=}")
+                raise
         if rank_or_rate == "rankone":
             rank = 1
             prefs[candidate]["rank"] = rank
@@ -501,8 +559,12 @@ def _get_votelinestr_from_jabvoteline(jabvoteline):
     if has_full_ratings:
         prefstr = _prefstr_from_ratings(prefitems)
     else:
-        prefstr = _prefstr_from_ranked_line(sorted(prefitems,
-                                                   key=lambda x: x[1]['rank']))
+        try:
+            prefstr = _prefstr_from_ranked_line(sorted(prefitems,
+                                                       key=lambda x: x[1]['rank']))
+        except:
+            print(f"{prefitems=}")
+            raise
     local_abif_str += f"{jabvoteline['qty']}:{prefstr}\n"
     #abiflib_test_log(f"func13: {local_abif_str=}")
     return local_abif_str
