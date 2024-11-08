@@ -83,6 +83,7 @@ def convert_abif_to_jabmod(inputstr,
     # 'v' is the voteline number
     v = 0
     for i, fullline in enumerate(inputstr.splitlines()):
+        abiflib_test_log(f"catj_Line086: {i=} {fullline=}")
         matchgroup = None
         linecomment = None
         cparts = None
@@ -138,10 +139,21 @@ def convert_abif_to_jabmod(inputstr,
 
     # Add in Borda-ish score if ratings are not provided
     firstprefs = abifmodel['votelines'][0]['prefstr']
-    abiflib_test_log(f"{firstprefs=}")
-    firstk, firstv = list(firstprefs.items())[0]
+    abiflib_test_log(f"catj_Line142:")
+    abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
+    abiflib_test_log(f"catj_Line144: {firstprefs=}")
+    closelog = False
+    firstk = {}
+    firstv = {}
+    try:
+        firstk, firstv = list(firstprefs.items())[0]
+    except:
+        closelog = True
+
     if not firstv.get('rating') and add_ratings:
         abifmodel = _add_ratings_to_jabmod_votelines(abifmodel)
+    abiflib_test_log(f"catj_Line148: {abifmodel=}")
+    abiflib_test_logblob(abifmodel)
 
     slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
                    reverse=True)

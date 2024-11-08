@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from pprint import pprint
+from pprint import pprint, pformat
 import copy
 import inspect
 import json
@@ -69,10 +69,26 @@ class LogfileSingleton:
 
         return cls._instance
 
-    def log(self, msg):
+    def log(self, msg, newline=True):
         """Log a message to the file if filehandle is set; otherwise, do nothing."""
         if self._filehandle:
             self._filehandle.write(f"{msg}")
+            if newline:
+                self._filehandle.write(f"\n")
+            self._filehandle.flush()
+
+    def logblob(self, blob, blobmark="BLOB"):
+        """Log a pformatted blob to the file if filehandle is set; otherwise, do nothing.
+
+        Set blobmark to None for no markers before/after blob
+        """
+        if self._filehandle:
+            if blobmark:
+                self._filehandle.write(f"--{blobmark}START--\n")
+            self._filehandle.write(pformat(blob))
+            self._filehandle.write(f"\n")
+            if blobmark:
+                self._filehandle.write(f"\n--{blobmark}END--\n")
             self._filehandle.flush()
 
     @classmethod
@@ -82,10 +98,17 @@ class LogfileSingleton:
             cls._filehandle.close()
             cls._filehandle = None
 
-def abiflib_test_log(msg=None):
-    """Logs to file in ABIFLIB_LOG environment variable if defined."""
+
+def abiflib_test_log(msg=None, newline=True):
+    """Logs msg to file in ABIFLIB_LOG environment variable if defined."""
     logobj = LogfileSingleton()
-    logobj.log(f"{msg}\n")
+    logobj.log(msg, newline)
+
+
+def abiflib_test_logblob(blob, blobmark=None):
+    """Logs pformatted blob to file in ABIFLIB_LOG environment variable if defined."""
+    logobj = LogfileSingleton()
+    logobj.logblob(blob, blobmark)
 
 
 def abiflib_stackfunc(index=1):
