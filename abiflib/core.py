@@ -357,33 +357,6 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
     candidates =  _extract_candprefs_from_prefstr(prefstr)
     candkeys = []
     for (i, candpref) in enumerate(candidates):
-        '''
-        candpref = candpref.strip()
-        if not candpref:
-            continue
-
-        parts = candpref.split("/")
-        candidate = parts[0].strip("[]\"")
-        candkeys.append(candidate)
-        if candidate not in abifmodel['candidates']:
-            abifmodel['candidates'][candidate] = candidate
-
-        prefs[candidate] = {}
-        if i < len(candidates) - 1:
-            prefs[candidate]["nextdelim"] = delimeters[i]
-        if rank_or_rate == "rankone":
-            rank = 1
-            prefs[candidate]["rank"] = rank
-        elif rank_or_rate == "rank":
-            prefs[candidate]["rank"] = rank
-            if i < len(candidates) - 1 and delimeters[i] == ">":
-                rank += 1
-
-        if len(parts) > 1:
-            prefs[candidate]["rating"] = parts[1]
-        elif rank_or_rate == "rate":
-            raise ABIFVotelineException(message=f"{candpref=}", value=candpref)
-        '''
         (cand, candrating) = candpref
         candkeys.append(cand)
         prefs[cand] = {}
@@ -413,6 +386,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
 def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
+    abiflib_test_log(f"pap_Line416: {prefstr=}")
     voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
     voterid = None
     if linecomment is not None:
@@ -438,6 +412,7 @@ def _process_abif_prefline(qty, prefstr,
     if voterid is not None:
         linepair['voterid'] = voterid
     abifmodel['votelines'].append(linepair)
+    abiflib_test_log(f"pap_Line442: {abifmodel=}")
     return abifmodel
 
 ########################
