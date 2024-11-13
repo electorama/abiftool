@@ -421,12 +421,16 @@ def _process_abif_prefline(qty, prefstr,
                                          qty=qty,
                                          abifmodel=abifmodel,
                                          linecomment=linecomment)
+    abiflib_test_log(f"{len(prefstrdict)=}")
+    abiflib_test_logblob(prefstrdict)
     linepair['comment'] = linecomment
     linepair['prefs'] = prefstrdict['prefs']
     linepair['prefstr'] = prefstr.rstrip()
     if voterid is not None:
         linepair['voterid'] = voterid
     abifmodel['votelines'].append(linepair)
+    # merge candidate list into abifmodel['candidates']
+    abifmodel['candidates'] = abifmodel['candidates'] | {x: x for x in prefstrdict['cands'] }
     #abiflib_test_log(f"pap_Line416:")
     #abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
     return abifmodel

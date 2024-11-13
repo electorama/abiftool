@@ -31,6 +31,8 @@ def pairwise_count_dict(abifmodel):
     votelines = abifmodel['votelines']
 
     candtoks = list(candidates.keys())
+    abiflib_test_log(f"{candidates=}")
+    abiflib_test_logblob(abifmodel)
 
     # Initialize the return value matrix
     retval = {}

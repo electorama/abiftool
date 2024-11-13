@@ -28,6 +28,7 @@ def copecount_diagram(copecount, outformat='svg', is_inline=False):
     winlosstie = copecount['winlosstie']
 
     # Determine the candidate with the highest Copeland score (most wins)
+    abiflib_test_log(f"{copecount=}")
     top_candidate = max(winlosstie,
                         key=lambda candidate: winlosstie[candidate]['wins'])
 
