@@ -81,10 +81,10 @@ def test_debtally_cli_json(outformat, filename, key1, subkey1, val1):
     outputdict = json.loads("\n".join(abiftool_output))
 
     #LOGOBJ.log(json.dumps(outputdict, indent=4) + "\n")
-    LOGOBJ.log(f'===============\n')
-    LOGOBJ.log(f'{outputdict[key1][subkey1]=} {key1=} {subkey1=}\n')
+    #LOGOBJ.log(f'===============\n')
+    #LOGOBJ.log(f'{outputdict[key1][subkey1]=} {key1=} {subkey1=}\n')
     testcond = (outputdict[key1][subkey1] == val1)
-    LOGOBJ.log(f'{val1=} {testcond=}\n')
+    #LOGOBJ.log(f'{val1=} {testcond=}\n')
     assert testcond
     return None
 

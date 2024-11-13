@@ -83,7 +83,7 @@ def convert_abif_to_jabmod(inputstr,
     # 'v' is the voteline number
     v = 0
     for i, fullline in enumerate(inputstr.splitlines()):
-        abiflib_test_log(f"catj_Line086: {i=} {fullline=}")
+        #abiflib_test_log(f"{i=} {fullline=}")
         matchgroup = None
         linecomment = None
         cparts = None
@@ -139,10 +139,11 @@ def convert_abif_to_jabmod(inputstr,
 
     # Add in Borda-ish score if ratings are not provided
     firstprefs = abifmodel['votelines'][0]['prefstr']
-    abiflib_test_log(f"catj_Line142:")
-    abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
-    abiflib_test_log(f"catj_Line144: {firstprefs=}")
-    closelog = False
+    #abiflib_test_log(f"catj_Line142:")
+    #abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
+    #abiflib_test_log(f"catj_Line144: {firstprefs=}")
+
+    # FIXME v Remove exception
     firstk = {}
     firstv = {}
     try:
@@ -152,8 +153,8 @@ def convert_abif_to_jabmod(inputstr,
 
     if not firstv.get('rating') and add_ratings:
         abifmodel = _add_ratings_to_jabmod_votelines(abifmodel)
-    abiflib_test_log(f"catj_Line148: {abifmodel=}")
-    abiflib_test_logblob(abifmodel)
+    #abiflib_test_log(f"{abifmodel=}")
+    #abiflib_test_logblob(abifmodel)
 
     slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
                    reverse=True)
@@ -272,9 +273,11 @@ def _extract_candprefs_from_prefstr(prefstr):
     prefnum = 0
     currating = None
     ccand = None
+    #abiflib_test_log(f"{tokenlist=}")
     for tok in tokenlist:
         #abiflib_test_log(f"ecfp_Line263: {tok=}")
         tok = tok.strip()
+        #abiflib_test_log(f"{tok=} {inbrackets=} {inquotes=}")
         if inbrackets or inquotes:
             #abiflib_test_log(f"ecfp_Line266 {tok=} {inquotes=}")
             if re.match(r"^\[", tok) and not inbrackets:
@@ -284,8 +287,11 @@ def _extract_candprefs_from_prefstr(prefstr):
                 currating = None
                 continue
             elif re.match(r"^\]", tok) and inbrackets:
+                # End of square bracketed part
                 inbrackets = False
-                retval.append( (quotetok, currating) )
+                ccand = quotetok
+                retval.append( (ccand, currating) )
+                #abiflib_test_log(f"{ccand=} {retval=}")
                 quotetok = ""
                 continue
             elif re.match(r"^\s*\"", tok):
@@ -308,29 +314,33 @@ def _extract_candprefs_from_prefstr(prefstr):
             #tok = re.sub(r'^[' + subchars + r']', '', tok)
             # replace subchars with nothing ("") at the end of the token:
             #tok = re.sub(r'[' + subchars + r']$', '', tok)
-            #abiflib_test_log(f"ecfp_Line299 {tok=}")
             if m := re.match(r'\s*\"([^\"]*)\"/(\d+)', tok):
-                cand = m.group(1)
+                ccand = m.group(1)
                 rating = m.group(2)
-                retval.append((cand, rating))
-                #abiflib_test_log(f"ecfp_Line303: {cand=} {rating=}")
+                retval.append((ccand, rating))
+                #abiflib_test_log(f"{ccand=} {rating=}")
             elif m := re.match(r'\s*\"([^\"]*)\"', tok):
-                cand = m.group(1)
+                ccand = m.group(1)
                 rating = None
-                #abiflib_test_log(f"ecfp_Line307: {cand=} {rating=}")
+                #abiflib_test_log(f"{ccand=} {rating=}")
             elif re.match(r"^\s*[^\[\]\>\=\,]", tok):
                 ctok = re.sub(r"/\d+$", '', tok)
+                #abiflib_test_log(f"{tok=} {ctok=}")
+                #if ctok != '':
+                #    retval.append(f"{ctok}")
                 if ctok != '':
-                    retval.append(f"{ctok}")
+                    ccand = ctok
+                    retval.append( (ccand, None) )
                 if m := re.search(r"/(\d+)$", tok):
-                    retval[-1] = ( retval[-1][0], int(m.group(1)) )
+                    retval[-1] = ( ccand, int(m.group(1)) )
+                #abiflib_test_log(f"{ccand=} {retval=}")
             elif re.match(r"^\[", tok):
                 inbrackets = True
             elif re.match(r"^\s*\"", tok):
                 inquotes = True
             else:
                 pass
-    #abiflib_test_log(f"ecfp_Line318 {retval=}")
+    #abiflib_test_log(f"{retval=}")
     return retval
 
 
@@ -338,7 +348,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
                            abifmodel=None, linecomment=None):
     '''Convert prefstr portion of .abif voteline to jabvoteline
     structure.'''
-    abiflib_test_log(f"pptd_Line318: {prefstr=}")
+    #abiflib_test_log(f"{prefstr=}")
     initval = corefunc_init(tag="f08")
     prefs = {}
     rank = 1
@@ -354,39 +364,45 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
     else:
         rank_or_rate = "rankone"
 
-    candidates =  _extract_candprefs_from_prefstr(prefstr)
+    candpreflist =  _extract_candprefs_from_prefstr(prefstr)
+    #abiflib_test_log(f"{candpreflist=}")
     candkeys = []
-    for (i, candpref) in enumerate(candidates):
+    for (i, candpref) in enumerate(candpreflist):
+        #abiflib_test_log(f"exception: {candpref=}")
         (cand, candrating) = candpref
         candkeys.append(cand)
         prefs[cand] = {}
+        if candrating:
+            prefs[cand]["rating"] = candrating
         if rank_or_rate == "rankone":
             rank = 1
             prefs[cand]["rank"] = rank
         elif rank_or_rate == "rank":
             prefs[cand]["rank"] = rank
-            if i < len(candidates) - 1 and delimeters[i] == ">":
+            if i < len(candpreflist) - 1 and delimeters[i] == ">":
                 rank += 1
-        elif rank_or_rate == "rate":
-            prefs[cand]["rating"] = candrating
+                prefs[cand]["nextdelim"] = delimeters[i]
+        if i < len(candpreflist) - 1:
+            prefs[cand]["nextdelim"] = delimeters[i]
 
 
-    abiflib_test_log(f"pptd_Line378: {prefs=}")
+    #abiflib_test_log(f"{prefs=}")
     if len(candkeys) > 0:
         firstcandprefs = prefs.get(candkeys[0])
         if firstcandprefs.get('rating') and not firstcandprefs.get('rank'):
             prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
     else:
         prefs = {}
-    abiflib_test_log(f"pptd_Line385: {prefs=} cands/{candkeys=}")
+    #abiflib_test_log(f"{prefs=} cands/{candkeys=}")
     prefstrdict = {"prefs": prefs, "cands": candkeys}
+    #abiflib_test_logblob(prefstrdict, blobmark="prefstrdict ")
     return prefstrdict
 
 
 def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
-    abiflib_test_log(f"pap_Line416: {prefstr=}")
+    #abiflib_test_log(f"pap_Line390: {prefstr=}")
     voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
     voterid = None
     if linecomment is not None:
@@ -404,15 +420,15 @@ def _process_abif_prefline(qty, prefstr,
     prefstrdict = _parse_prefstr_to_dict(prefstr,
                                          qty=qty,
                                          abifmodel=abifmodel,
-                                         linecomment=linecomment)['prefs']
-    #linepair['prefs'] = prefstrdict['prefs']
-    abiflib_test_log(f"pap_Line422: {prefstrdict=}")
+                                         linecomment=linecomment)
     linepair['comment'] = linecomment
+    linepair['prefs'] = prefstrdict['prefs']
     linepair['prefstr'] = prefstr.rstrip()
     if voterid is not None:
         linepair['voterid'] = voterid
     abifmodel['votelines'].append(linepair)
-    abiflib_test_log(f"pap_Line442: {abifmodel=}")
+    #abiflib_test_log(f"pap_Line416:")
+    #abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
     return abifmodel
 
 ########################
@@ -568,7 +584,7 @@ def _get_votelinestr_from_jabvoteline(jabvoteline):
     initval = corefunc_init(tag="f15")
     local_abif_str = ""
 
-    abiflib_test_log(f"{jabvoteline['prefs']}")
+    #abiflib_test_log(f"{jabvoteline['prefs']}")
     try:
         prefitems = sorted(jabvoteline['prefs'].items(),
                            key=lambda item: (-int(item[1].get('rating')),
@@ -682,6 +698,7 @@ def main():
                         help='stub function to run',
                         default='pref_to_dict',
                         choices=['pref_to_dict',
+                                 'process_abif_prefline',
                                  'emptyish',
                                  'modify_jabmod'])
     parser.add_argument('string', help='string(s) to pass to function',
@@ -692,6 +709,11 @@ def main():
         if not args.string:
             parser.error("pref_to_dict requires prefline as string[0]")
         parseout = _parse_prefstr_to_dict(f"{args.string[0]}")
+        print(json.dumps(parseout, indent=4))
+    elif args.func == 'process_abif_prefline':
+        if not args.string:
+            parser.error("process_abif_prefline requires prefline as string[0]")
+        parseout = _process_abif_prefline(0, f"{args.string[0]}")
         print(json.dumps(parseout, indent=4))
     elif args.func == 'emptyish':
         emptyish = _get_emptyish_abifmodel()

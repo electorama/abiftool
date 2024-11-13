@@ -100,9 +100,9 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     * roundmeta - metadata associated with all rounds
     """
     # 1. initializing/calculating rounds, roundmeta, and roundcount
-    abiflib_test_log("1. initializing/calculating rounds, roundmeta, and roundcount")
+    # abiflib_test_log("1. initializing/calculating rounds, roundmeta, and roundcount")
     # 1a. rounds, roundmeta, and roundnum are passed in recursively; init if needed
-    abiflib_test_log(pformat(roundmeta))
+    # abiflib_test_log(pformat(roundmeta))
     if rounds is None:
         rounds = []
     if roundmeta is None:
@@ -111,7 +111,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     roundcount = {cand: 0 for cand in candlist}
 
     # 2. initializing mymeta, which will eventually be appended to roundmeta
-    abiflib_test_log("2. Initializing mymeta")
+    # abiflib_test_log("2. Initializing mymeta")
     mymeta = {}
     if roundnum is None:
         roundnum = mymeta['roundnum'] = roundmeta[-1]['roundnum'] + 1
@@ -149,8 +149,8 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     mymeta['starting_cands'] = candlist
     mymeta['top_voteqty'] = min(roundcount.values())
     mymeta['bottom_voteqty'] = max(roundcount.values())
-    abiflib_test_log("votelines=")
-    abiflib_test_log(json.dumps(votelines, indent=4))
+    # abiflib_test_log("votelines=")
+    # abiflib_test_log(json.dumps(votelines, indent=4))
 
     # 5. Adding newly created "mymeta" to larger "roundmeta" variable
     rounds.append(roundcount)
@@ -158,9 +158,9 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     bottomcands = [c for c, v in roundcount.items() if v <= min_votes]
     has_tie = False
 
-    abiflib_test_log(f"{roundnum=}")
-    abiflib_test_log(f"{roundcount=}")
-    abiflib_test_log(f"{roundcount.items()=}")
+    # abiflib_test_log(f"{roundnum=}")
+    # abiflib_test_log(f"{roundcount=}")
+    # abiflib_test_log(f"{roundcount.items()=}")
 
     # * penultvotestot -- total topvotes among second-to-last-place
     #                     candidates
@@ -174,8 +174,8 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
                          roundcount)
     bottomvotesper = mbv = max(roundcount[cand] for cand in
                                bottomcands if cand in roundcount)
-    abiflib_test_log(f"{bottomvotestot=}")
-    abiflib_test_log(f"{bottomvotesper=}")
+    #abiflib_test_log(f"{bottomvotestot=}")
+    #abiflib_test_log(f"{bottomvotesper=}")
 
     if len(bottomcands) > 1:
         roundmeta[-1]['bottomtie'] = bottomcands
@@ -267,8 +267,8 @@ def IRV_dict_from_jabmod(jabmod):
     retval['has_tie'] = any(
         "bottomtie" in rm for rm in retval.get("roundmeta", []))
 
-    abiflib_test_log('IRV_dict_from_jabmod retval:')
-    abiflib_test_log(pformat(retval))
+    #abiflib_test_log('IRV_dict_from_jabmod retval:')
+    #abiflib_test_log(pformat(retval))
     return retval
 
 def get_IRV_report(IRV_dict):

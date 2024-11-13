@@ -69,9 +69,21 @@ class LogfileSingleton:
 
         return cls._instance
 
-    def log(self, msg, newline=True):
+    def log(self, msg, newline=True, showframeinfo=True, maxfuncnamelen=10,
+            maxfilenamelen=10):
         """Log a message to the file if filehandle is set; otherwise, do nothing."""
+        from inspect import currentframe, getframeinfo
+        callingframeinfo = getframeinfo(currentframe().f_back.f_back)
+        linenum = callingframeinfo.lineno
+        filename = os.path.basename(callingframeinfo.filename)
+        function = callingframeinfo.function
+        if maxfuncnamelen and len(function) > maxfuncnamelen:
+            function = function[0:maxfuncnamelen] + ".."
+        if maxfilenamelen and len(filename) > maxfilenamelen:
+            filename = filename[0:maxfilenamelen] + ".."
         if self._filehandle:
+            if showframeinfo:
+                self._filehandle.write(f"{function} ({filename}:{linenum}): ")
             self._filehandle.write(f"{msg}")
             if newline:
                 self._filehandle.write(f"\n")
@@ -88,7 +100,7 @@ class LogfileSingleton:
             self._filehandle.write(pformat(blob))
             self._filehandle.write(f"\n")
             if blobmark:
-                self._filehandle.write(f"\n--{blobmark}END--\n")
+                self._filehandle.write(f"--{blobmark}END--\n")
             self._filehandle.flush()
 
     @classmethod
@@ -99,10 +111,12 @@ class LogfileSingleton:
             cls._filehandle = None
 
 
-def abiflib_test_log(msg=None, newline=True):
+
+def abiflib_test_log(msg=None, newline=True, showframeinfo=True,
+                     maxfuncnamelen=10, maxfilenamelen=10):
     """Logs msg to file in ABIFLIB_LOG environment variable if defined."""
     logobj = LogfileSingleton()
-    logobj.log(msg, newline)
+    logobj.log(msg, newline, showframeinfo, maxfuncnamelen, maxfilenamelen)
 
 
 def abiflib_test_logblob(blob, blobmark=None):
