@@ -24,10 +24,12 @@ def _discard_toprank_overvotes(votelines):
     for i, vln in enumerate(retval):
         prefs = vln['prefs']
         try:
+            abiflib_test_log(f"{prefs.keys()=}")
             rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
         except:
-            import json
-            print(json.dumps(prefs, indent=2))
+            #import json
+            #print(json.dumps(prefs, indent=2))
+            abiflib_test_logblob(prefs)
             raise
         if len(rlist) > 0:
             x = 0

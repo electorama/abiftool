@@ -386,13 +386,19 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
             prefs[cand]["nextdelim"] = delimeters[i]
 
 
-    #abiflib_test_log(f"{prefs=}")
+    # NEW 2024-11-16 vv
+    prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    abiflib_test_log(f"prefs=")
+    abiflib_test_logblob(prefs)
+    # NEW 2024-11-16 ^^
     if len(candkeys) > 0:
         firstcandprefs = prefs.get(candkeys[0])
         if firstcandprefs.get('rating') and not firstcandprefs.get('rank'):
             prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
     else:
         prefs = {}
+    abiflib_test_log(f"prefs=")
+    abiflib_test_logblob(prefs)
     #abiflib_test_log(f"{prefs=} cands/{candkeys=}")
     prefstrdict = {"prefs": prefs, "cands": candkeys}
     #abiflib_test_logblob(prefstrdict, blobmark="prefstrdict ")
@@ -414,15 +420,15 @@ def _process_abif_prefline(qty, prefstr,
     if not abifmodel:
         abifmodel = _get_emptyish_abifmodel()
 
-    abifmodel['metadata']['ballotcount'] += int(qty)
+    #abifmodel['metadata']['ballotcount'] += int(qty)
     linepair = {}
     linepair['qty'] = int(qty)
     prefstrdict = _parse_prefstr_to_dict(prefstr,
                                          qty=qty,
                                          abifmodel=abifmodel,
                                          linecomment=linecomment)
-    abiflib_test_log(f"{len(prefstrdict)=}")
-    abiflib_test_logblob(prefstrdict)
+    #abiflib_test_log(f"{len(prefstrdict)=}")
+    #abiflib_test_logblob(prefstrdict)
     linepair['comment'] = linecomment
     linepair['prefs'] = prefstrdict['prefs']
     linepair['prefstr'] = prefstr.rstrip()
