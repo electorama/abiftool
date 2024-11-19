@@ -235,8 +235,9 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
                    key=lambda x: int(retval[x].get("rating", 0)),
                    reverse=True)
     if not inprefjab.get(cands[0]).get('rating'):
-        msg = f"Invalid call to _add_ranks_to_prefjab_by_rating"
-        raise ABIFVotelineException(value=inprefjab, message=msg)
+        inprefjab[cands[0]]['rating'] = 0
+        #msg = f"Invalid call to _add_ranks_to_prefjab_by_rating"
+        #raise ABIFVotelineException(value=inprefjab, message=msg)
 
     # Assign ranks
     prevrating = None
@@ -246,19 +247,24 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
             thisrank = 1
         elif int(retval[c].get("rating", 0)) < prevrating:
             thisrank += 1
-        retval[c]["rank"] = thisrank
+        else:
+            thisrank += 1
+        if not retval[c].get("rank"):
+            retval[c]["rank"] = thisrank
         prevrating = int(retval[c].get("rating", 0))
     return retval
 
 
 def _add_ratings_to_jabmod_votelines(inmod):
     ''' Calculate Borda-like ratings in lieu of explicit ratings '''
+    abiflib_test_log(f"{inmod=}")
     initval = corefunc_init(tag="f07")
     numcands = len(inmod['candidates'])
     outmod = copy.deepcopy(inmod)
     for vl in outmod['votelines']:
         for k, v in vl['prefs'].items():
             v['rating'] = numcands - v['rank']
+    abiflib_test_log(f"{outmod=}")
     return outmod
 
 
@@ -408,7 +414,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
 def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
-    #abiflib_test_log(f"pap_Line390: {prefstr=}")
+    abiflib_test_log(f"{prefstr=}")
     voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
     voterid = None
     if linecomment is not None:
