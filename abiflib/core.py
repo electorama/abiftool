@@ -83,7 +83,7 @@ def convert_abif_to_jabmod(inputstr,
     # 'v' is the voteline number
     v = 0
     for i, fullline in enumerate(inputstr.splitlines()):
-        #abiflib_test_log(f"{i=} {fullline=}")
+        abiflib_test_log(f"{i=} {fullline=}")
         matchgroup = None
         linecomment = None
         cparts = None
@@ -121,6 +121,7 @@ def convert_abif_to_jabmod(inputstr,
         elif (match := votelineregexp.match(strpdline)):
             matchgroup = 'votelineregexp'
             qty, prefstr = match.groups()
+
             abifmodel = _process_abif_prefline(qty,
                                                prefstr,
                                                abifmodel,
@@ -415,6 +416,7 @@ def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
     abiflib_test_log(f"{prefstr=}")
+
     voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
     voterid = None
     if linecomment is not None:
@@ -442,7 +444,9 @@ def _process_abif_prefline(qty, prefstr,
         linepair['voterid'] = voterid
     abifmodel['votelines'].append(linepair)
     # merge candidate list into abifmodel['candidates']
-    abifmodel['candidates'] = abifmodel['candidates'] | {x: x for x in prefstrdict['cands'] }
+    for x in prefstrdict['cands']:
+        if x not in abifmodel['candidates']:
+            abifmodel['candidates'][x] = x
     #abiflib_test_log(f"pap_Line416:")
     #abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
     return abifmodel

@@ -36,7 +36,7 @@ from abiftestfuncs import *
         #irv test006
         (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
          'testdata/commasep/jman722-example.abif',
-         r'The IRV winner is Georgie'),
+         r'The IRV winners are Allie and Georgie'),
         #irv test007
         (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
          'testdata/tenn-example/tennessee-example-overvote-02.abif',
