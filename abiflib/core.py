@@ -236,23 +236,27 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
                    key=lambda x: int(retval[x].get("rating", 0)),
                    reverse=True)
     if not inprefjab.get(cands[0]).get('rating'):
-        inprefjab[cands[0]]['rating'] = 0
+        inprefjab[cands[0]]['rating'] = 0 #FIXME don't just check the first of cands
         #msg = f"Invalid call to _add_ranks_to_prefjab_by_rating"
         #raise ABIFVotelineException(value=inprefjab, message=msg)
 
     # Assign ranks
-    prevrating = None
+    prevrate = None
     thisrank = 0
     for i, c in enumerate(cands):
+        thisrate = int(retval[c].get("rating", 0))
         if i == 0:
             thisrank = 1
-        elif int(retval[c].get("rating", 0)) < prevrating:
+        elif int(retval[c].get("rating", 0)) < prevrate:
             thisrank += 1
+        elif int(retval[c].get("rating", 0)) == prevrate:
+            thisrank = prevrank
         else:
-            thisrank += 1
+            raise ABIFVotelineException(message=f"Error: {i=} {c=} {thisrank=}")
         if not retval[c].get("rank"):
             retval[c]["rank"] = thisrank
-        prevrating = int(retval[c].get("rating", 0))
+        prevrate = int(retval[c].get("rating", 0))
+        prevrank = thisrank
     return retval
 
 
@@ -363,8 +367,8 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
     if not abifmodel:
         abifmodel = _get_emptyish_abifmodel()
     # Split the string by commas or ranking symbols
-    delimeters = [char for char in prefstr if char in ">,="]
-    if delimeters and delimeters[0] in '>=':
+    delimeters = [char for char in prefstr if char in ">,="] 
+    if delimeters and delimeters[0] in '>=':   # FIXME don't just check the first delimeter
         rank_or_rate = "rank"
     elif delimeters and delimeters[0] == ",":
         rank_or_rate = "rate"
