@@ -122,10 +122,13 @@ def convert_abif_to_jabmod(inputstr,
             matchgroup = 'votelineregexp'
             qty, prefstr = match.groups()
 
-            abifmodel = _process_abif_prefline(qty,
-                                               prefstr,
-                                               abifmodel,
-                                               linecomment)
+            if prefstr:
+                abifmodel = _process_abif_prefline(qty,
+                                                   prefstr,
+                                                   abifmodel,
+                                                   linecomment)
+            else:
+                abiflib_test_log(f"BLANK LINE: {prefstr=}")
             v += 1
         else:
             matchgroup = 'empty'
@@ -235,7 +238,9 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
     cands = sorted(retval,
                    key=lambda x: int(retval[x].get("rating", 0)),
                    reverse=True)
-    if not inprefjab.get(cands[0]).get('rating'):
+    abiflib_test_log(f"{inprefjab=}")
+
+    if inprefjab and not inprefjab.get(cands[0]).get('rating'):
         inprefjab[cands[0]]['rating'] = 0 #FIXME don't just check the first of cands
         #msg = f"Invalid call to _add_ranks_to_prefjab_by_rating"
         #raise ABIFVotelineException(value=inprefjab, message=msg)
@@ -396,23 +401,21 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         if i < len(candpreflist) - 1:
             prefs[cand]["nextdelim"] = delimeters[i]
 
-
-    # NEW 2024-11-16 vv
-    prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
-    abiflib_test_log(f"prefs=")
+    abiflib_test_log(f"{prefstr=}")
+    abiflib_test_log(f"{prefs=}")
     abiflib_test_logblob(prefs)
-    # NEW 2024-11-16 ^^
+    if prefs:
+        prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    else:
+        raise ABIFVotelineException(prefs, message=f"no prefs: {prefs=}")
+
     if len(candkeys) > 0:
         firstcandprefs = prefs.get(candkeys[0])
         if firstcandprefs.get('rating') and not firstcandprefs.get('rank'):
             prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
     else:
         prefs = {}
-    abiflib_test_log(f"prefs=")
-    abiflib_test_logblob(prefs)
-    #abiflib_test_log(f"{prefs=} cands/{candkeys=}")
     prefstrdict = {"prefs": prefs, "cands": candkeys}
-    #abiflib_test_logblob(prefstrdict, blobmark="prefstrdict ")
     return prefstrdict
 
 
