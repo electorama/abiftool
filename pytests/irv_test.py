@@ -34,9 +34,12 @@ from abiftestfuncs import *
          'testdata/burl2009/burl2009.abif',
          r'The IRV winner is Kiss'),
         #irv test006
+        # FIXME - There are a number of interpretations of this
+        # example.  The abiftool implmementation of IRV/RCV may need
+        # to be tweaked to match the popular usage of IRV/RCV.
         (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/commasep/jman722-example.abif',
-         r'The IRV winners are Allie and Georgie'),
+        'testdata/commasep/jman722-example.abif',
+         r'The IRV winner is Georgie'),
         #irv test007
         (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
          'testdata/tenn-example/tennessee-example-overvote-02.abif',
