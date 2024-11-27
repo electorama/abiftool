@@ -432,7 +432,7 @@ def _process_abif_prefline(qty, prefstr,
     if not abifmodel:
         abifmodel = _get_emptyish_abifmodel()
 
-    #abifmodel['metadata']['ballotcount'] += int(qty)
+    abifmodel['metadata']['ballotcount'] += int(qty)
     linepair = {}
     linepair['qty'] = int(qty)
     prefstrdict = _parse_prefstr_to_dict(prefstr,

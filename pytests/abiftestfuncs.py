@@ -34,7 +34,7 @@ def get_abiftool_output_as_array(cmd_args,
                                  log_post=""):
     command = [get_abiftool_scriptloc(), *cmd_args]
     commandstr = " ".join(command)
-    #abiflib_test_log(f"{log_pre}{commandstr}{log_post}")
+    abiflib_test_log(f"{log_pre}{commandstr}{log_post}")
     completed_process = subprocess.run(command,
                                        stdout=subprocess.PIPE,
                                        text=True)
