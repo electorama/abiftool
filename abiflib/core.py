@@ -529,31 +529,29 @@ def _prefstr_from_ranked_line(sortedprefs):
     prefstrfromranks = ""
     rank = 1
     lastrank = 1
+    abiflib_test_log(f"{len(sortedprefs)=}")
+    abiflib_test_log(f"{sortedprefs=}")
     add_delim = False
 
-    for name, data in sortedprefs:
+    for i, (name, data) in enumerate(sortedprefs):
+        abiflib_test_log(f"{name=} {data=}")
         if 'rank' in data:
             rank = data['rank']
-        if add_delim:
-            if rank > lastrank:
-                prefstrfromranks += '>'
-            elif rank == lastrank:
-                prefstrfromranks += '='
-            else:
-                pprint(sortedprefs)
-                raise(ValueError("Ranking error in jabmod"))
 
         prefstrfromranks += _abif_token_quote(name)
         if 'rating' in data and data['rating'] is not None:
             prefstrfromranks += f"/{data['rating']}"
-        if 'nextdelim' in data:
-            if data['nextdelim'] == '>':
-                rank += 1
-            prefstrfromranks += data['nextdelim']
-            add_delim = False
-        else:
-            add_delim = True
+        if i < len(sortedprefs) - 1:
+            nextrank = sortedprefs[i+1][1]['rank']
+            if rank < nextrank:
+                delim = '>'
+            elif rank == nextrank:
+                delim = '='
+            else:
+                raise(ValueError(f"Ranks don't make sense: {sortedprefs=}"))
+            prefstrfromranks += delim
         lastrank = rank
+    abiflib_test_log(f"{prefstrfromranks=}")
     return prefstrfromranks
 
 
