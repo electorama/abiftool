@@ -24,7 +24,7 @@ testdicts = [
         "votelinecandnum": 1,
         "votelinecandtok": "Allie",
         "abif_offset": -3,
-        "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy/0=Frank/0",
+        "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy=Frank",
         "html_offset": 8,
         "html_line": "     Allie"
     },
@@ -35,7 +35,7 @@ testdicts = [
         "votelinecandnum": 1,
         "votelinecandtok": "DGM",
         "abif_offset": -5,
-        "abif_line": "27:DGM/5>SBJ/2>SY/1>AM/0",
+        "abif_line": "27:DGM/5>SBJ/2>SY/1>AM",
         "html_offset": 8,
         "html_line": "     Doña García Márquez [\"DGM\"]"
     },
