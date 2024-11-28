@@ -240,11 +240,6 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
                    reverse=True)
     abiflib_test_log(f"{inprefjab=}")
 
-    if inprefjab and not inprefjab.get(cands[0]).get('rating'):
-        inprefjab[cands[0]]['rating'] = 0 #FIXME don't just check the first of cands
-        #msg = f"Invalid call to _add_ranks_to_prefjab_by_rating"
-        #raise ABIFVotelineException(value=inprefjab, message=msg)
-
     # Assign ranks
     prevrate = None
     thisrank = 0
@@ -252,15 +247,15 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
         thisrate = int(retval[c].get("rating", 0))
         if i == 0:
             thisrank = 1
-        elif int(retval[c].get("rating", 0)) < prevrate:
+        elif thisrate < prevrate:
             thisrank += 1
-        elif int(retval[c].get("rating", 0)) == prevrate:
+        elif thisrate == prevrate:
             thisrank = prevrank
         else:
             raise ABIFVotelineException(message=f"Error: {i=} {c=} {thisrank=}")
         if not retval[c].get("rank"):
             retval[c]["rank"] = thisrank
-        prevrate = int(retval[c].get("rating", 0))
+        prevrate = thisrate
         prevrank = thisrank
     return retval
 
