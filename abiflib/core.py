@@ -141,24 +141,9 @@ def convert_abif_to_jabmod(inputstr,
         msg += "Votelines (like '20:A>B>C') are required in valid ABIF files."
         raise ABIFVotelineException(value=inputstr, message=msg)
 
-    # Add in Borda-ish score if ratings are not provided
-    firstprefs = abifmodel['votelines'][0]['prefstr']
-    #abiflib_test_log(f"catj_Line142:")
-    #abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
-    #abiflib_test_log(f"catj_Line144: {firstprefs=}")
-
-    # FIXME v Remove exception
-    firstk = {}
-    firstv = {}
-    try:
-        firstk, firstv = list(firstprefs.items())[0]
-    except:
-        closelog = True
-
-    if not firstv.get('rating') and add_ratings:
+    # Add in Borda-ish score if requested by calling function
+    if add_ratings:
         abifmodel = _add_ratings_to_jabmod_votelines(abifmodel)
-    #abiflib_test_log(f"{abifmodel=}")
-    #abiflib_test_logblob(abifmodel)
 
     slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
                    reverse=True)
@@ -260,7 +245,7 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
     return retval
 
 
-def _add_ratings_to_jabmod_votelines(inmod):
+def _add_ratings_to_jabmod_votelines(inmod, overwrite=False):
     ''' Calculate Borda-like ratings in lieu of explicit ratings '''
     abiflib_test_log(f"{inmod=}")
     initval = corefunc_init(tag="f07")
@@ -268,7 +253,8 @@ def _add_ratings_to_jabmod_votelines(inmod):
     outmod = copy.deepcopy(inmod)
     for vl in outmod['votelines']:
         for k, v in vl['prefs'].items():
-            v['rating'] = numcands - v['rank']
+            if overwrite or not v.get('rating'):
+                v['rating'] = numcands - v['rank']
     abiflib_test_log(f"{outmod=}")
     return outmod
 
