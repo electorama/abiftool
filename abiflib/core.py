@@ -122,13 +122,10 @@ def convert_abif_to_jabmod(inputstr,
             matchgroup = 'votelineregexp'
             qty, prefstr = match.groups()
 
-            if prefstr:
-                abifmodel = _process_abif_prefline(qty,
-                                                   prefstr,
-                                                   abifmodel,
-                                                   linecomment)
-            else:
-                abiflib_test_log(f"BLANK LINE: {prefstr=}")
+            abifmodel = _process_abif_prefline(qty,
+                                               prefstr,
+                                               abifmodel,
+                                               linecomment)
             v += 1
         else:
             matchgroup = 'empty'
@@ -377,10 +374,8 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         rank_or_rate = "rankone"
 
     candpreflist =  _extract_candprefs_from_prefstr(prefstr)
-    #abiflib_test_log(f"{candpreflist=}")
     candkeys = []
     for (i, candpref) in enumerate(candpreflist):
-        #abiflib_test_log(f"exception: {candpref=}")
         (cand, candrating) = candpref
         candkeys.append(cand)
         prefs[cand] = {}
@@ -397,10 +392,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         if i < len(candpreflist) - 1:
             prefs[cand]["nextdelim"] = delimeters[i]
 
-    if prefs:
-        prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
-    else:
-        raise ABIFVotelineException(prefs, message=f"no prefs: {prefs=}")
+    prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
 
     if len(candkeys) > 0:
         firstcandprefs = prefs.get(candkeys[0])
@@ -417,6 +409,7 @@ def _process_abif_prefline(qty, prefstr,
     '''Add prefline with qty to the provided abifmodel/jabmod'''
     #abiflib_test_log(f"{prefstr=}")
 
+    initval = corefunc_init(tag="f09")
     voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
     voterid = None
     if linecomment is not None:
@@ -424,7 +417,6 @@ def _process_abif_prefline(qty, prefstr,
             cparts = match.groupdict()
             voterid = cparts['voterid']
 
-    initval = corefunc_init(tag="f09")
     if not abifmodel:
         abifmodel = _get_emptyish_abifmodel()
 
