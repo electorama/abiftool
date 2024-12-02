@@ -151,9 +151,8 @@ def main():
         modifiers = set(args.modifier)
     else:
         modifiers = set(['candlist', 'Copeland', 'winlosstie'])
-    add_STAR = 'STAR' in modifiers
-    add_scores = 'scores' in modifiers
-    add_ratings = args.add_scores or add_STAR or add_scores
+    add_ratings = args.add_scores
+
     storecomments = 'jcomments' in modifiers
     if (input_format == 'abif'):
         try:

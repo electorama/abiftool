@@ -223,7 +223,6 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
     cands = sorted(retval,
                    key=lambda x: int(retval[x].get("rating", 0)),
                    reverse=True)
-    abiflib_test_log(f"{inprefjab=}")
 
     # Assign ranks
     prevrate = None
@@ -245,17 +244,33 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
     return retval
 
 
-def _add_ratings_to_jabmod_votelines(inmod, overwrite=False):
+def _add_ratings_to_jabmod_votelines(inmod, add_ratings=True):
     ''' Calculate Borda-like ratings in lieu of explicit ratings '''
-    abiflib_test_log(f"{inmod=}")
+    # Detect if the rating key is in inmod anywhere.  Only add Borda
+    # style ratings if there are no ratings anywhere in inmod.
     initval = corefunc_init(tag="f07")
+
+    inmod_has_rating = False
+
+    for voteline in inmod['votelines']:
+        for k, v in voteline['prefs'].items():
+            if "rating" in v:
+                inmod_has_rating = True
+
     numcands = len(inmod['candidates'])
     outmod = copy.deepcopy(inmod)
     for vl in outmod['votelines']:
         for k, v in vl['prefs'].items():
-            if overwrite or not v.get('rating'):
-                v['rating'] = numcands - v['rank']
-    abiflib_test_log(f"{outmod=}")
+            # The ratings that get added should depend on whether
+            # inmod has ratings.  If it has ratings for some entries,
+            # then assume a default of zero for the entries that don't
+            # have ratings.  If there are no ratings throughout, then
+            # assume the ratings to be added are Borda-ish.
+            if not v.get('rating'):
+                if inmod_has_rating:
+                    v['rating'] = 0
+                elif add_ratings:
+                    v['rating'] = numcands - v['rank']
     return outmod
 
 
@@ -382,9 +397,6 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         if i < len(candpreflist) - 1:
             prefs[cand]["nextdelim"] = delimeters[i]
 
-    abiflib_test_log(f"{prefstr=}")
-    abiflib_test_log(f"{prefs=}")
-    abiflib_test_logblob(prefs)
     if prefs:
         prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
     else:
@@ -403,7 +415,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
 def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
-    abiflib_test_log(f"{prefstr=}")
+    #abiflib_test_log(f"{prefstr=}")
 
     voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
     voterid = None
@@ -423,8 +435,6 @@ def _process_abif_prefline(qty, prefstr,
                                          qty=qty,
                                          abifmodel=abifmodel,
                                          linecomment=linecomment)
-    #abiflib_test_log(f"{len(prefstrdict)=}")
-    #abiflib_test_logblob(prefstrdict)
     linepair['comment'] = linecomment
     linepair['prefs'] = prefstrdict['prefs']
     linepair['prefstr'] = prefstr.rstrip()
@@ -435,9 +445,8 @@ def _process_abif_prefline(qty, prefstr,
     for x in prefstrdict['cands']:
         if x not in abifmodel['candidates']:
             abifmodel['candidates'][x] = x
-    #abiflib_test_log(f"pap_Line416:")
-    #abiflib_test_logblob(abifmodel, blobmark="abifmodel ")
     return abifmodel
+
 
 ########################
 # Functions for converting jabmod into abif....
