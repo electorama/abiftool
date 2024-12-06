@@ -203,9 +203,6 @@ def main():
     elif (output_format == 'html'):
         outstr += htmltable_pairwise_and_winlosstie(abifmodel)
     elif (output_format == 'html_snippet'):
-        abiflib_test_log("html_snippet")
-        abiflib_test_logblob(abifmodel)
-
         copecount = full_copecount_from_abifmodel(abifmodel)
         if 'svg' in modifiers:
             svg_text = copecount_diagram(copecount, outformat='svg')

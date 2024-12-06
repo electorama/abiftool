@@ -45,9 +45,4 @@ def test_abiftool(test_case):
                                       testfilestr)
     elif(test_case['test_type'] == 'regex'):
         testval = re.search(test_case['test_data'], testfilestr)
-    cmd = f"abiftool.py {' '.join(test_case['options'])} {test_case['filename']}"
-    abiflib_test_log(cmd)
-    abiflib_test_log(f"{testval=}")
-    abiflib_test_logblob(test_case['test_data'], blobmark="test_case['test_data']")
-    abiflib_test_logblob(testfilearray, blobmark="testfilearray ")
     assert bool(testval)

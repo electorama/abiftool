@@ -16,7 +16,7 @@ LOGOBJ = abiflib.LogfileSingleton()
         # TEST 002:
         (['-t', 'jabmod'],
          'testdata/tenn-example/tennessee-example-scores.abif',
-         r"                    \"rating\": 133"), 
+         r"                    \"rating\": 133"),
         # TEST 003:
         (['-t', 'jabmod', '--add-scores'],
          'testdata/tenn-example/tennessee-example-scores.abif',
