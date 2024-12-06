@@ -27,11 +27,12 @@ import sys
 
 def basic_score_result_from_abifmodel(abifmodel):
     retval = {candtok: {} for candtok in abifmodel['candidates'].keys()}
+
     for cand in abifmodel['candidates'].keys():
         retval[cand]['candname'] = abifmodel['candidates'][cand]
         retval[cand]['score'] = 0
         retval[cand]['votercount'] = 0
-    for voteline in abifmodel['votelines']:
+    for i, voteline in enumerate(abifmodel['votelines']):
         qty = voteline['qty']
         for cand, candval in voteline['prefs'].items():
             rating = int(candval.get('rating', 0))

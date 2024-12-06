@@ -45,5 +45,4 @@ def test_abiftool(test_case):
                                       testfilestr)
     elif(test_case['test_type'] == 'regex'):
         testval = re.search(test_case['test_data'], testfilestr)
-    print(f"{testval=} {test_case['test_data']=} {testfilestr=}")
     assert bool(testval)

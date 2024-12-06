@@ -83,7 +83,14 @@ testlist = [
          'contains',
          ["roundmeta", 13, "all_eliminated"],
          r'F')
-    )
+    ),
+    (
+        (['-f', 'abif', '-t', 'jabmod'],
+         'testdata/AlaskaSpecial2022.abif',
+         'length',
+         ["candidates"],
+         4)
+    ),
 ]
 
 @pytest.mark.parametrize(
@@ -91,13 +98,28 @@ testlist = [
 )
 def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
     """Test equality of subkey to a value"""
-    fh = open(inputfile, 'rb')
+    # TODO: work out what I had planned with commit 56c3432e on
+    # 2023-10-08, since I'd like to use a generalized approach to
+    # skipping tests based on files that haven't been fetched with
+    # fetchmgr.py
+    try:
+        fh = open(inputfile, 'rb')
+        fh.close()
+    except:
+        msg = f'Missing file: {inputfile}'
+        msg += "Please run './fetchmgr.py *.fetchspec.json' "
+        msg += "if you haven't already"
+        pytest.skip(msg)
+
     cmd_args.append(inputfile)
     abiftool_output = get_abiftool_output_as_array(cmd_args)
     outputdict = json.loads("\n".join(abiftool_output))
+
     if testtype == 'is_equal':
         assert get_value_from_obj(outputdict, keylist) == value
     elif testtype == 'contains':
         assert value in get_value_from_obj(outputdict, keylist)
+    elif testtype == 'length':
+        assert len(get_value_from_obj(outputdict, keylist)) == value
     else:
-        assert testtype in ['is_equal', 'contains']
+        assert testtype in ['is_equal', 'contains', 'length']

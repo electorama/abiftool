@@ -151,9 +151,8 @@ def main():
         modifiers = set(args.modifier)
     else:
         modifiers = set(['candlist', 'Copeland', 'winlosstie'])
-    add_STAR = 'STAR' in modifiers
-    add_scores = 'scores' in modifiers
-    add_ratings = args.add_scores or add_STAR or add_scores
+    add_ratings = args.add_scores
+
     storecomments = 'jcomments' in modifiers
     if (input_format == 'abif'):
         try:
@@ -163,7 +162,7 @@ def main():
                                                storecomments=storecomments)
         except ABIFVotelineException as e:
             print(f"ERROR: {e.message}")
-            sys.exit()
+            raise
     elif (input_format == 'debtally'):
         rawabifstr = convert_debtally_to_abif(inputstr)
         abifmodel = convert_abif_to_jabmod(rawabifstr)
