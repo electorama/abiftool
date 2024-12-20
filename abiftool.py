@@ -105,8 +105,8 @@ def main():
                         help='Output debug information if available')
     parser.add_argument('-f', '--fromfmt', choices=validinfmts,
                         help='Input format (overrides file extension)')
-    parser.add_argument('-t', '--to', choices=validoutfmts,
-                        required=True, help='Output format (--help for list of options)')
+    parser.add_argument('-t', '--to', choices=validoutfmts, default="text",
+                        help='Output format (--help for list of options)')
     parser.add_argument("-m", "--modifier", action='append',
                         choices=validmod, help='Catch-all for modified output specifiers.')
     parser.add_argument('--cleanws', action="store_true",
