@@ -49,7 +49,7 @@ def corefunc_init(tag="unmarked"):
     functionality for all functions in abiflib/core.py
 
     '''
-    abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
+    #abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
     return {'tag': tag}
 
 

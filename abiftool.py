@@ -115,6 +115,7 @@ def main():
                         help='Add scores to votelines when only rankings are provided')
 
     args = parser.parse_args()
+    abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
@@ -122,16 +123,18 @@ def main():
         input_format = args.fromfmt
     elif args.input_file == '-':
         parser.error("The -f parameter is required with '-'")
-    else:
+    elif args.input_file[0].find('.') >= 0:
         _, file_extension = args.input_file[0].rsplit('.', 1)
         input_format = file_extension
+    else:
+        input_format = 'abif'
     if input_format not in validinfmts:
         print(f"Error: Unsupported input format '{input_format}'")
         return
 
     inputstr = ""
     inputblobs = []
-    if args.input_file == '-':
+    if args.input_file == '-' or args.input_file == ['-']:
         inputstr = sys.stdin.read()
     elif type(args.input_file) == list:
         for i, infile in enumerate(args.input_file):
