@@ -124,7 +124,7 @@ def convert_files_to_abif(fromfmt, input_files, output_file, fetchdesc=None):
         try:
             inputblobs.append(Path(f).read_text())
         except FileNotFoundError:
-            print(f"Error: Input file '{input_file}' not found.")
+            print(f"Error: Input file '{f}' not found.")
             sys.exit(1)
 
     abiftext = abiflib.convert_text_to_abif(fromfmt, inputblobs,
