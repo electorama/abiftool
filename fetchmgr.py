@@ -12,6 +12,7 @@ import requests
 import shutil
 import subprocess
 import sys
+import tarfile
 from pathlib import Path
 from pprint import pprint
 
@@ -133,20 +134,43 @@ def convert_files_to_abif(fromfmt, input_files, output_file, fetchdesc=None):
     return True
 
 
-def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt=None):
+def convert_nameq_tarball_to_abif_files(tarball_fn, archive_subfiles, abifsubdir):
+    """Extract nameq text files from tarball and write to subfiles
+    """
+    sys.stderr.write(f"Converting {tarball_fn}....\n")
+    for file_to_fetch in archive_subfiles:
+        with tarfile.open(tarball_fn, 'r') as tarball:
+            member = tarball.getmember(file_to_fetch['archive_subfile'])
+            file_obj = tarball.extractfile(member)
+            text_content = file_obj.read().decode('utf-8', errors='replace')
+        abifmodel = abiflib.convert_nameq_to_jabmod(text_content)
+        consmodel = abiflib.consolidate_jabmod_voteline_objects(abifmodel)
+        abifstr = abiflib.convert_jabmod_to_abif(consmodel)
+
+
+        abifpath = Path(file_to_fetch['abifloc'])
+        abifpath.parent.mkdir(parents=True, exist_ok=True)
+        abifpath.write_text(abifstr)
+        sys.stderr.write(".")
+        sys.stderr.flush()
+    sys.stderr.write("\n")
+    successful_count = len(archive_subfiles)
+    return successful_count
+
+
+def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt=None,
+                        archive_subfiles=None):
     if not os.path.exists(abifsubdir):
         os.makedirs(abifsubdir)
     for extfile in extfilelist:
         if 'localcopies' in extfile.keys():
             infiles = [os.path.join(dlsubdir, x) for x in extfile['localcopies']]
-            # infile = os.path.join(dlsubdir, extfile['localcopies'][0])
-            # infile = infiles[0]
         else:
             infiles = [os.path.join(dlsubdir, extfile['localcopy'])]
-        outfile = os.path.join(abifsubdir, extfile['abifloc'])
         srcfmt = extfile.get('srcfmt') or srcfmt
         fetchdesc = extfile.get('desc') or None
         if srcfmt == 'abif':
+            outfile = os.path.join(abifsubdir, extfile['abifloc'])
             sys.stderr.write(f"Linking from {outfile} to {infiles[0]}\n")
             symlinkval = os.path.relpath(infiles[0], start=abifsubdir)
             try:
@@ -154,13 +178,21 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             except FileExistsError:
                 os.remove(outfile)
                 os.symlink(src=symlinkval, dst=outfile)
-        else:
+        elif srcfmt == 'debtally' or srcfmt == 'preflib' or srcfmt == 'sftxt':
+            outfile = os.path.join(abifsubdir, extfile['abifloc'])
             infilestr = " ".join(infiles)
             sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile}\n")
             convert_files_to_abif(fromfmt=srcfmt,
                                   input_files=infiles,
                                   output_file=outfile,
                                   fetchdesc=fetchdesc)
+        elif srcfmt == 'nameq_archive':
+            tarball_fn = os.path.join(dlsubdir, extfile['localcopy'])
+            convert_nameq_tarball_to_abif_files(tarball_fn=tarball_fn,
+                                                archive_subfiles=archive_subfiles,
+                                                abifsubdir=abifsubdir)
+        else:
+            raise Exception(f"Unknown srcfmt: {srcfmt}")
     return True
 
 
@@ -176,7 +208,9 @@ def process_fetchspec(fn):
     elif 'web_urls' in fetchspec.keys():
         fetch_web_items(fetchspec)
     else:
-        raise Exception(f"Need either gitrepo or web url(s)")
+        raise Exception(f"Invalid fetchspec: {fetchspec.keys()=}")
+    sys.stderr.write(f"Processing {fn}....\n")
+
     dlsubdir = fetchspec['download_subdir']
     abifsubdir = fetchspec.get('abifloc_subdir')
     extfilelist = fetchspec.get('web_urls') or fetchspec.get('extfiles')
@@ -185,7 +219,8 @@ def process_fetchspec(fn):
         process_extfilelist(dlsubdir=dlsubdir,
                             abifsubdir=abifsubdir,
                             extfilelist=extfilelist,
-                            srcfmt=srcfmt)
+                            srcfmt=srcfmt,
+                            archive_subfiles=fetchspec.get('archive_subfiles'))
     return True
 
 
@@ -209,6 +244,7 @@ def main():
         sys.exit(1)
     for fetchspec_fn in args.fetchspec:
         process_fetchspec(fetchspec_fn)
+    sys.stderr.write(f"Done\n")
 
 if __name__ == "__main__":
     main()

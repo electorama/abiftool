@@ -1,0 +1,1545 @@
+{
+  "srcfmt": "nameq_archive",
+  "download_subdir": "downloads/bolson-nameq/votedata-2024-01-27",
+  "abifloc_subdir": "localabif/bolson-nameq/votedata-2024-01-27",
+  "web_urls": [
+    {
+      "desc": "Brian Olson's nameq tarball from 2024-01-27",
+      "url": "https://bolson.org/voting/votedata/archives/votedata-2024-01-27.tar.gz",
+      "metaurls": [
+        "https://bolson.org/voting/votedata/"
+      ],
+      "localcopy": "votedata-2024-01-27.tar.gz"
+    }
+  ],
+  "archive_subfiles": [
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Portland_ME/city_council_at_large.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Portland_ME-city_council_at_large.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Council Member_19th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Council_Member_19th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_36th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_36th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_26th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_26th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_33rd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_33rd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_32nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_32nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_37th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_37th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_38th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_38th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_1st Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_1st_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Comptroller_Citywide.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Comptroller_Citywide.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_7th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_7th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_28th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_28th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Council Member_23rd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Council_Member_23rd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Council Member_50th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Council_Member_50th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/CON Council Member_19th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-CON_Council_Member_19th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_46th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_46th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_29th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_29th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Borough President_Queens.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Borough_President_Queens.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_21st Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_21st_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_41st Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_41st_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_9th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_9th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Borough President_Richmond.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Borough_President_Richmond.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_34th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_34th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_35th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_35th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_6th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_6th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_30th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_30th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_14th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_14th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_16th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_16th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_3rd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_3rd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_31st Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_31st_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_25th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_25th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_27th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_27th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_8th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_8th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_5th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_5th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Public Advocate_Citywide.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Public_Advocate_Citywide.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_39th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_39th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Council Member_32nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Council_Member_32nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_17th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_17th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_49th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_49th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Borough President_Richmond.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Borough_President_Richmond.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_47th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_47th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_2nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_2nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Council Member_15th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Council_Member_15th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_19th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_19th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_42nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_42nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_22nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_22nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Borough President_Kings.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Borough_President_Kings.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_11th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_11th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Mayor_Citywide.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Mayor_Citywide.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_18th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_18th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_45th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_45th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_15th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_15th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_10th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_10th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_13th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_13th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Borough President_Bronx.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Borough_President_Bronx.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_12th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_12th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_40th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_40th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_20th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_20th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/REP Council Member_24th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-REP_Council_Member_24th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Borough President_New York.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Borough_President_New_York.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_48th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_48th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Mayor_Citywide.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Mayor_Citywide.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_23rd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_23rd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Borough President_Queens.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Borough_President_Queens.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/0622_NYC/PE2021_CVR_Final/DEM Council Member_24th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-06-22_NYC-PE2021_CVR_Final-DEM_Council_Member_24th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Park-5-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Park-5-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Park-3-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Park-3-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-12-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-12-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-3-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-3-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Park-2-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Park-2-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-2-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-2-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-9-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-9-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-10-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-10-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Park-AL-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Park-AL-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-7-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-7-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-BET-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-BET-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Park-4-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Park-4-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-5-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-5-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Park-6-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Park-6-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-1-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-1-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-6-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-6-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-8-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-8-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-4-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-4-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Mayor-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Mayor-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-13-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-13-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/1102_Minneapolis/2021-Ward-11-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021-11-02_Minneapolis-2021-Ward-11-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2021/06_Portland_ME/chater_commissioner.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2021_06_Portland_ME-chater_commissioner.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Park-District-1-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Park-District-1-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-2-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-2-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Park-District-3-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Park-District-3-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-10-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-10-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Park-District-4-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Park-District-4-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-11-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-11-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-12-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-12-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-7-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-7-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Mayor-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Mayor-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Park-District-5-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Park-District-5-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-8-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-8-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-6-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-6-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Board-of-Estimate-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Board-of-Estimate-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-3-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-3-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Park-District-2-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Park-District-2-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Park-District-6-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Park-District-6-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-9-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-9-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-4-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-4-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-5-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-5-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-1-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-1-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Park-At-Large-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Park-At-Large-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2013/1105_Minneapolis/2013-Council-Ward-13-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2013-11-05_Minneapolis-2013-Council-Ward-13-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2008/1104_Pierce_WA/county_council_2/county_council_2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2008-11-04_Pierce_WA-county_council_2-county_council_2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2008/1104_Pierce_WA/county_executive/county_executive.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2008-11-04_Pierce_WA-county_executive-county_executive.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2008/1104_Pierce_WA/acessor_treasurer/accesor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2008-11-04_Pierce_WA-acessor_treasurer-accesor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2014/1104_SanFrancisco/Board of Supervisors, District 10.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2014-11-04_SanFrancisco-Board_of_Supervisors_District_10.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Portland_ME/school_board_d3.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Portland_ME-school_board_d3.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/DISTRICT ATTORNEY.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-DISTRICT_ATTORNEY.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 4.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_4.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/ASSESSOR-RECORDER.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-ASSESSOR-RECORDER.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 6.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_6.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 8.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_8.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/PUBLIC DEFENDER.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-PUBLIC_DEFENDER.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 10.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_10.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Maine/20221108_ME_CD2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Maine-20221108_ME_CD2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_18.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_18.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_25.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_25.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_13.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_13.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/U.S._Representative_(Special_General).nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Representative_(Special_General).abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_12.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_12.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_34.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_34.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/U.S._Senator.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Senator.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_31.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_31.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_4.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_4.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_J.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_J.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_F.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_F.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_1.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_1.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Governor_|_Lt._Governor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Governor_|_Lt._Governor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_16.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_16.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_5.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_5.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_33.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_33.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_21.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_21.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_40.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_40.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_6.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_6.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_R.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_R.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_A.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_A.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_C.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_C.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_27.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_27.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_22.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_22.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_28.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_28.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_N.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_N.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_26.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_26.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_Q.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_Q.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_I.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_I.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_11.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_11.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_S.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_S.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_37.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_37.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_7.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_7.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_19.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_19.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_39.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_39.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_K.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_K.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_24.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_24.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_G.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_G.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_H.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_H.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_23.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_23.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_E.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_E.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_P.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_P.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_B.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_B.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_36.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_36.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_35.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_35.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_15.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_15.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_38.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_38.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_29.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_29.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/U.S._Representative.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Representative.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_14.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_14.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_9.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_9.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_8.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_8.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_M.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_M.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_D.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_D.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_17.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_17.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_30.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_30.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_O.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_O.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_20.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_20.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_3.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_3.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/Senate_District_L.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-Senate_District_L.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_32.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_32.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0816_Alaska/House_District_10.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-House_District_10.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0614_Portland,ME/school_board_at_large.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-06-14_PortlandME-school_board_at_large.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/0614_Portland,ME/school_board_d5_at_large.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-06-14_PortlandME-school_board_d5_at_large.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/City Auditor - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-City_Auditor_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 3 - San Leandro.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._3_-_San_Leandro.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 4 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._4_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 1 - San Leandro.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._1_-_San_Leandro.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Mayor - San Leandro.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Mayor_-_San_Leandro.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 1 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._1_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 2 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._2_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 7 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._7_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Members, Board of Education - Albany.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Members_Board_of_Education_-_Albany.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Members, City Council - Albany.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Members_City_Council_-_Albany.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/School Director, Dist. 6 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-School_Director_Dist._6_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/City Auditor - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-City_Auditor_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 4 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._4_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 6 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._6_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 5 - San Leandro.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._5_-_San_Leandro.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/School Director, Dist. 2 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-School_Director_Dist._2_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/School Director, Dist. 4 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-School_Director_Dist._4_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Mayor - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Mayor_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_AlamedaCounty/Member, City Council, Dist. 8 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_AlamedaCounty-Member_City_Council_Dist._8_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+27.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_27.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+31.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_31.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+C.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_C.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+19.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_19.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+O.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_O.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+35.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_35.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+32.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_32.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+J.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_J.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+7.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_7.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+18.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_18.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+R.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_R.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+26.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_26.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+4.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_4.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+14.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_14.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+40.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_40.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+6.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_6.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+36.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_36.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Governor+%2F+Lieutenant+Governor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Governor_%2F_Lieutenant_Governor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+37.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_37.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+K.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_K.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+N.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_N.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+F.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_F.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+P.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_P.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+G.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_G.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+8.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_8.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+3.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_3.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+29.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_29.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+1.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_1.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+17.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_17.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+34.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_34.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+30.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_30.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+15.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_15.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+S.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_S.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/U.S.+Senator.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-U.S._Senator.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+I.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_I.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+9.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_9.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+16.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_16.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+33.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_33.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+A.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_A.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+10.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_10.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+23.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_23.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+5.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_5.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+38.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_38.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+25.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_25.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+28.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_28.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+Q.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_Q.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+13.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_13.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+B.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_B.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+E.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_E.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+21.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_21.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+M.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_M.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+24.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_24.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+39.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_39.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+D.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_D.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+H.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_H.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/Senate+District+L.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-Senate_District_L.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+12.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_12.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+11.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_11.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/U.S.+Representative.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-U.S._Representative.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+20.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_20.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2022/1108_Alaska/House+District+22.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2022-11-08_Alaska-House_District_22.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2019/1105_SanFrancisco/CITY+ATTORNEY.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2019-11-05_SanFrancisco-CITY_ATTORNEY.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2019/1105_SanFrancisco/PUBLIC+DEFENDER.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2019-11-05_SanFrancisco-PUBLIC_DEFENDER.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2019/1105_SanFrancisco/DISTRICT+ATTORNEY.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2019-11-05_SanFrancisco-DISTRICT_ATTORNEY.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2019/1105_SanFrancisco/MEMBER%2C+BOARD+OF+SUPERVISORS%2C+DISTRICT+5.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2019-11-05_SanFrancisco-MEMBER_BOARD_OF_SUPERVISORS_DISTRICT_5.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2019/1105_SanFrancisco/MAYOR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2019-11-05_SanFrancisco-MAYOR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2019/1105_SanFrancisco/SHERIFF.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2019-11-05_SanFrancisco-SHERIFF.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2019/1105_SanFrancisco/TREASURER.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2019-11-05_SanFrancisco-TREASURER.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2011/SanFrancisco/DA.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2011_SanFrancisco-DA.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2011/SanFrancisco/Mayor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2011_SanFrancisco-Mayor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2011/SanFrancisco/Sheriff.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2011_SanFrancisco-Sheriff.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 11.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_11.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 1.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_1.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 3.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_3.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 5.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_5.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 7.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_7.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_SanFrancisco/BOARD OF SUPERVISORS DISTRICT 9.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_SanFrancisco-BOARD_OF_SUPERVISORS_DISTRICT_9.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/0714_ME_Primary/ss11.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-07-14_ME_Primary-ss11.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/0714_ME_Primary/sr49.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-07-14_ME_Primary-sr49.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/0714_ME_Primary/sr90.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-07-14_ME_Primary-sr90.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/0714_ME_Primary/sr41.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-07-14_ME_Primary-sr41.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/0714_ME_Primary/sr47.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-07-14_ME_Primary-sr47.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/0714_ME_Primary/cg2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-07-14_ME_Primary-cg2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 7 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._7_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/City Attorney - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-City_Attorney_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/School Director, Dist. 7 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-School_Director_Dist._7_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, At-Large - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_At-Large_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/School Director, Dist. 5 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-School_Director_Dist._5_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 4 - San Leandro.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._4_-_San_Leandro.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/School Director, Dist. 3 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-School_Director_Dist._3_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 3 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._3_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 3 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._3_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 2 - San Leandro.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._2_-_San_Leandro.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/School Director, Dist. 1 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-School_Director_Dist._1_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 1 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._1_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 6 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._6_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 5 - Oakland.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._5_-_Oakland.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 6 - San Leandro.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._6_-_San_Leandro.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 5 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._5_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Member, City Council, Dist. 2 - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Member_City_Council_Dist._2_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2020/1103_AlamedaCounty/Mayor - Berkeley.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2020-11-03_AlamedaCounty-Mayor_-_Berkeley.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2016/1106_SanFrancisco/Board of Supervisors, District 5.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2016-11-06_SanFrancisco-Board_of_Supervisors_District_5.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2016/1106_SanFrancisco/Board of Supervisors, District 7.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2016-11-06_SanFrancisco-Board_of_Supervisors_District_7.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2016/1106_SanFrancisco/Board of Supervisors, District 11.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2016-11-06_SanFrancisco-Board_of_Supervisors_District_11.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2016/1106_SanFrancisco/Board of Supervisors, District 3.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2016-11-06_SanFrancisco-Board_of_Supervisors_District_3.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2016/1106_SanFrancisco/Board of Supervisors, District 1.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2016-11-06_SanFrancisco-Board_of_Supervisors_District_1.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2016/1106_SanFrancisco/Board of Supervisors, District 9.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2016-11-06_SanFrancisco-Board_of_Supervisors_District_9.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2010/san_francisco/d8.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2010_san_francisco-d8.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2010/san_francisco/d2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2010_san_francisco-d2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2010/san_francisco/d6.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2010_san_francisco-d6.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2010/san_francisco/dA.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2010_san_francisco-dA.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2010/oakland_mayor/mayor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2010_oakland_mayor-mayor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2010/san_leandro_mayor/mayor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2010_san_leandro_mayor-mayor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/REP Council Member_47th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-REP_Council_Member_47th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_26th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_26th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_1st Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_1st_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_29th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_29th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_41st Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_41st_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_9th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_9th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_34th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_34th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/REP Council Member_48th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-REP_Council_Member_48th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_14th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_14th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_43rd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_43rd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_25th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_25th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/REP Council Member_20th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-REP_Council_Member_20th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/REP Council Member_13th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-REP_Council_Member_13th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_2nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_2nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_19th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_19th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_42nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_42nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_22nd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_22nd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_10th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_10th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_13th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_13th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/REP Council Member_43rd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-REP_Council_Member_43rd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_12th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_12th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/REP Council Member_44th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-REP_Council_Member_44th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/DEM Council Member_23rd Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-DEM_Council_Member_23rd_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2023/0627_NYC/CON Council Member_13th Council District.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2023-06-27_NYC-CON_Council_Member_13th_Council_District.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2015/1103_SanFrancisco/Mayor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2015-11-03_SanFrancisco-Mayor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2015/1103_SanFrancisco/Sheriff.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2015-11-03_SanFrancisco-Sheriff.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2015/1103_SanFrancisco/Board of Supervisors, District 3.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2015-11-03_SanFrancisco-Board_of_Supervisors_District_3.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-11-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-11-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Mayor-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Mayor-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Park-Board-District-1-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Park-Board-District-1-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Council-Ward-5-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Council-Ward-5-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-12-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-12-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-4-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-4-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Board-of-Estimate-and-Taxation-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Board-of-Estimate-and-Taxation-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-10-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-10-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-6-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-6-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-13-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-13-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Park-District-3-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Park-District-3-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Park-District-6-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Park-District-6-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Park-District-5-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Park-District-5-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Park-District-2-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Park-District-2-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-3-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-3-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-1-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-1-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-2-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-2-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-8-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-8-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Park-Board-District-4-Cast-Vote-Record.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Park-Board-District-4-Cast-Vote-Record.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Park-Board-At-Large-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Park-Board-At-Large-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Ward-9-Ballot-Records.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Ward-9-Ballot-Records.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2017/1107_Minneapolis/2017-Council-Ward-7-CVR.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2017-11-07_Minneapolis-2017-Council-Ward-7-CVR.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2009/Burlington_VT/tmp/vote.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2009_Burlington_VT-vote.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2009/1103_Pierce_WA/auditor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2009-11-03_Pierce_WA-auditor.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_SanFrancisco/Public Defender.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_SanFrancisco-Public_Defender.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_SanFrancisco/Board of Supervisors, District 4.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_SanFrancisco-Board_of_Supervisors_District_4.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_SanFrancisco/Board of Supervisors, District 2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_SanFrancisco-Board_of_Supervisors_District_2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_SanFrancisco/Board of Supervisors, District 8.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_SanFrancisco-Board_of_Supervisors_District_8.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_SanFrancisco/Board of Supervisors, District 6.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_SanFrancisco-Board_of_Supervisors_District_6.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_SanFrancisco/Board of Supervisors, District 10.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_SanFrancisco-Board_of_Supervisors_District_10.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_SanFrancisco/Assessor-Recorder.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_SanFrancisco-Assessor-Recorder.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/1106_Maine/20181106_maine_CD2.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-11-06_Maine-20181106_maine_CD2.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/0605_SF_Mayor/Board of Supervisors, District 8.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-06-05_SF_Mayor-Board_of_Supervisors_District_8.abif"
+    },
+    {
+      "archive_subfile": "votedata-2024-01-27/2018/0605_SF_Mayor/Mayor.nameq",
+      "abifloc": "localabif/bolson-nameq/votedata-2024-01-27/2018-06-05_SF_Mayor-Mayor.abif"
+    }
+  ]
+}
