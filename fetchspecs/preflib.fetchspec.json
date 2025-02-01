@@ -5,7 +5,7 @@
   "web_urls":
   [
     {
-      "url":"https://www.preflib.org/static/data/debian/00002-00000002.toc",
+      "url":"https://raw.githubusercontent.com/PrefLib/PrefLib-Data/main/datasets/00002%20-%20debian/00002-00000002.toc",
       "localcopy":"dpl-00002-00000002.toc",
       "metaurls": [
         "https://www.preflib.org/dataset/00002",
@@ -17,7 +17,7 @@
       "abifloc":"debianpl2003-toc.abif"
     },
     {
-      "url":"https://www.preflib.org/static/data/debian/00002-00000002.soi",
+      "url":"https://raw.githubusercontent.com/PrefLib/PrefLib-Data/main/datasets/00002%20-%20debian/00002-00000002.soi",
       "localcopy":"dpl-00002-00000002.soi",
       "metaurls": [
         "https://www.preflib.org/dataset/00002"
@@ -26,7 +26,7 @@
       "abifloc":"debianpl2003-soi.abif"
     },
     {
-      "url":"https://www.preflib.org/static/data/burlington/00005-00000002.toc",
+      "url":"https://raw.githubusercontent.com/PrefLib/PrefLib-Data/main/datasets/00005%20-%20burlington/00005-00000002.toc",
       "localcopy":"burl2009-00005-00000002.toc",
       "metaurls": [
         "https://www.preflib.org/dataset/00005"
@@ -35,7 +35,7 @@
       "abifloc": "burl2009-toc.abif"
     },
     {
-      "url":"https://www.preflib.org/static/data/burlington/00005-00000002.toi",
+      "url":"https://raw.githubusercontent.com/PrefLib/PrefLib-Data/main/datasets/00005%20-%20burlington/00005-00000002.toi",
       "localcopy":"burl2009-00005-00000002.toi",
       "metaurls": [
         "https://www.preflib.org/dataset/00005"
