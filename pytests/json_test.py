@@ -86,7 +86,7 @@ testlist = [
     ),
     (
         (['-f', 'abif', '-t', 'jabmod'],
-         'testdata/AlaskaSpecial2022.abif',
+         'localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Representative_(Special_General).abif',
          'length',
          ["candidates"],
          4)
