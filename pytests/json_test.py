@@ -91,6 +91,13 @@ testlist = [
          ["candidates"],
          4)
     ),
+    (
+        (['-f', 'abif', '-t', 'paircountjson'],
+         'testdata/commasep/commasquare.abif',
+         'is_equal',
+         ["A,X", "B,Y"],
+         12)
+    ),
 ]
 
 @pytest.mark.parametrize(
