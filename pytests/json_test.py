@@ -98,6 +98,13 @@ testlist = [
          ["A,X", "B,Y"],
          12)
     ),
+    (
+        (['-f', 'abif', '-t', 'jabmod'],
+         'testdata/commasep/commasquare.abif',
+         'is_equal',
+         ["votelines", 0, "prefs", "C,Z", "rank"],
+         3)
+    ),
 ]
 
 @pytest.mark.parametrize(
