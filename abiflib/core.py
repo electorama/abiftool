@@ -336,6 +336,21 @@ def _extract_candprefs_from_prefstr(prefstr):
     return retval
 
 
+def _determine_rank_or_rate(prefstr):
+    '''Determine if a prefstr represents a ranking, a set of ratings,
+       or just one candidate'''
+    # replace all square-bracketed candidates with a placeholder
+    subbedstr, num_of_bracketed_tok = re.subn(r'\[[^]]*\]', '[PLACEHOLDER]', prefstr)
+    delimeters = [char for char in subbedstr if char in ">,="]
+    if delimeters and delimeters[0] in '>=':
+        rank_or_rate = "rank"
+    elif delimeters and delimeters[0] == ",":
+        rank_or_rate = "rate"
+    else:
+        rank_or_rate = "rankone"
+    return rank_or_rate, delimeters
+
+
 def _parse_prefstr_to_dict(prefstr, qty=0,
                            abifmodel=None, linecomment=None):
     '''Convert prefstr portion of .abif voteline to jabvoteline
@@ -346,16 +361,10 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
 
     if not abifmodel:
         abifmodel = _get_emptyish_abifmodel()
-    # Split the string by commas or ranking symbols
-    delimeters = [char for char in prefstr if char in ">,="]
-    if delimeters and delimeters[0] in '>=':   # FIXME don't just check the first delimeter
-        rank_or_rate = "rank"
-    elif delimeters and delimeters[0] == ",":
-        rank_or_rate = "rate"
-    else:
-        rank_or_rate = "rankone"
 
-    candpreflist =  _extract_candprefs_from_prefstr(prefstr)
+    rank_or_rate, delimeters = _determine_rank_or_rate(prefstr)
+
+    candpreflist = _extract_candprefs_from_prefstr(prefstr)
     candkeys = []
     for (i, candpref) in enumerate(candpreflist):
         (cand, candrating) = candpref
