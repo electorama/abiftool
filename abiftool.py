@@ -42,6 +42,7 @@ OUTPUT_FORMATS = [
     {'html_snippet': 'HTML snippet that does not includes the <head> elements'},
     {'irvjson': 'JSON format representing IRV election results'},
     {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
+    {'json': 'JSON format as specified in corresponding modifier'},
     {'nameq': 'Brian Olson\'s format which URL-encoded version of the raw ballots'},
     {'paircountjson': 'Pairwise ballot counts'},
     {'svg': 'SVG output showing pairwise matchups and Copeland wins/losses/ties'},
@@ -218,16 +219,25 @@ def main():
                                                    modlimit = ABIFMODEL_LIMIT,
                                                    svg_text = svg_text,
                                                    modifiers = modifiers)
-    elif (output_format == 'irvjson'):
-        IRV_dict = IRV_dict_from_jabmod(abifmodel)
-        outstr += json.dumps(clean_dict(IRV_dict), indent=4)
+    elif (output_format in ['irvjson', 'json', 'paircountjson']):
+        # 'irvjson' and 'paircountjson' are deprecated in favor of
+        # "-t 'json'" and "-m" with desired output modifier
+
+        if output_format == 'irvjson' or 'IRV' in modifiers:
+            IRV_dict = IRV_dict_from_jabmod(abifmodel)
+            outstr += json.dumps(clean_dict(IRV_dict), indent=4)
+        elif output_format == 'paircountjson' or 'pairwise' in modifiers:
+            pairdict = pairwise_count_dict(abifmodel)
+            outstr += json.dumps(pairdict, indent=4)
+        elif 'STAR' in modifiers:
+            STAR_dict = STAR_result_from_abifmodel(abifmodel)
+            outstr += json.dumps(STAR_dict, indent=4)
+        else:
+            outstr += "Please specify modifier or choose 'jabmod' output format"
     elif (output_format == 'jabmod'):
         outstr += json.dumps(abifmodel, indent=4)
     elif (output_format == 'nameq'):
         outstr += convert_jabmod_to_nameq(abifmodel)
-    elif (output_format == 'paircountjson'):
-        pairdict = pairwise_count_dict(abifmodel)
-        outstr += json.dumps(pairdict, indent=4)
     elif (output_format == 'svg'):
         copecount = full_copecount_from_abifmodel(abifmodel)
         outstr += copecount_diagram(copecount, outformat='svg')

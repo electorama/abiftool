@@ -267,6 +267,7 @@ def _add_ratings_to_jabmod_votelines(inmod, add_ratings=True):
                     v['rating'] = 0
                 elif add_ratings:
                     v['rating'] = numcands - v['rank']
+                    outmod['metadata']['is_ranking_to_rating'] = True
     return outmod
 
 
