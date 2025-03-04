@@ -23,6 +23,7 @@ import re
 import sys
 import urllib.parse
 
+
 INPUT_FORMATS = [
     {'abif': 'ABIF format'},
     {'debtally': 'Election output format used by the Debian Project'},
@@ -246,7 +247,12 @@ def main():
         if 'score' in modifiers:
             outstr += score_report(abifmodel)
         if 'STAR' in modifiers:
-            outstr += STAR_report(abifmodel)
+            # check if the first voteline candidate has a rating
+            if abifmodel_has_ratings(abifmodel):
+                outstr += STAR_report(abifmodel)
+            else:
+                outstr += "No stars/scores available."
+                outstr += "  Please use --add-scores to extrapolate score from ranks."
         if 'Copeland' in modifiers:
             copecount = full_copecount_from_abifmodel(abifmodel)
             outstr += Copeland_report(abifmodel['candidates'], copecount)

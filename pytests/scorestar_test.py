@@ -65,6 +65,13 @@ LOGOBJ = abiflib.LogfileSingleton()
         (['-t', 'text', '-m', 'score'],
          'testdata/commasep/tn-example-scores-and-commas.abif',
          r"19370 points \(from 100 voters\) -- Knoxville"),
+        # TEST 015:
+        # TODO: add id's to test001 through test014
+        pytest.param(['-t', 'text', '-m', 'STAR', '--add-scores'],
+                     'testdata/burl2009/burl2009.abif',
+                     r"26167 stars \(from 6706 voters\) -- Andy Montroll",
+                     #r"0 stars \(from 0 voters\) -- Andy Montroll",
+                     id='test015'),
     ]
 )
 

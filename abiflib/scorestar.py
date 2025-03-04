@@ -150,8 +150,19 @@ def scaled_scores(jabmod, target_scale=100):
     return retval
 
 
+def abifmodel_has_ratings(abifmodel):
+    '''Check if abifmodel has rating data to use by STAR or score methods
+
+    It would be nice to do a more sophisticated test.  As of this
+    writing, this function just checks the first candidate in the
+    first voteline and hopes that's good enough.
+    '''
+    has_rating = bool(list(abifmodel['votelines'][0]['prefs'].values())[0].get('rating'))
+    return(has_rating)
+
+
 def main():
-    """Create score array"""
+    """Library for calculating score voting and STAR voting results"""
     parser = argparse.ArgumentParser(
         description='Takes abif and returns score results')
     parser.add_argument('input_file', help='Input .abif')
@@ -162,11 +173,12 @@ def main():
     jabmod = convert_abif_to_jabmod(abiftext, add_ratings=True)
 
     outstr = ""
+
     report_abif_file = True
-    report_raw_jabmod = False
-    report_raw_score_json = False
-    report_raw_STAR_json = False
-    report_score_results = False
+    report_raw_jabmod = True
+    report_raw_score_json = True
+    report_raw_STAR_json = True
+    report_score_results = True
     report_star_results = True
     report_scaled_scores = True
     if report_abif_file:
