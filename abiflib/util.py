@@ -58,3 +58,19 @@ def candlist_text_from_abif(jabmod):
     for k, v in sorted(canddict.items()):
         output += f"  {k}: {v}\n"
     return output
+
+
+def utf8_string_to_abif_token(longstring, max_length=20, add_sha1=False):
+    '''Convert a name into a short token for use in abif'''
+    # TODO: replace _short_token in sftxt.py with this
+    # TDOO: make this more sophisticated, replacing candidate names with something
+    #   recognizable as candidate names, even if there's a lot of upper ASCII in the
+    #   name.
+    if len(longstring) <= max_length and \
+       re.match(r'^[A-Za-z0-9]+$', longstring):
+        retval = longstring
+    else:
+        cleanstr = re.sub('[^A-Za-z0-9]+', '_', longstring)
+        cleanstr = re.sub('WRITE_IN_', "wi_", cleanstr)
+        retval = cleanstr[:max_length]
+    return retval
