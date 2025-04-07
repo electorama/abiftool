@@ -29,14 +29,13 @@ except:
 import urllib.parse
 
 
-def textgrid_for_2D_dict(twodimdict,
-                         tablelabel="YYYYYYX"):
+def textgrid_for_2D_dict(twodimdict, tablelabel='   Loser ->\nv Winner', width=160):
     # The first level of dict keys becomes row labels
     # The second level of dict keys becomes column labels
 
     retval = ""
 
-    table = Texttable()
+    table = Texttable(max_width=width)
     ctok = list(twodimdict.keys())
     table.add_row([tablelabel] + ctok)
 

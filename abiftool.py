@@ -111,6 +111,8 @@ def main():
                         help='Output format (--help for list of options)')
     parser.add_argument("-m", "--modifier", action='append',
                         choices=validmod, help='Catch-all for modified output specifiers.')
+    parser.add_argument("-w", "--width", type=int, default=160,
+                        help="width when rendering output with texttable lib" )
     parser.add_argument('--cleanws', action="store_true",
                         help='Clean whitespace in ABIF file')
     parser.add_argument('--add-scores', action="store_true",
@@ -248,9 +250,10 @@ def main():
             outstr += texttable_pairwise_and_winlosstie(abifmodel)
         if 'pairwise' in modifiers:
             pairdict = pairwise_count_dict(abifmodel)
-            outstr += textgrid_for_2D_dict(
-                twodimdict=pairdict,
-                tablelabel='   Loser ->\nv Winner')
+            outstr += textgrid_for_2D_dict(twodimdict=pairdict,
+                                           tablelabel='   Loser ->\nv Winner',
+                                           width=args.width
+            )
         if 'IRV' in modifiers:
             irvdict = IRV_dict_from_jabmod(abifmodel)
             outstr += get_IRV_report(irvdict)
