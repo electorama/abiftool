@@ -36,6 +36,9 @@ for testdict in testdicts:
 
 @pytest.mark.parametrize(mycols, pytestlist)
 def test_pattern_match(filename, pattern, options):
+    if not has_lib("texttable"):
+        pytest.skip("Skipping test because 'texttable' is not installed.")
+
     fh = open(filename, 'rb')
 
     texttable_content = \

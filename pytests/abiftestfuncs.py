@@ -11,6 +11,7 @@
 # testing API is heading.
 
 import bs4
+import importlib
 import os
 import pytest
 import re
@@ -26,6 +27,14 @@ def get_abiftool_scriptloc():
     abiftool_directory = os.path.dirname(pytest_directory)
     abiftool_path = os.path.join(abiftool_directory, "abiftool.py")
     return abiftool_path
+
+
+def get_requirements_txt():
+    '''Infer requirements.txt location from the location of abiftestfuncs.py'''
+    pytest_directory = os.path.dirname(__file__)
+    reqtxt_directory = os.path.dirname(pytest_directory)
+    reqtxt_path = os.path.join(reqtxt_directory, "requirements.txt")
+    return reqtxt_path
 
 
 def get_abiftool_output_as_array(cmd_args,
@@ -96,6 +105,27 @@ def check_regex_in_output(cmd_args, inputfile, pattern):
     print(output_lines)
     return check_regex_in_textarray(pattern, output_lines)
 
+def has_lib(library):
+    '''Check that the given module is importable'''
+    try:
+        importlib.import_module(library)
+        return True
+    except ImportError:
+        return False
+
+
+def missing_libraries(requirements_file=get_requirements_txt()):
+    not_installed = []
+    with open(requirements_file, 'r') as f:
+        for line in f:
+            module = line.strip().split('==')[0]  # Remove version specifier
+            # Kludge for beautifulsoup4 name mismatch
+            if module == "beautifulsoup4":
+                module = "bs4"
+            if module and not module.startswith('#') and not has_lib(module):
+                not_installed.append(module)
+    return not_installed
+
 
 def html_element_search(elementname, needle, haystack):
     soup = bs4.BeautifulSoup(haystack, "html.parser")
@@ -110,4 +140,5 @@ def get_value_from_obj(obj, keylist):
     for k in keylist:
         obj = obj[k]
     return obj
+
 

@@ -30,6 +30,9 @@ for testdict in testdicts:
 
 @pytest.mark.parametrize(mycols, pytestlist)
 def test_pattern_match(filename, pattern, outfmt):
+    if not has_lib("graphviz"):
+        pytest.skip("Skipping test because 'graphviz' is not installed.")
+
     fh = open(filename, 'rb')
 
     texttable_content = \

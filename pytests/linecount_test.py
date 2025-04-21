@@ -13,6 +13,6 @@ from subprocess import run, PIPE
 def test_abiftool_linecount(input_file, command_line_args, expected_output_length):
     cmd_args = command_line_args + [ input_file ]
     output_lines = get_abiftool_output_as_array(cmd_args)
-
-    # Assert the output length matches the expected length
+    if 'text' == command_line_args[1] and not has_lib("texttable"):
+        pytest.skip("Skipping test because 'texttable' is not installed.")
     assert len(output_lines) == expected_output_length

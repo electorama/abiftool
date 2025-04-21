@@ -85,6 +85,9 @@ def test_grep_output_for_regexp(cmd_args, inputfile, pattern):
         msg += "Please run './fetchmgr.py *.fetchspec.json' "
         msg += "if you haven't already"
         pytest.skip(msg)
+    if len(cmd_args) == 2 and cmd_args[1] == 'text' and not has_lib("texttable"):
+        pytest.skip("Skipping test because 'texttable' is not installed.")
+
     # 2024-08-06 - I'm not sure what the get_abiftool_output_as_array
     # call is doing in this context, and I'm pretty sure I can/should
     # eliminate it:

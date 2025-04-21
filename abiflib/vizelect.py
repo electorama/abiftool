@@ -17,7 +17,12 @@ vizelect - functions for election visualizations
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from graphviz import Digraph
+try:
+    from graphviz import Digraph
+except ImportError:
+    # Make import failure late-binding, since this file frequently gets
+    # imported when Digraph isn't even instantiated
+    pass
 import json
 import os
 import sys

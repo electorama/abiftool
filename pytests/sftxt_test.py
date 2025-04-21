@@ -23,8 +23,8 @@ def test_grep_output_for_regexp(cmd_args, inputfiles, pattern):
             fh = open(inf, 'rb')
         except:
             msg = f'Missing file: {inf}'
-            msg += "Please run './fetchmgr.py *.fetchspec.json' "
-            msg += "if you haven't already"
+            msg += ". Please run './fetchmgr.py sf-elections.fetchspec.json' "
+            msg += "to get SF election data for this test."
             pytest.skip(msg)
     output_lines = get_abiftool_output_as_array(cmd_args + inputfiles,
                                                 log_post=' (check_regex)')

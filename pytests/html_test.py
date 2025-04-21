@@ -33,6 +33,9 @@ test_list=[
 @pytest.mark.parametrize("test_case", test_list)
 def test_abiftool(test_case):
     optstr = " ".join(test_case['options'])
+    if 'svg' in test_case['options'] and not has_lib("graphviz"):
+        pytest.skip("Skipping test because 'graphviz' is not installed.")
+
     fnstr = test_case['filename']
     testfilearray = get_abiftool_output_as_array(test_case['options'] +
                                                  [ test_case['filename'] ])
