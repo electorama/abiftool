@@ -15,12 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from abiflib import *
+import os
+import sys
+
+try:
+    from abiflib import *
+except ModuleNotFoundError as e:
+    print(f"ModuleNotFoundError: {e.name}\n")
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    print("Please install the following modules listed in abiftool/requirements.txt:\n")
+    with open("requirements.txt", "r") as req_file:
+        print(req_file.read())
+    print("You may also run 'pip install -r requirements.txt' to install all modules.")
+    sys.exit()
+
 import argparse
 import json
-import os
 import re
-import sys
 import urllib.parse
 
 
