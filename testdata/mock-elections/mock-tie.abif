@@ -1,0 +1,20 @@
+# Case 20 - Monster tie
+#
+# This tests a monster multi-level tie.
+
+1:A>B>C>D>E>F>G>H
+11:B>C>D>E>F>G>H
+101:C>D>E>F>G>H
+1001:D>E>F>G>H
+10001:E>F>G>H
+100001:F>G>H
+1000001:G>H
+10000001:H
+10000001:S
+1000001:T>S
+100001:U>T>S
+10001:V>U>T>S
+1001:W>V>U>T>S
+101:X>W>V>U>T>S
+11:Y>X>W>V>U>T>S
+1:Z>Y>X>W>V>U>T>S

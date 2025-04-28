@@ -165,6 +165,22 @@ testlist = [
                  ["winner", 0],
                  "Knox",
                  id='test017'),
+    # TEST 018:
+    # Test the "-t json -m FPTP" combo wth simplified TN example
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
+                 'testdata/mock-elections/tennessee-example-simple.abif',
+                 'is_equal',
+                 ["winners", 0],
+                 "Memph",
+                 id='test018'),
+    # TEST 019:
+    # Test the "-t json -m FPTP" combo with a tie election
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
+                 'testdata/mock-elections/mock-tie.abif',
+                 'is_equal',
+                 ["winners", 1],
+                 "S",
+                 id='test019'),
 ]
 
 @pytest.mark.parametrize(

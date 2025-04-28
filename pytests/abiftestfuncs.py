@@ -16,7 +16,6 @@ import os
 import pytest
 import re
 import subprocess
-import sys
 from subprocess import run, PIPE
 from abiflib import abiflib_test_log, abiflib_test_logblob
 

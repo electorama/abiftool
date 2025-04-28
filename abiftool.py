@@ -65,7 +65,8 @@ MODIFIERS = [
     {'candlist': 'List all candidates at the beginning of output'},
     {'Copeland': 'Show pairwise table and Copeland winner (default)'},
     {'consolidate': 'Consolidate votelines if possible'},
-    {'IRV': 'Provide IRV results'},
+    {'FPTP': 'Show FPTP results'},
+    {'IRV': 'Show IRV/RCV results'},
     {'jcomments': 'Put comments in jabmod output if available'},
     {'pairwise': 'Show pairwise table (possibly without winlosstie info)'},
     {'score': 'Provide score results'},
@@ -245,6 +246,9 @@ def main():
         elif 'STAR' in modifiers:
             STAR_dict = STAR_result_from_abifmodel(abifmodel)
             outstr += json.dumps(STAR_dict, indent=4)
+        elif 'FPTP' in modifiers:
+            FPTP_dict = FPTP_result_from_abifmodel(abifmodel)
+            outstr += json.dumps(FPTP_dict, indent=4)
         else:
             outstr += "Please specify modifier or choose 'jabmod' output format"
     elif (output_format == 'jabmod'):
@@ -265,6 +269,9 @@ def main():
                                            tablelabel='   Loser ->\nv Winner',
                                            width=args.width
             )
+        if 'FPTP' in modifiers:
+            #fptpdict = FPTP_dict_from_jabmod(abifmodel)
+            outstr += get_FPTP_report(abifmodel)
         if 'IRV' in modifiers:
             irvdict = IRV_dict_from_jabmod(abifmodel)
             outstr += get_IRV_report(irvdict)
