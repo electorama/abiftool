@@ -19,6 +19,7 @@ from abiflib.abifregex import *
 from abiflib.devtools import *
 from abiflib.core import *
 from abiflib.debtally import *
+from abiflib.fptp_tally import *
 from abiflib.html_output import *
 from abiflib.irvtally import *
 from abiflib.nameq import *
