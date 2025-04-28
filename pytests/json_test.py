@@ -10,126 +10,147 @@ import pytest
 
 testlist = [
     # TEST 001:
-    # FIXME: add test id and description of test
-    (
+    # Test the '-t winlosstiejson' parameter with the simplified TN example
+    pytest.param(
         ['-f', 'abif', '-t', 'winlosstiejson'],
         'testdata/tenn-example/tennessee-example-simple.abif',
-         'is_equal',
+        'is_equal',
         ["Chat", "wins"],
-        2
+        2,
+        id='test001'
     ),
     # TEST 002:
-    # FIXME: add test id and description of test
-    (
+    # Test the '-t jabmod' parameter with the simplified TN example
+    pytest.param(
         ['-f', 'abif', '-t', 'jabmod'],
         'testdata/tenn-example/tennessee-example-simple.abif',
-         'is_equal',
+        'is_equal',
         ["votelines", 0, "qty"],
-        42
+        42,
+        id='test002'
     ),
     # TEST 003:
-    # FIXME: add test id and description of test
-    (
+    # Test roundtripping jabmod with a mock election example
+    pytest.param(
         ['-f', 'jabmod', '-t', 'jabmod'],
         'testdata/california/simple001-example.jabmod.json',
-         'is_equal',
+        'is_equal',
         ["votelines", 0, "qty"],
-        1
+        1,
+        id='test003'
     ),
     # TEST 004:
-    # FIXME: add test id and description of test
-    (
+    # Test roundtripping jabmod with a mock election example,
+    # consolidating the results
+    pytest.param(
         ['-f', 'jabmod', '-t', 'jabmod', '-m', 'consolidate'],
         'testdata/california/simple001-example.jabmod.json',
-         'is_equal',
+        'is_equal',
         ["votelines", 0, "qty"],
-        5
+        5,
+        id='test004'
     ),
     # TEST 005:
-    # FIXME: add test id and description of test
-    (
+    # Test IRV with the SF 2018 special election, checking if the winner
+    # is correct
+    pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
-         'is_equal',
+        'is_equal',
         ["roundmeta", -1, "winner"],
-        ["LONDON_BREED"]
+        ["LONDON_BREED"],
+        id='test005'
     ),
     # TEST 006:
-    # FIXME: add test id and description of test
-    (
+    # Test IRV with the SF 2018 special election, checking for eliminated
+    # candidates
+    pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
-         'is_equal',
+        'is_equal',
         ["roundmeta", -1, "eliminated"],
-        ["MARK_LENO"]
+        ["MARK_LENO"],
+        id='test006'
     ),
     # TEST 007:
-    # FIXME: add test id and description of test
-    (
+    # Test IRV with the SF 2018 special election, checking for starting
+    # quantity of votes
+    pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
-         'is_equal',
+        'is_equal',
         ["roundmeta", -1, "startingqty"],
-        254016
+        254016,
+        id='test007'
     ),
     # TEST 008:
-    # FIXME: add test id and description of test
-    # FIXME - the report from the city says Breed won with 115977, but my
+    # Test IRV with the SF 2018 special election, checking the final count
+    # of votes for the winner
+    #
+    # FIXME - the report from the city says Breed won with 115977 in the final round, but my
     # count shows 116020
     # 
     # SF Report:
     #  https://www.sfelections.org/results/20180605/data/20180627/mayor/20180627_mayor.pdf
-    (
+    pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
-         'is_equal',
+        'is_equal',
         ["rounds", -1, "LONDON_BREED"],
-        116020
+        116020,
+        id='test008'
     ),
     # TEST 009:
-    # FIXME: add test id and description of test
-    (
-        (['-f', 'abif', '-t', 'irvjson'],
-         'testdata/california/sf2018special-results.abif',
-         'is_equal',
-         ["roundmeta", 0, "eliminated", 3],
-         r'WRITE_IN')
+    # Test IRV with the SF 2018 special election, checking if a WRITE_IN
+    # candidate is present. 
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/california/sf2018special-results.abif',
+        'is_equal',
+        ["roundmeta", 0, "eliminated", 3],
+        r'WRITE_IN',
+        id='test009'
     ),
     # TEST 010:
-    # FIXME: add test id and description of test
-    (
-        (['-f', 'abif', '-t', 'irvjson'],
-         'testdata/mock-elections/mock-twotie.abif',
-         'contains',
-         ["roundmeta", 13, "all_eliminated"],
-         r'F')
+    # Test IRV with a mock election, checking if it uses 14 rounds as
+    # expected.
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/mock-elections/mock-twotie.abif',
+        'contains',
+        ["roundmeta", 13, "all_eliminated"],
+        r'F',
+        id='test010'
     ),
     # TEST 011:
-    # FIXME: add test id and description of test
-    (
-        (['-f', 'abif', '-t', 'jabmod'],
-         'localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Representative_(Special_General).abif',
-         'length',
-         ["candidates"],
-         4)
+    # Testing whether an Alaska election has 4 candidates
+    pytest.param(
+        ['-f', 'abif', '-t', 'jabmod'],
+        'localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Representative_(Special_General).abif',
+        'length',
+        ["candidates"],
+        4,
+        id='test011'
     ),
     # TEST 012:
-    # FIXME: add test id and description of test
-    (
-        (['-f', 'abif', '-t', 'paircountjson'],
-         'testdata/commasep/commasquare.abif',
-         'is_equal',
-         ["A,X", "B,Y"],
-         12)
+    # Test the '-t paircountjson' parameter
+    pytest.param(
+        ['-f', 'abif', '-t', 'paircountjson'],
+        'testdata/commasep/commasquare.abif',
+        'is_equal',
+        ["A,X", "B,Y"],
+        12,
+        id='test012'
     ),
     # TEST 013:
-    # FIXME: add test id and description of test
-    (
-        (['-f', 'abif', '-t', 'jabmod'],
-         'testdata/commasep/commasquare.abif',
-         'is_equal',
-         ["votelines", 0, "prefs", "C,Z", "rank"],
-         3)
+    # FIXME: figure out what this test is supposed to be checking
+    pytest.param(
+        ['-f', 'abif', '-t', 'jabmod'],
+        'testdata/commasep/commasquare.abif',
+        'is_equal',
+        ["votelines", 0, "prefs", "C,Z", "rank"],
+        3,
+        id='test013'
     ),
     # TEST 014:
     # Test the deprecated '-t paircountjson' parameter, which will be
