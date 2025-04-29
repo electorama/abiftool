@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# nameq.py - funcitons for working with Brian Olson's '.nameq' format
-#
-# Copyright (C) 2024 Rob Lanphier
+''' nameq.py - funcitons for working with Brian Olson's '.nameq' format '''
+
+# Copyright (c) 2024 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or

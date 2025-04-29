@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# textoutput.py - Utility functions for structured data
-#
-# Copyright (C) 2023 Rob Lanphier
+''' html_output_scorestar.py - HTML output function for score and STAR output. '''
+
+# Copyright (c) 2023, 2024 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or

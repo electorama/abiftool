@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# textoutput.py - Utility functions for structured data
-#
-# Copyright (C) 2023 Rob Lanphier
+''' html_output_pairwise.py - HTML output function for winlosstie table. '''
+
+# Copyright (c) 2023, 2024 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -14,6 +14,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+# TODO - replace with Jinja2 template, perhaps
 
 from abiflib import *
 from abiflib.pairwise import *

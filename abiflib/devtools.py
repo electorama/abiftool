@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# abiflib/core.py - core ABIF<=>jabmod conversion functions
+''' abiflib/devtools.py - Functions/classes for debugging abiftool '''
 #
-# Copyright (C) 2023 Rob Lanphier
+# Copyright (C) 2024 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or

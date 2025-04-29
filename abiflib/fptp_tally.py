@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# abiflib/fptp_tally.py - Functions for converting jabmod
-#
-# Copyright (C) 2023, 2024, 2025 Rob Lanphier
+''' abiflib/fptp_tally.py - Functions for tallying FPTP elections '''
+
+# Copyright (c) 2025 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# abiflib/sftxt.py - conversion functions for election results published by SF
-#
+''' abiflib/sftxt.py - conversion functions for election results published by SF '''
+
 # Copyright (C) 2018, 2024 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -1,7 +1,25 @@
 #!/usr/bin/env python3
+''' preflib.py - input/output support for the PrefLib formats '''
+
+# Copyright (c) 2023, 2024 Rob Lanphier
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
 from abiflib import *
 import re
 
+# Example of PrefLib format:
 '''
 # ALTERNATIVE NAME 1: Bob Kiss
 # ALTERNATIVE NAME 2: Andy Montroll
@@ -13,6 +31,7 @@ import re
 355: 1,2,{3,4,5,6}
 326: 1,{2,3,4,5,6}
 '''
+# See https://preflib.org for more
 
 def _extract_alt_names_from_preflib_str(preflib_str):
     lines = preflib_str.splitlines()

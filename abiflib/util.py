@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# abiflib/util.py - misc ABIF-related functions
-#
+'''abiflib/util.py - misc ABIF-related functions'''
+
 # Copyright (C) 2023, 2024, 2025 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

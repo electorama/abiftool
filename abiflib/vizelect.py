@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""
-vizelect - functions for election visualizations
-"""
-# Copyright (C) 2024 Rob Lanphier
+"""vizelect - functions for election visualizations"""
+
+# Copyright (c) 2024, 2025 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or

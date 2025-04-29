@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# abiflib/__init__.py - conversion to/from .abif to other electoral expressions
-#
+'''abiflib/__init__.py - conversion to/from .abif to other electoral expressions'''
+
 # Copyright (C) 2023 Rob Lanphier
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
