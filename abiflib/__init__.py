@@ -15,21 +15,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# Core functions and debugging tools
 from abiflib.abifregex import *
 from abiflib.devtools import *
 from abiflib.core import *
-from abiflib.debtally import *
+
+# Modules for parsing/rendering different formats
+from abiflib.debvote_fmt import *
+from abiflib.nameq_fmt import *
+from abiflib.preflib_fmt import *
+from abiflib.sftxt_fmt import *
+from abiflib.widj_fmt import *
+
+# Modules for tallying with various election methods
 from abiflib.fptp_tally import *
+from abiflib.irv_tally import *
+from abiflib.pairwise_tally import *
+from abiflib.score_star_tally import *
+
+# Modules for output display
 from abiflib.html_output import *
-from abiflib.irvtally import *
-from abiflib.nameq import *
-from abiflib.pairwise import *
-from abiflib.preflib import *
-from abiflib.scorestar import *
-from abiflib.sftxt import *
-from abiflib.textoutput import *
-from abiflib.vizelect import *
-from abiflib.widjfuncs import *
+from abiflib.text_output import *
+from abiflib.vizelect_output import *
 
 # Some functions in util may rely on being imported after all other
 # functions
