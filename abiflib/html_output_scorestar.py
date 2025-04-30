@@ -16,8 +16,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from abiflib.scorestar import *
-from abiflib.html_output import *
 import argparse
 import html
 import json

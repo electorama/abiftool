@@ -16,7 +16,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from abiflib.pairwise import *
 import argparse
 import json
 import re

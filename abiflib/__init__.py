@@ -29,14 +29,14 @@ from abiflib.widj_fmt import *
 
 # Modules for tallying with various election methods
 from abiflib.fptp_tally import *
-from abiflib.irvtally import *
-from abiflib.pairwise import *
-from abiflib.scorestar import *
+from abiflib.irv_tally import *
+from abiflib.pairwise_tally import *
+from abiflib.score_star_tally import *
 
 # Modules for output display
 from abiflib.html_output import *
-from abiflib.textoutput import *
-from abiflib.vizelect import *
+from abiflib.text_output import *
+from abiflib.vizelect_output import *
 
 # Some functions in util may rely on being imported after all other
 # functions

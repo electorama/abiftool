@@ -18,7 +18,6 @@
 # TODO - replace with Jinja2 template, perhaps
 
 from abiflib import *
-from abiflib.pairwise import *
 from abiflib.html_output import *
 import argparse
 import json
