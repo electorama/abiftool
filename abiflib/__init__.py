@@ -18,18 +18,18 @@
 from abiflib.abifregex import *
 from abiflib.devtools import *
 from abiflib.core import *
-from abiflib.debtally import *
+from abiflib.debvote_fmt import *
 from abiflib.fptp_tally import *
 from abiflib.html_output import *
 from abiflib.irvtally import *
-from abiflib.nameq import *
+from abiflib.nameq_fmt import *
 from abiflib.pairwise import *
-from abiflib.preflib import *
+from abiflib.preflib_fmt import *
 from abiflib.scorestar import *
-from abiflib.sftxt import *
+from abiflib.sftxt_fmt import *
 from abiflib.textoutput import *
 from abiflib.vizelect import *
-from abiflib.widjfuncs import *
+from abiflib.widj_fmt import *
 
 # Some functions in util may rely on being imported after all other
 # functions
