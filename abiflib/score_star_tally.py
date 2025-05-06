@@ -131,7 +131,10 @@ def scaled_scores(jabmod, target_scale=100):
     ballotcount = jabmod['metadata']['ballotcount']
     retval['max_rating'] = jabmod['metadata'].get('max_rating')
     retval['total_all_scores'] = scores['total_all_scores']
-    scale = target_scale / retval['total_all_scores']
+    try:
+        scale = target_scale / retval['total_all_scores']
+    except ZeroDivisionError:
+        scale = 0
     retval['scale_factor'] = scale
     scaled_total = 0
     candidates = jabmod['candidates']
