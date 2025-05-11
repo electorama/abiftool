@@ -75,7 +75,7 @@ def convert_abif_to_jabmod(inputstr,
     candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
     votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
 
-    newmodel = _get_emptyish_abifmodel()
+    newmodel = get_emptyish_abifmodel()
 
     if len(inputstr) == 0:
         msg = f'Empty ABIF string..'
@@ -139,7 +139,7 @@ def convert_abif_to_jabmod(inputstr,
 
     # Add in Borda-ish score if requested by calling function
     if add_ratings:
-        abifmodel = _add_ratings_to_jabmod_votelines(abifmodel)
+        abifmodel = add_ratings_to_jabmod_votelines(abifmodel)
 
     slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
                    reverse=True)
@@ -157,7 +157,7 @@ def _process_abif_comment_line(abifmodel=None,
     '''Store abif comments in jabmod metadata'''
     initval = corefunc_init(tag="f02")
     if not abifmodel:
-        abifmodel = _get_emptyish_abifmodel()
+        abifmodel = get_emptyish_abifmodel()
     commenttuple = (linenum, linecomment)
     if linecomment and storecomments:
         if not 'comments' in abifmodel['metadata']:
@@ -196,7 +196,7 @@ def _process_abif_candline(candtoken, canddesc, abifmodel, linecomment=None):
     return abifmodel
 
 
-def _get_emptyish_abifmodel():
+def get_emptyish_abifmodel():
     '''Provide initialized jabmod/abifmodel'''
     initval = corefunc_init(tag="f05")
     retval = {}
@@ -206,9 +206,6 @@ def _get_emptyish_abifmodel():
     retval['votelines'] = []
     return retval
 
-
-def get_emptyish_jabmod():
-    return _get_emptyish_abifmodel()
 
 def _add_ranks_to_prefjab_by_rating(inprefjab):
     '''Use candidate ratings to provide rankings'''
@@ -240,7 +237,7 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
     return retval
 
 
-def _add_ratings_to_jabmod_votelines(inmod, add_ratings=True):
+def add_ratings_to_jabmod_votelines(inmod, add_ratings=True):
     ''' Calculate Borda-like ratings in lieu of explicit ratings '''
     # Detect if the rating key is in inmod anywhere.  Only add Borda
     # style ratings if there are no ratings anywhere in inmod.
@@ -361,7 +358,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
     rank = 1
 
     if not abifmodel:
-        abifmodel = _get_emptyish_abifmodel()
+        abifmodel = get_emptyish_abifmodel()
 
     rank_or_rate, delimeters = _determine_rank_or_rate(prefstr)
 
@@ -408,7 +405,7 @@ def _process_abif_prefline(qty, prefstr,
             voterid = cparts['voterid']
 
     if not abifmodel:
-        abifmodel = _get_emptyish_abifmodel()
+        abifmodel = get_emptyish_abifmodel()
 
     abifmodel['metadata']['ballotcount'] += int(qty)
     linepair = {}
@@ -708,7 +705,7 @@ def main():
         parseout = _process_abif_prefline(0, f"{args.string[0]}")
         print(json.dumps(parseout, indent=4))
     elif args.func == 'emptyish':
-        emptyish = _get_emptyish_abifmodel()
+        emptyish = get_emptyish_abifmodel()
         print(json.dumps(emptyish, indent=4))
     elif args.func == 'modify_jabmod':
         if not args.string:

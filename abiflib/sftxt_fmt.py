@@ -284,7 +284,7 @@ def convert_sftxt_to_jabmod(sftxt_master_blob, sftxt_ballot_blob, verbose=False)
     candpool = sftxt_master_blob
     outputrecords = sftxt_ballot_blob
 
-    retval = get_emptyish_jabmod()
+    retval = get_emptyish_abifmodel()
 
     lookuplines = list(read_sftxt_blob(MASTERLOOKUP_FIELDSPEC, sftxt_master_blob))
 

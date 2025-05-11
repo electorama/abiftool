@@ -29,6 +29,7 @@ prefline_test_entries = [
     'prefstr, candtok, testrank, testrating', prefline_test_entries
 )
 def test_process_abif_prefline_parse(prefstr, candtok, testrank, testrating):
+    abiflib_test_log(f"{prefstr=}")
     jabmod = _process_abif_prefline(0, prefstr)
     assert candtok in jabmod['votelines'][0]['prefs']
 
