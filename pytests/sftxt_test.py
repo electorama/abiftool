@@ -13,7 +13,8 @@ LOGOBJ = abiflib.LogfileSingleton()
          ['downloads/california/20180627_masterlookup.txt',
           'downloads/california/20180627_ballotimage.txt'],
          r"11937:LONDON_BREED>MARK_LENO>JANE_KIM"),
-    ]
+    ],
+    ids=['sftxt_001']
 )
 
 def test_grep_output_for_regexp(cmd_args, inputfiles, pattern):

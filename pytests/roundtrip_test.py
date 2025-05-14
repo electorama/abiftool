@@ -12,17 +12,20 @@ testdicts = [
     {
         "fetchspec": "abif-electorama.fetchspec.json",
         "filename": "downloads/electorama-abif/testfiles/potus1980test01.abif",
-        "abif_line": "20010:Carter>Anderson>Reagan"
+        "abif_line": "20010:Carter>Anderson>Reagan",
+        "id": "roundtrip_001"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
         "filename": "downloads/electorama-abif/testfiles/test001.abif",
-        "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy=Frank"
+        "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy=Frank",
+        "id": "roundtrip_002"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
         "filename": "downloads/electorama-abif/testfiles/test016.abif",
-        "abif_line": "24:[蘇業]/5>AM/2=DGM/2>SBJ/1"
+        "abif_line": "24:[蘇業]/5>AM/2=DGM/2>SBJ/1",
+        "id": "roundtrip_003"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
@@ -30,7 +33,8 @@ testdicts = [
         # FIXME: this is a horrible kludge.  I shouldn't have altered the
         #   electorama/abif test suite to get around the fact that the
         #   abiflib parser fails with the 2024-06-02 commit.  So sue me.
-        "abif_line": "23:[Adam num4]/5>[Sue (蘇) num3]/3>[Doña num1]/1>[Steven num2]"
+        "abif_line": "23:[Adam num4]/5>[Sue (蘇) num3]/3>[Doña num1]/1>[Steven num2]",
+        "id": "roundtrip_004"
     },
 ]
 

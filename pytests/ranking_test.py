@@ -15,7 +15,8 @@ testdicts = [
         "abif_offset": -6,
         "abif_line": "20010:Carter>Anderson>Reagan",
         "html_offset": 8,
-        "html_line": "     Anderson"
+        "html_line": "     Anderson",
+        "id": "ranking_001"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
@@ -26,7 +27,8 @@ testdicts = [
         "abif_offset": -3,
         "abif_line": "7:Georgie/5>Allie/4>Dennis/3=Harold/3>Candace/2>Edith/1>Billy=Frank",
         "html_offset": 8,
-        "html_line": "     Allie"
+        "html_line": "     Allie",
+        "id": "ranking_002"
     },
     {
         "fetchspec": "abif-electorama.fetchspec.json",
@@ -37,7 +39,8 @@ testdicts = [
         "abif_offset": -5,
         "abif_line": "27:DGM/5>SBJ/2>SY/1>AM",
         "html_offset": 8,
-        "html_line": "     Doña García Márquez [\"DGM\"]"
+        "html_line": "     Doña García Márquez [\"DGM\"]",
+        "id": "ranking_003"
     },
     {
         "fetchspec": None,
@@ -48,7 +51,8 @@ testdicts = [
         "abif_offset": -2,
         "abif_line": "15:Chat>Knox>Nash>Memph",
         "html_offset": 8,
-        "html_line": "     Nash"
+        "html_line": "     Nash",
+        "id": "ranking_004"
     },
 ]
 

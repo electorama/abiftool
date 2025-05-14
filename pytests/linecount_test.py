@@ -7,7 +7,8 @@ from subprocess import run, PIPE
         ('testdata/widjexample/widjexample.jabmod', ['-t', 'abif'], 22),
         ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 8650),
         ('testdata/burl2009/burl2009.abif', ['-t', 'text'], 26)
-    ]
+    ],
+    ids=['linecount_001', 'linecount_002', 'linecount_003']
 )
 
 def test_abiftool_linecount(input_file, command_line_args, expected_output_length):

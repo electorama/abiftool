@@ -14,27 +14,28 @@ import subprocess
 import sys
 
 ########################################
-# json tests
-
-jsontestlist = [
-    (
-        ['-f', 'nameq', '-t', 'jabmod', '-m', 'consolidate'],
-        'testdata/bolson-nameq/letters.nameq',
-         'is_equal',
-        ["votelines", 2, "qty"],
-        2
-    ),
-    (
-        ['-f', 'nameq', '-t', 'paircountjson'],
-        'testdata/bolson-nameq/tennessee-example-simple.nameq',
-        'is_equal',
-        ['Knox', 'Chat'],
-        17
-    ),
-]
+# 1. nameq_json tests
 
 @pytest.mark.parametrize(
-    'cmd_args, inputfile, testtype, keylist, value', jsontestlist
+    'cmd_args, inputfile, testtype, keylist, value',
+    [
+        (
+            ['-f', 'nameq', '-t', 'jabmod', '-m', 'consolidate'],
+            'testdata/bolson-nameq/letters.nameq',
+            'is_equal',
+            ["votelines", 2, "qty"],
+            2
+        ),
+        (
+            ['-f', 'nameq', '-t', 'paircountjson'],
+            'testdata/bolson-nameq/tennessee-example-simple.nameq',
+            'is_equal',
+            ['Knox', 'Chat'],
+            17
+        ),
+    ],
+    ids=['nameq_json_001', 'nameq_json_002']
+
 )
 def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
     """Test equality of subkey to a value"""
@@ -50,7 +51,7 @@ def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
         assert testtype in ['is_equal', 'contains']
 
 ########################################
-# text tests
+# 2. nameq_text tests
 texttestlist = [
     (['-f', 'nameq', '-t', 'text', '-m', 'IRV'],
      'testdata/bolson-nameq/letters.nameq',
@@ -70,7 +71,9 @@ texttestlist = [
 ]
 
 @pytest.mark.parametrize(
-    'cmd_args, inputfile, pattern', texttestlist
+    'cmd_args, inputfile, pattern', texttestlist,
+    ids=['nameq_text_001', 'nameq_text_002', 'nameq_text_003', 'nameq_text_004',
+         'nameq_text_005'] 
 )
 def test_IRV_text_output(cmd_args, inputfile, pattern):
     print(inputfile)
