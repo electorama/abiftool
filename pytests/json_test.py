@@ -17,7 +17,7 @@ testlist = [
         'is_equal',
         ["Chat", "wins"],
         2,
-        id='test001'
+        id='json_001'
     ),
     # TEST 002:
     # Test the '-t jabmod' parameter with the simplified TN example
@@ -27,7 +27,7 @@ testlist = [
         'is_equal',
         ["votelines", 0, "qty"],
         42,
-        id='test002'
+        id='json_002'
     ),
     # TEST 003:
     # Test roundtripping jabmod with a mock election example
@@ -37,7 +37,7 @@ testlist = [
         'is_equal',
         ["votelines", 0, "qty"],
         1,
-        id='test003'
+        id='json_003'
     ),
     # TEST 004:
     # Test roundtripping jabmod with a mock election example,
@@ -48,7 +48,7 @@ testlist = [
         'is_equal',
         ["votelines", 0, "qty"],
         5,
-        id='test004'
+        id='json_004'
     ),
     # TEST 005:
     # Test IRV with the SF 2018 special election, checking if the winner
@@ -59,7 +59,7 @@ testlist = [
         'is_equal',
         ["roundmeta", -1, "winner"],
         ["LONDON_BREED"],
-        id='test005'
+        id='json_005'
     ),
     # TEST 006:
     # Test IRV with the SF 2018 special election, checking for eliminated
@@ -70,7 +70,7 @@ testlist = [
         'is_equal',
         ["roundmeta", -1, "eliminated"],
         ["MARK_LENO"],
-        id='test006'
+        id='json_006'
     ),
     # TEST 007:
     # Test IRV with the SF 2018 special election, checking for starting
@@ -81,7 +81,7 @@ testlist = [
         'is_equal',
         ["roundmeta", -1, "startingqty"],
         254016,
-        id='test007'
+        id='json_007'
     ),
     # TEST 008:
     # Test IRV with the SF 2018 special election, checking the final count
@@ -98,7 +98,7 @@ testlist = [
         'is_equal',
         ["rounds", -1, "LONDON_BREED"],
         116020,
-        id='test008'
+        id='json_008'
     ),
     # TEST 009:
     # Test IRV with the SF 2018 special election, checking if a WRITE_IN
@@ -109,7 +109,7 @@ testlist = [
         'is_equal',
         ["roundmeta", 0, "eliminated", 3],
         r'WRITE_IN',
-        id='test009'
+        id='json_009'
     ),
     # TEST 010:
     # Test IRV with a mock election, checking if it uses 14 rounds as
@@ -120,7 +120,7 @@ testlist = [
         'contains',
         ["roundmeta", 13, "all_eliminated"],
         r'F',
-        id='test010'
+        id='json_010'
     ),
     # TEST 011:
     # Testing whether an Alaska election has 4 candidates
@@ -130,7 +130,7 @@ testlist = [
         'length',
         ["candidates"],
         4,
-        id='test011'
+        id='json_011'
     ),
     # TEST 012:
     # Test the '-t paircountjson' parameter
@@ -140,7 +140,7 @@ testlist = [
         'is_equal',
         ["A,X", "B,Y"],
         12,
-        id='test012'
+        id='json_012'
     ),
     # TEST 013:
     # FIXME: figure out what this test is supposed to be checking
@@ -150,7 +150,7 @@ testlist = [
         'is_equal',
         ["votelines", 0, "prefs", "C,Z", "rank"],
         3,
-        id='test013'
+        id='json_013'
     ),
     # TEST 014:
     # Test the deprecated '-t paircountjson' parameter, which will be
@@ -160,7 +160,7 @@ testlist = [
                  'is_equal',
                  ["Chat", "Knox"],
                  83,
-                 id='test014'),
+                 id='json_014'),
     # TEST 015:
     # Test the "-t json -m pairwise" combo
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'pairwise'],
@@ -168,7 +168,7 @@ testlist = [
                  'is_equal',
                  ["Chat", "Knox"],
                  83,
-                 id='test015'),
+                 id='json_015'),
     # TEST 016:
     # Test the deprecated '-t irvjson' parameter, which will be
     # replaced by "-t json -m IRV" combo
@@ -177,7 +177,7 @@ testlist = [
                  'is_equal',
                  ["winner", 0],
                  "Knox",
-                 id='test016'),
+                 id='json_016'),
     # TEST 017:
     # Test the "-t json -m IRV" combo
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'IRV'],
@@ -185,7 +185,7 @@ testlist = [
                  'is_equal',
                  ["winner", 0],
                  "Knox",
-                 id='test017'),
+                 id='json_017'),
     # TEST 018:
     # Test the "-t json -m FPTP" combo wth simplified TN example
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
@@ -193,7 +193,7 @@ testlist = [
                  'is_equal',
                  ["winners", 0],
                  "Memph",
-                 id='test018'),
+                 id='json_018'),
     # TEST 019:
     # Test the "-t json -m FPTP" combo with a tie election
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
@@ -201,7 +201,7 @@ testlist = [
                  'is_equal',
                  ["winners", 1],
                  "S",
-                 id='test019'),
+                 id='json_019'),
 ]
 
 @pytest.mark.parametrize(

@@ -24,11 +24,12 @@ prefline_test_entries = [
      ),
 ]
 
-prefline_ids = [f"prefline{i + 1:02d}" for i in range(len(prefline_test_entries))]
+id_prefix = "abifprefstr"
+prefline_ids = [f"{i + 1:03d}" for i in range(len(prefline_test_entries))]
 
 @pytest.mark.parametrize(
     'prefstr, candtok, testrank, testrating', prefline_test_entries,
-    ids = [f"parse_{i}" for i in prefline_ids]
+    ids = [f"{id_prefix}_parse_{i}" for i in prefline_ids]
 )
 def test_process_abif_prefline_parse(prefstr, candtok, testrank, testrating):
     abiflib_test_log(f"{prefstr=}")
@@ -38,7 +39,7 @@ def test_process_abif_prefline_parse(prefstr, candtok, testrank, testrating):
 
 @pytest.mark.parametrize(
     'prefstr, candtok, testrank, testrating', prefline_test_entries,
-    ids = [f"rank_{i}" for i in prefline_ids]
+    ids = [f"{id_prefix}_rank_{i}" for i in prefline_ids]
 )
 def test_process_abif_prefline_rank(prefstr, candtok, testrank, testrating):
     jabmod = _process_abif_prefline(0, prefstr)
@@ -49,7 +50,7 @@ def test_process_abif_prefline_rank(prefstr, candtok, testrank, testrating):
 
 @pytest.mark.parametrize(
     'prefstr, candtok, testrank, testrating', prefline_test_entries,
-    ids = [f"rating_{i}" for i in prefline_ids]
+    ids = [f"{id_prefix}_rating_{i}" for i in prefline_ids]
 )
 def test_process_abif_prefline_rating(prefstr, candtok, testrank, testrating):
     jabmod = _process_abif_prefline(0, prefstr)

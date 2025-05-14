@@ -21,7 +21,7 @@ test_list=[
             "test_data": {"tag": "tr",
                           "pattern": r"Nash: 68"}
         },
-        id='htmltest_001'),
+        id='html_001'),
     pytest.param(
         {
             "fetchspec":None,
@@ -30,7 +30,7 @@ test_list=[
             "test_type":"regex",
             "test_data":r"← Knox: 58"
         },
-        id='htmltest_002'),
+        id='html_002'),
 ]
 
 
