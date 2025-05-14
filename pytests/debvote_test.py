@@ -17,7 +17,8 @@ testdicts=[
         'filename':"downloads/debian-elections/2022/vote_002_tally.txt",
         'key1':"metadata",
         'subkey1':"ballotcount",
-        'val1':354
+        'val1':354,
+        'id':'debvote_json_001'
     },
     {
         "fetchspec":"debian-elections.fetchspec.json",
@@ -25,7 +26,8 @@ testdicts=[
         'filename':"downloads/debian-elections/2003/leader2003_tally.txt",
         'key1':"MartinMichlmayr",
         'subkey1':"BdaleGarbee",
-        'val1':228
+        'val1':228,
+        'id':'debvote_json_002'
     },
     {
         "fetchspec":"debian-elections.fetchspec.json",
@@ -33,7 +35,8 @@ testdicts=[
         'filename':"downloads/debian-elections/2003/leader2003_tally.txt",
         'key1':"BdaleGarbee",
         'subkey1':"MartinMichlmayr",
-        'val1':224
+        'val1':224,
+        'id':'debvote_json_003'
     },
     {
         "fetchspec":"debian-elections.fetchspec.json",
@@ -41,7 +44,8 @@ testdicts=[
         'filename':"downloads/debian-elections/2021/vote_002_tally.txt",
         'key1':"metadata",
         'subkey1':"ballotcount",
-        'val1':420
+        'val1':420,
+        'id':'debvote_json_004'
     },
     {
         "fetchspec":"debian-elections.fetchspec.json",
@@ -49,11 +53,12 @@ testdicts=[
         'filename':"downloads/debian-elections/2006/vote_002_tally.txt",
         'key1':"JeroenvanWolffelaar",
         'subkey1':"AriPollak",
-        'val1':310
+        'val1':310,
+        'id':'debvote_json_005'
     }
 ]
 
-mycols = ('outformat', 'filename', 'key1', 'subkey1', 'val1')
+mycols = ('outformat', 'filename', 'key1', 'subkey1', 'val1', 'id')
 
 pytestlist = []
 for testdict in testdicts:
@@ -63,7 +68,7 @@ for testdict in testdicts:
 LOGOBJ = abiflib.LogfileSingleton()
 
 @pytest.mark.parametrize(mycols, pytestlist)
-def test_debtally_cli_json(outformat, filename, key1, subkey1, val1):
+def test_debtally_cli_json(outformat, filename, key1, subkey1, val1, id):
     """Testing debtally using json output from abiftool.py"""
     # TODO: turn this into a generic test function for testing JSON
     #    output
@@ -88,9 +93,11 @@ def test_debtally_cli_json(outformat, filename, key1, subkey1, val1):
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
     [
-        (["-f", "debtally", "-t", "csvrank"],
-         "downloads/debian-elections/2006/vote_002_tally.txt",
-         r"1ccb15e79dc5734b217fb8e3fb296b9d,1,4,2,1,2,6,3,5"),
+        pytest.param(
+            ["-f", "debtally", "-t", "csvrank"],
+            "downloads/debian-elections/2006/vote_002_tally.txt",
+            r"1ccb15e79dc5734b217fb8e3fb296b9d,1,4,2,1,2,6,3,5",
+            id='debvote_grepout_001')
     ]
 )
 def test_grep_output_for_regexp(cmd_args, inputfile, pattern):

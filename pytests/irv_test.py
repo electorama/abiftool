@@ -14,68 +14,99 @@ from abiftestfuncs import *
     'cmd_args, inputfile, pattern',
     [
         #irv test001
-        (['-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-scores.abif',
-         r"Chat: 15"),
+        pytest.param(
+            ['-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-scores.abif',
+            r"Chat: 15",
+            id='irv_textout_001'),
         #irv test002
-        (['-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-STAR.abif',
-         r'The IRV winner is Knox'),
+        pytest.param(
+            ['-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-STAR.abif',
+            r'The IRV winner is Knox',
+            id='irv_textout_002'),
         #irv test003
-        (['-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
-         r"Knox: 17"),
+        pytest.param(
+            ['-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
+            r"Knox: 17",
+            id='irv_textout_003'),
         #irv test004
-        (['-t', 'text', '-m', 'IRV'],
-         'testdata/commasep/tn-example-scores-and-commas.abif',
-         r"Knox: 58"),
+        pytest.param(
+            ['-t', 'text', '-m', 'IRV'],
+            'testdata/commasep/tn-example-scores-and-commas.abif',
+            r"Knox: 58",
+            id='irv_textout_004'),
         #irv test005
-        (['-t', 'text', '-m', 'IRV'],
-         'testdata/burl2009/burl2009.abif',
-         r'The IRV winner is Kiss'),
+        pytest.param(
+            ['-t', 'text', '-m', 'IRV'],
+            'testdata/burl2009/burl2009.abif',
+            r'The IRV winner is Kiss',
+            id='irv_textout_005'),
         #irv test006
         # FIXME - There are a number of interpretations of this
         # example.  The abiftool implmementation of IRV/RCV may need
         # to be tweaked to match the popular usage of IRV/RCV.
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-        'testdata/commasep/jman722-example.abif',
-         r'The IRV winner is Georgie'),
+        pytest.param(
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/commasep/jman722-example.abif',
+            r'The IRV winner is Georgie',
+            id='irv_textout_006'),
         #irv test007
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-overvote-02.abif',
-         r"Memph: 42"),
+        pytest.param(
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            r"Memph: 42",
+            id='irv_textout_007'),
         #irv test008
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-overvote-02.abif',
-         r"Total starting votes: 100"),
+        pytest.param(
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            r"Total starting votes: 100",
+            id='irv_textout_008'),
         #irv test009
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-overvote-02.abif',
-         r"Total counted votes: 83"),
+        pytest.param(
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            r"Total counted votes: 83",
+            id='irv_textout_009'),
         #irv test010
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+        pytest.param(
+        ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
          'testdata/tenn-example/tennessee-example-overvote-02.abif',
-         r'Overvotes: 17'),
+            r'Overvotes: 17',
+            id='irv_textout_010'),
         #irv test011
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-overvote-02.abif',
-         r'Eliminated this round: Chat, Knox, Nash'),
+        pytest.param(
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            r'Eliminated this round: Chat, Knox, Nash',
+            id='irv_textout_011'),
         #irv test012
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/commasep/jman722-example.abif',
-         r'Total starting votes: 24'),
+        pytest.param(
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/commasep/jman722-example.abif',
+            r'Total starting votes: 24',
+            id='irv_textout_012'),
         #irv test013
-        (['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-irv-tie.abif',
-         r'The IRV winners are Knox and Memph'),
+        pytest.param(
+        ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/tenn-example/tennessee-example-irv-tie.abif',
+            r'The IRV winners are Knox and Memph',
+            id='irv_textout_013'),
         #irv test014
-        (['-f', 'abif', '-t', 'irvjson'],
-         'testdata/tenn-example/tennessee-example-irv-tie.abif',
-         r'Knoxville, TN and Memphis, TN'),
+        pytest.param(
+            ['-f', 'abif', '-t', 'irvjson'],
+            'testdata/tenn-example/tennessee-example-irv-tie.abif',
+            r'Knoxville, TN and Memphis, TN',
+            id='irv_textout_014'),
         #irv test015
-        (['-f', 'abif', '-t', 'irvjson'],
-         'testdata/burl2009/burl2009.abif',
-         r'Bob Kiss \(Progressive\)'),
+        pytest.param(
+            ['-f', 'abif', '-t', 'irvjson'],
+            'testdata/burl2009/burl2009.abif',
+            r'Bob Kiss \(Progressive\)',
+            id='irv_textout_015'
+        )
     ]
 )
 def test_IRV_text_output(cmd_args, inputfile, pattern):
@@ -87,10 +118,8 @@ def test_IRV_text_output(cmd_args, inputfile, pattern):
 
 @pytest.mark.parametrize(
     'abif_filename',
-    [
-        #irv test016
-        'testdata/tenn-example/tennessee-example-scores.abif'
-    ]
+    ['testdata/tenn-example/tennessee-example-scores.abif'],
+    ids=['irv_multicall_001'],
 )
 def test_IRV_multiple_calls(abif_filename):
     abiftext = pathlib.Path(abif_filename).read_text()

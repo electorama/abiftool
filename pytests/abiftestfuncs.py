@@ -85,6 +85,7 @@ def get_pytest_abif_testsubkey(testdict, cols=None):
         skipmsg = f"No fetchspec: {this_file}"
     return pytest.param(
         *this_list,
+        id=testdict.get('id'),
         marks=pytest.mark.skipif(
             not os.path.isfile(this_file),
             reason=f"Missing {this_file=}. {skipmsg}")
