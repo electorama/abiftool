@@ -9,7 +9,7 @@
 {min_rating: 0}
 {count_subpage_ballots: false}
 {count_inline_ballots: true}
-{election_methods: [{"type": "copeland"}, {"type": "plurality"}]}
+{election_methods: "copeland, plurality"}
 {inline_ballot_type: "range-array"}
 #-----------------------
 =Kiss:[Bob Kiss (Progressive)]
