@@ -469,7 +469,7 @@ def _abif_token_quote(candtoken):
     '''Add square brackets to a candidate token if necessary'''
     initval = corefunc_init(tag="f11")
     quotedcand = urllib.parse.quote_plus(candtoken)
-    if quotedcand == candtoken:
+    if quotedcand == candtoken and not candtoken.isdecimal():
         candtoken = candtoken
     else:
         candtoken = f"[{candtoken}]"
