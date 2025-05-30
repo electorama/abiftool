@@ -39,6 +39,8 @@ def convert_nameq_to_jabmod(inputstr):
         }
         qp = parse_qs(qs)
         for key, value in qp.items():
+            if len(key) < 1:
+                key = "null"
             vl["prefs"][key] = {}
             vl["prefs"][key]["rank"] = int(value[0])
             abifmodel["candidates"][key] = key 

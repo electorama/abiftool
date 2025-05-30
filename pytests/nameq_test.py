@@ -40,8 +40,15 @@ import sys
             ['00002', '00001'],
             4
         ),
+        (
+            ['-f', 'nameq', '-t', 'jabmod'],
+            'testdata/bolson-nameq/nullcand.nameq',
+            'is_equal',
+            ['candidates', 'null'],
+            'null'
+        ),
     ],
-    ids=['nameq_json_001', 'nameq_json_002', 'nameq_json_003']
+    ids=['nameq_json_001', 'nameq_json_002', 'nameq_json_003', 'name_json_004']
 
 )
 def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
@@ -78,12 +85,15 @@ texttestlist = [
     (['-f', 'nameq', '-t', 'abif'],
      'testdata/bolson-nameq/numbercand.nameq',
      r'1:\[00005\]>\[00008\]>\[00003\]'),
+    (['-f', 'nameq', '-t', 'abif'],
+     'testdata/bolson-nameq/nullcand.nameq',
+     r'1:null'),
 ]
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern', texttestlist,
     ids=['nameq_text_001', 'nameq_text_002', 'nameq_text_003', 'nameq_text_004',
-         'nameq_text_005', 'nameq_test_006']
+         'nameq_text_005', 'nameq_text_006', 'nameq_text_007']
 )
 def test_IRV_text_output(cmd_args, inputfile, pattern):
     print(inputfile)
