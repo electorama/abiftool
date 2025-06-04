@@ -280,7 +280,6 @@ def _extract_candprefs_from_prefstr(prefstr):
     currating = None
     ccand = None
     for tok in tokenlist:
-        tok = tok.strip()
         if inbrackets or inquotes:
             if re.match(r"^\[", tok) and not inbrackets:
                 # Start of square bracketed part
@@ -310,6 +309,7 @@ def _extract_candprefs_from_prefstr(prefstr):
             else:
                 raise ABIFVotelineException(message=f"{tok=}")
         else:
+            tok = tok.strip()
             subchars = r'<>='
             if m := re.match(r'\s*\"([^\"]*)\"/(\d+)', tok):
                 ccand = m.group(1)

@@ -202,6 +202,14 @@ testlist = [
                  ["winners", 1],
                  "S",
                  id='json_019'),
+    # TEST 020:
+    # Test that whitespace in quoted tokens is handled properly
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Representative_(Special_General).abif',
+                 'is_equal',
+                 ["candidates", "Begich, Nick"],
+                 "Begich, Nick",
+                 id='json_020'),
 ]
 
 @pytest.mark.parametrize(
