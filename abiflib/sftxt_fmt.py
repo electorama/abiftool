@@ -336,7 +336,7 @@ def convert_sftxt_to_jabmod(sftxt_master_blob, sftxt_ballot_blob, verbose=False)
 
 def main(argv=None):
     # using splitlines to just get the first line
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[1])
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--imagelines',
                         help='print records for imagelines',
                         action="store_true")
