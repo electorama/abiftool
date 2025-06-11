@@ -1,0 +1,7 @@
+{"title": "Tennessee capitol - blank prefstr"}
+{"description": "A blank prefstr portion represents blank ballots and is valid."}
+500:
+210:Memph/5>Nash/0>Chat/0>Knox/0
+130:Nash/5>Chat/4>Knox/4>Memph/0
+75:Chat/5>Knox/4>Nash/3>Memph/0
+85:Knox/5>Chat/4>Nash/3>Memph/0

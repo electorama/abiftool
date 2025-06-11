@@ -210,6 +210,14 @@ testlist = [
                  ["candidates", "Begich, Nick"],
                  "Begich, Nick",
                  id='json_020'),
+    # TEST 021:
+    # Test that blank abif prefstrs are parsed and reported
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/mock-elections/tennessee-example-blank-prefstr.abif',
+                 'is_equal',
+                 ["votelines", 0, "prefstr"],
+                 "",
+                 id='json_021'),
 ]
 
 @pytest.mark.parametrize(
