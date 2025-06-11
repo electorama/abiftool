@@ -307,7 +307,8 @@ def _extract_candprefs_from_prefstr(prefstr):
             elif len(tok)>0:
                 quotetok += tok
             else:
-                raise ABIFVotelineException(message=f"{tok=}")
+                raise ABIFVotelineException(value=None,
+                                            message=f"{tok=} {prefstr=} {prevtok=}")
         else:
             tok = tok.strip()
             subchars = r'<>='
@@ -331,6 +332,7 @@ def _extract_candprefs_from_prefstr(prefstr):
                 inquotes = True
             else:
                 pass
+        prevtok = tok
     return retval
 
 

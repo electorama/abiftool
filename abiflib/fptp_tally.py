@@ -30,13 +30,17 @@ def FPTP_result_from_abifmodel(abifmodel):
     winners = []
 
     for vline in abifmodel['votelines']:
-        xtop = min(vline['prefs'], key=lambda cand: vline['prefs'][cand]['rank'])
-        toppicks[xtop] = toppicks.get(xtop, 0) + vline['qty']
-        if toppicks[xtop] > maxtop:
-            maxtop = toppicks[xtop]
-            winners = [xtop]
-        elif toppicks[xtop] == maxtop:
-            winners.append(xtop)
+        if len(vline['prefs']) > 0:
+            xtop = min(vline['prefs'], key=lambda cand: vline['prefs'][cand]['rank'])
+            toppicks[xtop] = toppicks.get(xtop, 0) + vline['qty']
+            if toppicks[xtop] > maxtop:
+                maxtop = toppicks[xtop]
+                winners = [xtop]
+            elif toppicks[xtop] == maxtop:
+                winners.append(xtop)
+        else:
+            toppicks[None] = toppicks.get(None, 0) + vline['qty']
+            winners.append(None)
 
     total_votes_recounted = sum(toppicks.values()),
     total_votes = abifmodel['metadata']['ballotcount']
