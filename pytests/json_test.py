@@ -218,6 +218,14 @@ testlist = [
                  ["votelines", 0, "prefstr"],
                  "",
                  id='json_021'),
+    # TEST 022:
+    # Test that embedded quotes are allowed within square brackets
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/mock-elections/tennessee-example-nested-quote.abif',
+                 'is_equal',
+                 ["votelines", 0, "prefs", "\"Memph\" Memphis", "rating"],
+                 5,
+                 id='json_022'),
 ]
 
 @pytest.mark.parametrize(

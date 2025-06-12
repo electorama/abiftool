@@ -280,7 +280,7 @@ def _extract_candprefs_from_prefstr(prefstr):
     currating = None
     ccand = None
     for tok in tokenlist:
-        if inbrackets or inquotes:
+        if inbrackets:
             if re.match(r"^\[", tok) and not inbrackets:
                 # Start of square bracketed part
                 inbrackets = True
@@ -294,7 +294,10 @@ def _extract_candprefs_from_prefstr(prefstr):
                 retval.append( (ccand, currating) )
                 quotetok = ""
                 continue
-            elif re.match(r"^\s*\"", tok):
+            else:
+                quotetok += tok
+        elif inquotes:
+            if re.match(r"^\s*\"", tok):
                 if not inquotes:
                     # this must be the starting quote
                     quotetok = ""
@@ -304,11 +307,8 @@ def _extract_candprefs_from_prefstr(prefstr):
                     quotetok = ""
                 inquotes = ( not inquotes )
                 continue
-            elif len(tok)>0:
-                quotetok += tok
             else:
-                raise ABIFVotelineException(value=None,
-                                            message=f"{tok=} {prefstr=} {prevtok=}")
+                quotetok += tok
         else:
             tok = tok.strip()
             subchars = r'<>='
@@ -332,7 +332,6 @@ def _extract_candprefs_from_prefstr(prefstr):
                 inquotes = True
             else:
                 pass
-        prevtok = tok
     return retval
 
 

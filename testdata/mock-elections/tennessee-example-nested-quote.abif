@@ -1,0 +1,6 @@
+{"title": "Tennessee capitol - nested quote"}
+{"description": "Pretty much everything within square brackets should be valid"}
+420:["Memph" Memphis]/5>["Nash" Nash]/0
+260:["Nash" Nash]/5>Chat/4>Knox/4
+150:Chat/5>Knox/4>["Nash" Nash]/3
+170:Knox/5>Chat/4>["Nash" Nash]/3
