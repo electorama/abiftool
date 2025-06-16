@@ -73,20 +73,39 @@ def STAR_result_from_abifmodel(abifmodel):
     retval['round1winners'] = retval['ranklist'][0:2]
     copecount = full_copecount_from_abifmodel(abifmodel)
 
-    fin1 = retval['fin1'] = retval['ranklist'][0]
-    fin2 = retval['fin2'] = retval['ranklist'][1]
-    fin1n = retval['fin1n'] = retval['scores'][fin1]['candname']
-    fin2n = retval['fin2n'] = retval['scores'][fin2]['candname']
+    if len(retval['ranklist']) == 1:
+        fin1 = retval['fin1'] = retval['ranklist'][0]
+        fin2 = retval['fin2'] = None
+        fin1n = retval['fin1n'] = retval['scores'][fin1]['candname']
+        fin2n = retval['fin2n'] = None
 
-    f1v = retval['fin1votes'] = copecount['winningvotes'][fin1][fin2]
-    f2v = retval['fin2votes'] = copecount['winningvotes'][fin2][fin1]
-    retval['final_abstentions'] = bc - f1v - f2v
-    if f1v > f2v:
+        # Count how many voters gave fin1 a positive rating
+        fin1votes = 0
+        for vl in abifmodel['votelines']:
+            qty = vl['qty']
+            prefs = vl['prefs']
+            rating = prefs.get(fin1, {}).get('rating', 0)
+            if rating > 0:
+                fin1votes += qty
+
+        retval['fin1votes'] = fin1votes
+        retval['fin2votes'] = 0
+        retval['final_abstentions'] = bc - fin1votes
         retval['winner'] = fin1n
-    elif f2v > f1v:
-        retval['winner'] = fin2n
     else:
-        retval['winner'] = f"tie {fin1n} and {fin2n}"
+        fin1 = retval['fin1'] = retval['ranklist'][0]
+        fin2 = retval['fin2'] = retval['ranklist'][1]
+        fin1n = retval['fin1n'] = retval['scores'][fin1]['candname']
+        fin2n = retval['fin2n'] = retval['scores'][fin2]['candname']
+        f1v = retval['fin1votes'] = copecount['winningvotes'][fin1][fin2]
+        f2v = retval['fin2votes'] = copecount['winningvotes'][fin2][fin1]
+        retval['final_abstentions'] = bc - f1v - f2v
+        if f1v > f2v:
+            retval['winner'] = fin1n
+        elif f2v > f1v:
+            retval['winner'] = fin2n
+        else:
+            retval['winner'] = f"tie {fin1n} and {fin2n}"
     return retval
 
 
@@ -119,7 +138,8 @@ def STAR_report(jabmod):
         retval += f" -- {candinfo['candname']}\n"
     retval += f"Finalists: \n"
     retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']} of {tvot} voters\n"
-    retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']} of {tvot} voters\n"
+    if sr['fin2n']:
+        retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']} of {tvot} voters\n"
     retval += f"- {sr['final_abstentions']} abstentions\n"
     retval += f"STAR Winner: {sr['winner']}\n"
     return retval

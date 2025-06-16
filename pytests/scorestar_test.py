@@ -85,6 +85,18 @@ LOGOBJ = abiflib.LogfileSingleton()
                      r"26167 stars \(from 6706 voters\) -- Andy Montroll",
                      #r"0 stars \(from 0 voters\) -- Andy Montroll",
                      id='scorestar_015'),
+        # TEST 016:
+        # Test whether a one-candidate election is handled by STAR
+        pytest.param(['-t', 'text', '-m', 'STAR', '--add-scores'],
+                     'testdata/mock-elections/mock-one-cand.abif',
+                     r"A preferred by 100 of 100 voters",
+                     id='scorestar_016'),
+        # TEST 017:
+        # Test whether a one-candidate election with abstentions is handled by STAR
+        pytest.param(['-t', 'text', '-m', 'STAR', '--add-scores'],
+                     'testdata/mock-elections/mock-one-cand-with-blanks.abif',
+                     r"A preferred by 50 of 100 voters",
+                     id='scorestar_017'),
     ]
 )
 
