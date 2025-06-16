@@ -146,16 +146,25 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
 
     # 4. Other mymeta stuff
     winner = None
-    min_votes = mymeta['bottom_votes_percand'] = min(roundcount.values())
-    max_votes = mymeta['leading_votes_percand'] = max(roundcount.values())
+    if len(roundcount.values()) > 0:
+        min_votes = mymeta['bottom_votes_percand'] = min(roundcount.values())
+        max_votes = mymeta['leading_votes_percand'] = max(roundcount.values())
+    else:
+        min_votes = mymeta['bottom_votes_percand'] = 0
+        max_votes = mymeta['leading_votes_percand'] = 0
     if min_votes == max_votes:
         mymeta['penultimate_votes_percand'] = penultvotesper = max_votes
     else:
         mymeta['penultimate_votes_percand'] = penultvotesper = \
             min(votes for cand, votes in roundcount.items() if votes > min_votes)
     mymeta['starting_cands'] = candlist
-    mymeta['top_voteqty'] = min(roundcount.values())
-    mymeta['bottom_voteqty'] = max(roundcount.values())
+
+    if len(roundcount.values()) > 0:
+        mymeta['top_voteqty'] = min(roundcount.values())
+        mymeta['bottom_voteqty'] = max(roundcount.values())
+    else:
+        mymeta['top_voteqty'] = 0
+        mymeta['bottom_voteqty'] = 0
 
     # 5. Adding newly created "mymeta" to larger "roundmeta" variable
     rounds.append(roundcount)
@@ -173,8 +182,11 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
 
     bottomvotestot = sum(roundcount[c] for c in bottomcands if c in
                          roundcount)
-    bottomvotesper = mbv = max(roundcount[cand] for cand in
-                               bottomcands if cand in roundcount)
+    if len(roundcount) > 0:
+        bottomvotesper = mbv = max(roundcount[cand] for cand in
+                                   bottomcands if cand in roundcount)
+    else:
+        bottomvotesper = mbv = 0
 
     if len(bottomcands) > 1:
         roundmeta[-1]['bottomtie'] = bottomcands
@@ -259,8 +271,10 @@ def IRV_dict_from_jabmod(jabmod):
     winner = retval['winner']
     if len(winner) > 1:
         winnerstr = " and ".join(canddict[w] for w in sorted(winner))
-    else:
+    elif len(winner) == 1:
         winnerstr = canddict[winner[0]]
+    else:
+        winnerstr = None
     retval['winnerstr'] = winnerstr
 
     retval['has_tie'] = any(
@@ -292,8 +306,10 @@ def get_IRV_report(IRV_dict):
 
     if len(winner) > 1:
         output += f"The IRV winners are {' and '.join(sorted(winner))}\n"
-    else:
+    elif len(winner) == 1:
         output += f"The IRV winner is {winner[0]}\n"
+    else:
+        output += f"No IRV winner due to blank preferences."
     return output
 
 

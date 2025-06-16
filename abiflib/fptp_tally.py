@@ -23,7 +23,7 @@ import re
 import sys
 import urllib.parse
 
-def FPTP_result_from_abifmodel(abifmodel):
+def FPTP_result_from_abifmodel(abifmodel, count_blanks=True):
     """Calculate the First Past the Post (FPTP/Plurality) result from the ABIF model."""
     toppicks = {}
     maxtop = 0
@@ -38,9 +38,8 @@ def FPTP_result_from_abifmodel(abifmodel):
                 winners = [xtop]
             elif toppicks[xtop] == maxtop:
                 winners.append(xtop)
-        else:
+        elif count_blanks:
             toppicks[None] = toppicks.get(None, 0) + vline['qty']
-            winners.append(None)
 
     total_votes_recounted = sum(toppicks.values()),
     total_votes = abifmodel['metadata']['ballotcount']
@@ -74,3 +73,26 @@ def get_FPTP_report(abifmodel):
         for w in results['winners']:
            report += f"   * {w}\n"
     return report
+
+
+def main():
+    parser = argparse.ArgumentParser(description='FPTP calculator for ABIF')
+    parser.add_argument('input_file', help='Input .abif')
+    parser.add_argument('-j', '--json', action="store_true",
+                        help='Provide raw json output')
+
+    args = parser.parse_args()
+    abiftext = pathlib.Path(args.input_file).read_text()
+    jabmod = convert_abif_to_jabmod(abiftext)
+    FPTP_dict = FPTP_result_from_abifmodel(jabmod)
+    output = ""
+    if args.json:
+        output += json.dumps(clean_dict(FPTP_dict), indent=4)
+    else:
+        output += candlist_text_from_abif(jabmod)
+        output += get_FPTP_report(jabmod)
+    print(output)
+
+
+if __name__ == "__main__":
+    main()

@@ -73,7 +73,17 @@ def STAR_result_from_abifmodel(abifmodel):
     retval['round1winners'] = retval['ranklist'][0:2]
     copecount = full_copecount_from_abifmodel(abifmodel)
 
-    if len(retval['ranklist']) == 1:
+    if len(retval['ranklist']) == 0:
+        fin1 = retval['fin1'] = None
+        fin2 = retval['fin2'] = None
+        fin1n = retval['fin1n'] = None
+        fin2n = retval['fin2n'] = None
+
+        retval['fin1votes'] = 0
+        retval['fin2votes'] = 0
+        retval['final_abstentions'] = bc
+        retval['winner'] = fin1n
+    elif len(retval['ranklist']) == 1:
         fin1 = retval['fin1'] = retval['ranklist'][0]
         fin2 = retval['fin2'] = None
         fin1n = retval['fin1n'] = retval['scores'][fin1]['candname']

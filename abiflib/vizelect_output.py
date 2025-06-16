@@ -32,8 +32,11 @@ def copecount_diagram(copecount, outformat='svg', is_inline=False):
     winlosstie = copecount['winlosstie']
 
     # Determine the candidate with the highest Copeland score (most wins)
-    top_candidate = max(winlosstie,
-                        key=lambda candidate: winlosstie[candidate]['wins'])
+    if(len(winlosstie) > 0):
+        top_candidate = max(winlosstie,
+                            key=lambda candidate: winlosstie[candidate]['wins'])
+    else:
+        top_candiate = None
 
     dot = Digraph(comment='Pairwise Matchup Visualization')
 

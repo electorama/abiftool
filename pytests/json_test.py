@@ -226,6 +226,22 @@ testlist = [
                  ["votelines", 0, "prefs", "\"Memph\" Memphis", "rating"],
                  5,
                  id='json_022'),
+    # TEST 023:
+    # Test the way that ABIF files with nothing but blanks still counts the ballots
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/mock-elections/mock-all-blank.abif',
+                 'is_equal',
+                 ["metadata", "ballotcount"],
+                 100,
+                 id='json_023'),
+    # TEST 024:
+    # Test the way that ABIF files with nothing but blanks still counts the ballots
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
+                 'testdata/mock-elections/mock-all-blank.abif',
+                 'is_equal',
+                 ["winners"],
+                 [],
+                 id='json_024'),
 ]
 
 @pytest.mark.parametrize(

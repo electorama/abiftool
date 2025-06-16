@@ -127,7 +127,10 @@ def calc_Copeland_scores(copecount):
 def get_Copeland_winners(copecount):
     """Return a list of candidates having the highest Copeland score"""
     copescores = calc_Copeland_scores(copecount)
-    winning_score = max(cscore for name, cscore in copescores)
+    if len(copescores) > 0:
+        winning_score = max(cscore for name, cscore in copescores)
+    else:
+        winning_score = 0
     return [name for name, score in copescores if score == winning_score]
 
 
