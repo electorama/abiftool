@@ -1,6 +1,6 @@
 [project]
 name = "abiftool"
-version = "0.2.0"
+version = "0.31.0"
 description = "abiftool parses, converts and analyzes Aggregated Ballot Information File (ABIF)."
 readme = "README.md"
 requires-python =  ">=3.8"

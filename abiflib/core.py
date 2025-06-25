@@ -75,11 +75,8 @@ def convert_abif_to_jabmod(inputstr,
     candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
     votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
 
-    newmodel = get_emptyish_abifmodel()
+    abifmodel = get_emptyish_abifmodel()
 
-    if len(inputstr) == 0:
-        msg = f'Empty ABIF string..'
-        raise ABIFVotelineException(value=inputstr, message=msg)
     # 'v' is the voteline number
     v = 0
     for i, fullline in enumerate(inputstr.splitlines()):
@@ -99,7 +96,7 @@ def convert_abif_to_jabmod(inputstr,
         else:
             strpdline = fullline
             linecomment = None
-        abifmodel = _process_abif_comment_line(abifmodel=newmodel,
+        abifmodel = _process_abif_comment_line(abifmodel=abifmodel,
                                                linecomment=linecomment,
                                                linenum=i,
                                                storecomments=storecomments)
@@ -129,19 +126,11 @@ def convert_abif_to_jabmod(inputstr,
         else:
             matchgroup = 'empty'
 
-    if len(abifmodel['votelines']) == 0:
-        if len(inputstr) > 20:
-            msg = f'No votelines in "{inputstr[:20]}...". '
-        else:
-            msg = f'No votelines in "{inputstr}". '
-        msg += "Votelines (like '20:A>B>C') are required in valid ABIF files."
-        raise ABIFVotelineException(value=inputstr, message=msg)
-
     # Add in Borda-ish score if requested by calling function
     if add_ratings:
         abifmodel = add_ratings_to_jabmod_votelines(abifmodel)
 
-    slist = sorted(abifmodel["votelines"], key=lambda x: x['qty'],
+    slist = sorted(abifmodel.get("votelines", []), key=lambda x: x['qty'],
                    reverse=True)
     abifmodel["votelines"] = slist
     if extradata:

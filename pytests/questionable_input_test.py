@@ -9,13 +9,13 @@ from abiftestfuncs import *
         pytest.param(
             ['-t', 'jabmod'],
             'testdata/questionable/empty.abif',
-            r"ERROR: Empty ABIF string",
+            r"ballotcount[^\d]*0",
             id='q_001'
         ),
         pytest.param(
             ['-t', 'jabmod'],
             'testdata/questionable/novotelines-tenn.abif',
-            "ERROR: No votelines in ",
+            r"ballotcount[^\d]*0",
             id='q_002'
         ),
         pytest.param(

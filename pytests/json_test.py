@@ -242,6 +242,30 @@ testlist = [
                  ["winners"],
                  [],
                  id='json_024'),
+    # TEST 025:
+    # Test empty ABIF input string
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/questionable/empty.abif',
+                 'is_equal',
+                 ['metadata', 'ballotcount'],
+                 0,
+                 id='json_025'),
+    # TEST 026:
+    # Test ABIF with one voteline and one cand no newline
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/questionable/one-A.abif',
+                 'is_equal',
+                 ['metadata', 'ballotcount'],
+                 1,
+                 id='json_026'),
+    # TEST 027:
+    # Test ABIF with one voteline and one cand with newline
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/questionable/one-A-LF.abif',
+                 'is_equal',
+                 ['metadata', 'ballotcount'],
+                 1,
+                 id='json_027'),
 ]
 
 @pytest.mark.parametrize(
