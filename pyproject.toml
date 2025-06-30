@@ -1,9 +1,9 @@
 [project]
 name = "abiftool"
-version = "0.31.0"
+version = "0.31.0rc1"
 description = "abiftool parses, converts and analyzes Aggregated Ballot Information File (ABIF)."
 readme = "README.md"
-requires-python =  ">=3.8"
+requires-python = ">=3.8"
 license = {text = "GPL-3.0"}
 authors = [
     { name = "Rob Lanphier", email = "robla@robla.net" }
@@ -22,15 +22,13 @@ classifiers = [
     "Topic :: Sociology :: History"
 ]
 
-[build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
-
-[tool.pdm.scripts]
+[project.scripts]
 abiftool = "abiftool:main"
 
-[tool.pdm]
-distribution = true
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
-
-
+[tool.setuptools]
+py-modules = ["abiftool", "fetchmgr"]
+packages = ["abiflib"]

@@ -1,0 +1,13 @@
+graft abiflib
+graft pytests
+graft testdata
+graft fetchspecs
+graft env_setup
+graft util
+include LICENSE
+include README.md
+include abiftool.py
+include conftest.py
+include fetchmgr.py
+include pytest.ini
+include requirements.txt
