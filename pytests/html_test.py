@@ -16,7 +16,7 @@ test_list=[
         {
             "fetchspec":"tennessee-example.fetchspec.json",
             "options":["-f", "abif", "-t", "html"],
-            "filename":"testdata/tenn-example/tennessee-example-scores.abif",
+            "filename":"testdata/mock-elections/tennessee-example-scores.abif",
             "test_type": "regex_htmltag",
             "test_data": {"tag": "tr",
                           "pattern": r"Nash: 68"}
@@ -26,7 +26,7 @@ test_list=[
         {
             "fetchspec":None,
             "options":['-t', 'html_snippet', '--modifier', 'svg'],
-            "filename":'testdata/tenn-example/tennessee-example-simple.abif',
+            "filename":'testdata/mock-elections/tennessee-example-simple.abif',
             "test_type":"regex",
             "test_data":r"← Knox: 58"
         },

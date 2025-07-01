@@ -16,19 +16,19 @@ from abiftestfuncs import *
         #irv test001
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-scores.abif',
+            'testdata/mock-elections/tennessee-example-scores.abif',
             r"Chat: 15",
             id='irv_textout_001'),
         #irv test002
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-STAR.abif',
+            'testdata/mock-elections/tennessee-example-STAR.abif',
             r'The IRV winner is Knox',
             id='irv_textout_002'),
         #irv test003
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-STAR-score-difference.abif',
+            'testdata/mock-elections/tennessee-example-STAR-score-difference.abif',
             r"Knox: 17",
             id='irv_textout_003'),
         #irv test004
@@ -55,31 +55,31 @@ from abiftestfuncs import *
         #irv test007
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r"Memph: 42",
             id='irv_textout_007'),
         #irv test008
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r"Total starting votes: 100",
             id='irv_textout_008'),
         #irv test009
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r"Total counted votes: 83",
             id='irv_textout_009'),
         #irv test010
         pytest.param(
         ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/tenn-example/tennessee-example-overvote-02.abif',
+         'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r'Overvotes: 17',
             id='irv_textout_010'),
         #irv test011
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-overvote-02.abif',
+            'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r'Eliminated this round: Chat, Knox, Nash',
             id='irv_textout_011'),
         #irv test012
@@ -91,13 +91,13 @@ from abiftestfuncs import *
         #irv test013
         pytest.param(
         ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-            'testdata/tenn-example/tennessee-example-irv-tie.abif',
+            'testdata/mock-elections/tennessee-example-irv-tie.abif',
             r'The IRV winners are Knox and Memph',
             id='irv_textout_013'),
         #irv test014
         pytest.param(
             ['-f', 'abif', '-t', 'irvjson'],
-            'testdata/tenn-example/tennessee-example-irv-tie.abif',
+            'testdata/mock-elections/tennessee-example-irv-tie.abif',
             r'Knoxville, TN and Memphis, TN',
             id='irv_textout_014'),
         #irv test015
@@ -118,7 +118,7 @@ def test_IRV_text_output(cmd_args, inputfile, pattern):
 
 @pytest.mark.parametrize(
     'abif_filename',
-    ['testdata/tenn-example/tennessee-example-scores.abif'],
+    ['testdata/mock-elections/tennessee-example-scores.abif'],
     ids=['irv_multicall_001'],
 )
 def test_IRV_multiple_calls(abif_filename):
