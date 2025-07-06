@@ -23,7 +23,7 @@ import sys
             ['-f', 'nameq', '-t', 'jabmod', '-m', 'consolidate'],
             'testdata/bolson-nameq/letters.nameq',
             'is_equal',
-            ["votelines", 2, "qty"],
+            ["votelines", 0, "qty"],
             2
         ),
         (

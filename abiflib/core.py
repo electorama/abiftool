@@ -665,6 +665,7 @@ def consolidate_jabmod_voteline_objects(jabmod):
         prefs_to_voteline[prefs]["qty"] += voteline["qty"]
 
     retval_votelines.extend(prefs_to_voteline.values())
+    retval_votelines.sort(key=lambda x: x['qty'], reverse=True)
     jabmod["votelines"] = retval_votelines
     return jabmod
 
