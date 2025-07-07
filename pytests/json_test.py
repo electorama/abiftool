@@ -266,6 +266,93 @@ testlist = [
                  ['metadata', 'ballotcount'],
                  1,
                  id='json_027'),
+    # TEST 028:
+    # Test parsing of the Tennessee example in SF CVR format
+    pytest.param(
+        ['-f', 'sfjson',
+         '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
+         '--contestid', '1',
+         '-t', 'jabmod'
+        ],
+        None,
+        'is_equal',
+        ["metadata", "ballotcount"],
+        100,
+        id='json_028'
+    ),
+
+    # TEST 029:
+    # Test parsing of the Tennessee example in SF CVR format - specific voteline rank
+    pytest.param(
+        ['-f', 'sfjson',
+         '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
+         '--contestid', '1',
+         '-t', 'jabmod'
+        ],
+        None,
+        'is_equal',
+        ["votelines", 0, "prefs", "Memph", "rank"],
+        1,
+        id='json_029'
+    ),
+    # TEST 030:
+    # Make sure that we have 100 ballots on race #2 of the sample zipfile
+    pytest.param(
+        ['-f', 'sfjson',
+         '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
+         '--contestid', '2',
+         '-t', 'jabmod'
+        ],
+        None,
+        'is_equal',
+        ["metadata", "ballotcount"],
+        100,
+        id='json_030'
+    ),
+    # TEST 031:
+    # Make sure that Jackson shows up in race #2 in the sample zipfile
+    pytest.param(
+        ['-f', 'sfjson',
+         '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
+         '--contestid', '2',
+         '-t', 'jabmod'
+        ],
+        None,
+        'is_equal',
+        ["votelines", 0, "prefs", "Jackson", "rank"],
+        1,
+        id='json_031'
+    ),
+    # TEST 032:
+    # Make sure Memph has 42 first-place votes in race #1 in the sample zipfile
+    pytest.param(
+        ['-f', 'sfjson',
+         '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
+         '--contestid', '1',
+         '-t', 'jabmod',
+         '-m', 'consolidate'
+        ],
+        None,
+        'is_equal',
+        ["votelines", 0, "qty"],
+        42,
+        id='json_032'
+    ),
+    # TEST 033:
+    # Ensure Murfreesboro has 26 first-place votes in race #1 in the sample zipfile
+    pytest.param(
+        ['-f', 'sfjson',
+         '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
+         '--contestid', '2',
+         '-t', 'jabmod',
+         '-m', 'consolidate'
+        ],
+        None,
+        'is_equal',
+        ["votelines", 1, "qty"],
+        26,
+        id='json_033'
+    )
 ]
 
 @pytest.mark.parametrize(
@@ -273,20 +360,16 @@ testlist = [
 )
 def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
     """Test equality of subkey to a value"""
-    # TODO: work out what I had planned with commit 56c3432e on
-    # 2023-10-08, since I'd like to use a generalized approach to
-    # skipping tests based on files that haven't been fetched with
-    # fetchmgr.py
-    try:
-        fh = open(inputfile, 'rb')
-        fh.close()
-    except:
-        msg = f'Missing file: {inputfile}'
-        msg += "Please run './fetchmgr.py *.fetchspec.json' "
-        msg += "if you haven't already"
-        pytest.skip(msg)
-
-    cmd_args.append(inputfile)
+    if inputfile:
+        try:
+            fh = open(inputfile, 'rb')
+            fh.close()
+        except:
+            msg = f'Missing file: {inputfile}'
+            msg += "Please run './fetchmgr.py *.fetchspec.json' "
+            msg += "if you haven't already"
+            pytest.skip(msg)
+        cmd_args.append(inputfile)
     abiftool_output = get_abiftool_output_as_array(cmd_args)
     outputdict = json.loads("\n".join(abiftool_output))
 

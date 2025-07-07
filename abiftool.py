@@ -20,6 +20,7 @@ import sys
 
 try:
     from abiflib import *
+    from abiflib.sfjson_fmt import convert_sfjson_to_jabmod, list_contests
 except ModuleNotFoundError as e:
     print(f"ModuleNotFoundError: {e.name}\n")
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +42,7 @@ INPUT_FORMATS = [
     {'jabmod': 'Internal JSON ABIF model (Json ABIF MODel)'},
     {'nameq': 'Brian Olson\'s format which URL-encoded version of the raw ballots'},
     {'preflib': 'Files downloaded from preflib.org'},
+    {'sfjson': 'San Francisco JSON CVR format'},
     {'sftxt': 'Text files published by the City and County of San Francisco'},
     {'widj': 'Legacy format from Electowidget'}
 ]
@@ -113,7 +115,9 @@ def main():
     validinfmts = get_keys_from_dict_list(INPUT_FORMATS)
     validoutfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
     validmod = get_keys_from_dict_list(MODIFIERS)
-    parser.add_argument('input_file', nargs='+',
+    parser.add_argument('--container',
+                        help='Container file (e.g., zip, tar.gz)')
+    parser.add_argument('input_file', nargs='*',
                         help='Input file(s) to convert (--help for list of options)')
     parser.add_argument('-d', '--debug', action="store_true",
                         help='Output debug information if available')
@@ -129,17 +133,29 @@ def main():
                         help='Clean whitespace in ABIF file')
     parser.add_argument('--add-scores', action="store_true",
                         help='Add scores to votelines when only rankings are provided')
+    parser.add_argument('--contestid', type=int,
+                        help='The ID of the contest to process from a container')
+    parser.add_argument('-l', '--list-contests', action='store_true',
+                        help='List contests in a container and exit')
 
     args = parser.parse_args()
     abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
+
+    if args.list_contests:
+        if args.container:
+            list_contests(args.container)
+            sys.exit()
+        else:
+            print("Error: The --list-contests flag requires a container specified with --container.")
+            sys.exit()
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
     if args.fromfmt:
         input_format = args.fromfmt
-    elif args.input_file == '-':
+    elif args.input_file and args.input_file[0] == '-':
         parser.error("The -f parameter is required with '-'")
-    elif args.input_file[0].find('.') >= 0:
+    elif args.input_file and args.input_file[0].find('.') >= 0:
         _, file_extension = args.input_file[0].rsplit('.', 1)
         input_format = file_extension
     else:
@@ -173,7 +189,21 @@ def main():
     add_ratings = args.add_scores
 
     storecomments = 'jcomments' in modifiers
-    if (input_format == 'abif'):
+    if 'list-contests' in modifiers:
+        if args.container:
+            list_contests(args.container)
+            sys.exit()
+        else:
+            print("Error: The --list-contests modifier requires a container specified with --container.")
+            sys.exit()
+
+    if args.container:
+        if input_format == 'sfjson':
+            abifmodel = convert_sfjson_to_jabmod(args.container, contestid=args.contestid)
+        else:
+            print(f"Error: The --container flag is not supported for the '{input_format}' format yet.")
+            sys.exit()
+    elif (input_format == 'abif'):
         try:
             abifmodel = convert_abif_to_jabmod(inputstr,
                                                cleanws=args.cleanws,

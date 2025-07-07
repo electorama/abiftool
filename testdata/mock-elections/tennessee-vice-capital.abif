@@ -1,0 +1,14 @@
+{"title": "Tennessee 'Vice Capital' election"}
+{"description": "Same voters as the Tennessee capital example, but selecting a 'Vice Capital'. Preferences shift for regional balance. Uses Jackson (West), Murfreesboro (Central), Johnson City (East), and Kingsport (East)."}
+{"min_rating": 0}
+{"max_rating": 5}
+# -------------------------
+=Jackson:[Jackson]
+=Murfreesboro:[Murfreesboro]
+=Johnson_City:[Johnson City]
+=Kingsport:[Kingsport]
+# -------------------------
+42:Jackson/5>Murfreesboro/3>Johnson_City/1>Kingsport/0
+26:Murfreesboro/5>Jackson/3>Johnson_City/2>Kingsport/0
+15:Johnson_City/5>Kingsport/3>Murfreesboro/2>Jackson/0
+17:Kingsport/5>Johnson_City/4>Murfreesboro/2>Jackson/0
