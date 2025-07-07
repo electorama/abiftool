@@ -17,33 +17,10 @@
 
 import json
 import re
+import sys
 import zipfile
 from abiflib.core import get_emptyish_abifmodel
-
-def _short_token(longstring, max_length=20, add_sha1=False):
-    if len(longstring) <= max_length and \
-       re.match(r'^[A-Za-z0-9]+$', longstring):
-        retval = longstring
-    else:
-        cleanstr = re.sub('[^A-Za-z0-9]+', '_', longstring)
-        cleanstr = re.sub('WRITE_IN_', 'wi_', cleanstr)
-        retval = cleanstr[:max_length]
-    return retval
-
-def _cand_tok_generation(targ, candblob):
-    i = next(i for i, cand in enumerate(candblob["List"]) if cand["Id"] == targ)
-    name = candblob['List'][i]['Description']
-    tok = _short_token(name)
-    return tok
-
-def _candidate_section_for_jabmod(contestid, candblob):
-    retval = {}
-    for c in candblob['List']:
-        if c["ContestId"] == contestid:
-            candtok = _short_token(c['Description'])
-            retval[candtok] = c['Description']
-
-    return retval
+from abiflib.util import utf8_string_to_abif_token as _short_token
 
 def list_contests(container_path):
     """Lists the contests in a San Francisco JSON CVR zip file."""
@@ -86,8 +63,15 @@ def convert_sfjson_to_jabmod(container_path, contestid=None):
         title = f"{contestmanblob['List'][contestindex]['Description']} ({eventdesc})"
         abifmodel['metadata']['title'] = title
 
+        # Create a lookup map from candidate ID to token and description
+        cand_map = {}
+        for c in candblob['List']:
+            if c['ContestId'] == contestid:
+                tok = _short_token(c['Description'])
+                cand_map[c['Id']] = {'tok': tok, 'name': c['Description']}
+
         # Add the candidates section
-        abifmodel['candidates'] = _candidate_section_for_jabmod(contestid, candblob)
+        abifmodel['candidates'] = {c['tok']: c['name'] for c in cand_map.values()}
 
         # Add the votelines section
         abifmodel['votelines'] = []
@@ -113,7 +97,7 @@ def convert_sfjson_to_jabmod(container_path, contestid=None):
                             for contest in card['Contests']:
                                 if contest['Id'] == contestid:
                                     for m in contest['Marks']:
-                                        candtok = _cand_tok_generation(m['CandidateId'], candblob)
+                                        candtok = cand_map[m['CandidateId']]['tok']
                                         abifmodel['votelines'][i]['prefs'][candtok] = {}
                                         abifmodel['votelines'][i]['prefs'][candtok]['rank'] = m['Rank']
                             if abifmodel['votelines'][i]['prefs'] == {}:
