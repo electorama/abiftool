@@ -23,35 +23,55 @@ import re
 import sys
 import urllib.parse
 
-def FPTP_result_from_abifmodel(abifmodel, count_blanks=True):
+def FPTP_result_from_abifmodel(abifmodel):
     """Calculate the First Past the Post (FPTP/Plurality) result from the ABIF model."""
     toppicks = {}
-    maxtop = 0
-    winners = []
+    # Initialize all candidates with 0 votes
+    for cand_token in abifmodel['candidates'].keys():
+        toppicks[cand_token] = 0
+
+    invalid_ballots = 0
 
     for vline in abifmodel['votelines']:
-        if len(vline['prefs']) > 0:
-            xtop = min(vline['prefs'], key=lambda cand: vline['prefs'][cand]['rank'])
-            toppicks[xtop] = toppicks.get(xtop, 0) + vline['qty']
-            if toppicks[xtop] > maxtop:
-                maxtop = toppicks[xtop]
-                winners = [xtop]
-            elif toppicks[xtop] == maxtop:
-                winners.append(xtop)
-        elif count_blanks:
-            toppicks[None] = toppicks.get(None, 0) + vline['qty']
+        first_prefs = []
+        for cand, prefs in vline['prefs'].items():
+            if prefs.get('rank') == 1:
+                first_prefs.append(cand)
 
-    total_votes_recounted = sum(toppicks.values()),
-    total_votes = abifmodel['metadata']['ballotcount']
-    top_pct = (maxtop / total_votes) * 100 if total_votes > 0 else 0
+        if len(first_prefs) == 1:
+            # valid votes
+            toppicks[first_prefs[0]] += vline['qty']
+        elif len(first_prefs) > 1:
+            # overvotes
+            invalid_ballots += vline['qty']
+
+    # Calculate winner based on the new toppicks
+    maxtop = 0
+    winners = []
+    for cand, votes in toppicks.items():
+        if votes > maxtop:
+            maxtop = votes
+            winners = [cand]
+        elif votes == maxtop:
+            winners.append(cand)
+
+    total_valid_votes = sum(toppicks.values())
+    total_ballots_processed = abifmodel['metadata']['ballotcount']
+
+    # The 'None' category should reflect ballots that were either blank or overvoted
+    # This aligns more closely with official summary's undervotes/overvotes
+    toppicks[None] = total_ballots_processed - total_valid_votes
+
+    top_pct = (maxtop / total_valid_votes) * 100 if total_valid_votes > 0 else 0
 
     return {
         'toppicks': toppicks,
         'winners': winners,
         'top_qty': maxtop,
         'top_pct': top_pct,
-        'total_votes_recounted': total_votes_recounted,
-        'total_votes': total_votes,
+        'total_votes_recounted': total_valid_votes,
+        'total_votes': total_ballots_processed,
+        'invalid_ballots': invalid_ballots
     }
 
 
