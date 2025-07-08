@@ -30,6 +30,7 @@ import tarfile
 from pathlib import Path
 from pprint import pprint
 
+
 def update_repository(gitrepo_url, subdir):
     if not os.path.exists(subdir):
         print(f"Directory '{subdir}' isn't there.")
@@ -70,20 +71,25 @@ def fetch_url_to_subdir(url=None, subdir=None, localpath=None, metaurl=None, des
     sys.stderr.write(f"  {desc}\n")
     sys.stderr.write(f"  See the following URL to learn more about this election:\n")
     sys.stderr.write(f"  {metaurl}\n")
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+    except requests.exceptions.RequestException as e:
+        sys.stderr.write(f"Error downloading {url}: {e}\n")
+        return None
 
-    if response.status_code == 200:
-        d, f = os.path.split(localpath)
+    d, f = os.path.split(localpath)
 
-        if not os.path.exists(d):
-            os.makedirs(d)
+    if not os.path.exists(d):
+        os.makedirs(d)
 
-        if os.path.exists(d):
-            with open(localpath, "wb") as f:
-                f.write(response.content)
-        else:
-            print(f"d {d} f {f}")
-            raise Exception(f"Bad URL: {response.status_code}")
+    if os.path.exists(d):
+        with open(localpath, "wb") as f:
+            f.write(response.content)
+        sys.stderr.write(f"Successfully downloaded {url} to {localpath}\n")
+    else:
+        print(f"d {d} f {f}")
+        raise Exception(f"Bad URL: {response.status_code}")
 
     return response
 
@@ -93,38 +99,30 @@ def fetch_web_items(fetchspec):
     if not os.path.exists(subdir):
         os.makedirs(subdir)
 
-    response = False
-    localpaths = []
     for urldict in fetchspec['web_urls']:
         if 'localcopies' in urldict.keys():
-            for i, l in enumerate(urldict['localcopies']):
-                localpaths.append("REPLACETHIS")
-                localpaths[i] = os.path.join(subdir, urldict['localcopies'][i])
-
+            localpaths = [os.path.join(subdir, lc) for lc in urldict['localcopies']]
         else:
-            localpath = os.path.join(subdir, urldict['localcopy'])
+            localpaths = [os.path.join(subdir, urldict['localcopy'])]
 
         if 'urls' in urldict.keys():
-            for i, suburl in enumerate(urldict['urls']):
-                #print(f"{i=} {suburl=}")
-                if not os.path.exists(localpaths[i]):
-                    response = fetch_url_to_subdir(url=suburl,
-                                                   subdir=subdir,
-                                                   localpath=localpaths[i],
-                                                   metaurl=urldict['metaurls'][0],
-                                                   desc=urldict['desc'])
-                else:
-                    sys.stderr.write(f"Skipping download of existing {localpaths[i]}\n")
+            urls = urldict['urls']
         else:
+            urls = [urldict['url']]
+
+        for i, url in enumerate(urls):
+            localpath = localpaths[i]
             if not os.path.exists(localpath):
-                response = fetch_url_to_subdir(url=urldict['url'],
+                response = fetch_url_to_subdir(url=url,
                                                subdir=subdir,
                                                localpath=localpath,
                                                metaurl=urldict['metaurls'][0],
                                                desc=urldict['desc'])
+                if not response:
+                    return False  # Stop if a download fails
             else:
                 sys.stderr.write(f"Skipping download of existing {localpath}\n")
-    return response
+    return True
 
 
 def convert_files_to_abif(fromfmt, input_files, output_file, fetchdesc=None):
@@ -200,6 +198,16 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
                                   input_files=infiles,
                                   output_file=outfile,
                                   fetchdesc=fetchdesc)
+        elif srcfmt == 'sfjson':
+            outfile = os.path.join(abifsubdir, extfile['abifloc'])
+            infilestr = " ".join(infiles)
+            contestid = int(extfile.get('contestid')) if extfile.get('contestid') else None
+            sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile}\n")
+            jabmod = abiflib.sfjson_fmt.convert_sfjson_to_jabmod(infiles[0], contestid=contestid)
+            jabmod = abiflib.consolidate_jabmod_voteline_objects(jabmod)
+            abifstr = abiflib.convert_jabmod_to_abif(jabmod)
+            with open(outfile, 'w') as f:
+                f.write(abifstr)
         elif srcfmt == 'nameq_archive':
             tarball_fn = os.path.join(dlsubdir, extfile['localcopy'])
             convert_nameq_tarball_to_abif_files(tarball_fn=tarball_fn,
@@ -220,10 +228,13 @@ def process_fetchspec(fn):
         checkout_repository(fetchspec['gitrepo_url'],
                             fetchspec['download_subdir'])
     elif 'web_urls' in fetchspec.keys():
-        fetch_web_items(fetchspec)
+        if not fetch_web_items(fetchspec):
+            sys.stderr.write("Halting due to download failure.\n")
+            return False
     else:
         raise Exception(f"Invalid fetchspec: {fetchspec.keys()=}")
     sys.stderr.write(f"Processing {fn}....\n")
+
 
     dlsubdir = fetchspec['download_subdir']
     abifsubdir = fetchspec.get('abifloc_subdir')

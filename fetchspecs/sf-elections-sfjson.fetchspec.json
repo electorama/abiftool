@@ -1,0 +1,18 @@
+{
+  "download_subdir": "downloads/california",
+  "abifloc_subdir": "localabif/california",
+  "srcfmt": "sfjson",
+  "web_urls":
+  [
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "San Francisco Mayor, 2024",
+      "abifloc":"sf2024-mayor.abif",
+      "contestid": "18"
+    }
+  ]
+}
