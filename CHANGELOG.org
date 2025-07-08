@@ -1,0 +1,30 @@
+* Changelog for abiftool:
+** [0.31.0] (FIXMEdate; FIXMErev) Major refactoring, FPTP support, improved testing, and bug fixes
+  * Substantial refactoring of abiflib, including renaming
+    sub-libraries and adding deprecation stubs.
+  * Initial implementation of First-Past-The-Post (FPTP) tabulation.
+  * Handling of SF's latest JSON-based CVRs.
+  * Much more robust pytests and more of them.
+  * Many micro-features hidden in command-line options.
+  * General code cleanup and major improvements throughout.
+** [0.2.0] (2025-02-04; 71db28a) Major feature additions including nameq and sftxt support, IRV improvements, and general refactoring
+  * Added support for Brian Olson's .nameq format, including
+    extraction from tarballs.
+  * Initial support for San Francisco's sftxt ballot image files.
+  * Significant improvements to IRV tallying, including batch
+    elimination and random tiebreakers.
+  * Added score and STAR tabulation support.
+  * Enhanced fetchmgr.py for better data fetching and conversion.
+  * Numerous bug fixes, refactoring, and test improvements across the
+    codebase.
+  * Improved command-line interface and output options.
+** [0.1.1] (2024-07-12; 67471ae) Minor release with dependency updates and documentation improvements
+  * Updated pyproject.toml and generalized requirements.txt.
+  * Added dependency installation instructions.
+** [0.1.0] (2024-07-07; 4b2902a) Initial public release with core ABIF conversion, pairwise, and basic IRV support
+  * Initial implementation of ABIF to jabmod conversion and vice-versa.
+  * Basic pairwise counting and text output.
+  * Preliminary IRV tallying support.
+  * Support for Electowidget (.widj) files.
+  * Initial fetchmgr.py for managing external data repositories.
+  * Basic test infrastructure.
