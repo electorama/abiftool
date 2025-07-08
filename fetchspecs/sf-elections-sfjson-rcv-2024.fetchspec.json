@@ -1,0 +1,117 @@
+{
+  "download_subdir": "downloads/california",
+  "abifloc_subdir": "localabif/california",
+  "srcfmt": "sfjson",
+  "web_urls": [
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "MAYOR",
+      "abifloc": "sf2024-mayor.abif",
+      "contestid": 18
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "MEMBER, BOARD OF SUPERVISORS, DISTRICT 1",
+      "abifloc": "sf2024-member-board-of-supervisors-district-1.abif",
+      "contestid": 23
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "MEMBER, BOARD OF SUPERVISORS, DISTRICT 3",
+      "abifloc": "sf2024-member-board-of-supervisors-district-3.abif",
+      "contestid": 24
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "MEMBER, BOARD OF SUPERVISORS, DISTRICT 5",
+      "abifloc": "sf2024-member-board-of-supervisors-district-5.abif",
+      "contestid": 25
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "MEMBER, BOARD OF SUPERVISORS, DISTRICT 7",
+      "abifloc": "sf2024-member-board-of-supervisors-district-7.abif",
+      "contestid": 26
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "MEMBER, BOARD OF SUPERVISORS, DISTRICT 9",
+      "abifloc": "sf2024-member-board-of-supervisors-district-9.abif",
+      "contestid": 27
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "MEMBER, BOARD OF SUPERVISORS, DISTRICT 11",
+      "abifloc": "sf2024-member-board-of-supervisors-district-11.abif",
+      "contestid": 28
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "CITY ATTORNEY",
+      "abifloc": "sf2024-city-attorney.abif",
+      "contestid": 19
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "DISTRICT ATTORNEY",
+      "abifloc": "sf2024-district-attorney.abif",
+      "contestid": 21
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "SHERIFF",
+      "abifloc": "sf2024-sheriff.abif",
+      "contestid": 22
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "TREASURER",
+      "abifloc": "sf2024-treasurer.abif",
+      "contestid": 20
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "download_subdir": "downloads/california",
+  "abifloc_subdir": "localabif/california",
+  "srcfmt": "sfjson",
+  "web_urls": [
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "PRESIDENT AND VICE PRESIDENT",
+      "abifloc": "sf2024-president-and-vice-president.abif",
+      "contestid": 1
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "UNITED STATES SENATOR",
+      "abifloc": "sf2024-united-states-senator.abif",
+      "contestid": 2
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "UNITED STATES SENATOR PARTIAL TERM",
+      "abifloc": "sf2024-united-states-senator-partial-term.abif",
+      "contestid": 3
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "UNITED STATES REPRESENTATIVE, DISTRICT 2",
+      "abifloc": "sf2024-united-states-representative-district-2.abif",
+      "contestid": 4
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "UNITED STATES REPRESENTATIVE, DISTRICT 11",
+      "abifloc": "sf2024-united-states-representative-district-11.abif",
+      "contestid": 5
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "UNITED STATES REPRESENTATIVE, DISTRICT 12",
+      "abifloc": "sf2024-united-states-representative-district-12.abif",
+      "contestid": 6
+    },
+    {
+      "url": "https://www.sfelections.org/results/20241105/data/20241203/CVR_Export_20241202143051.zip",
+      "localcopy": "CVR_Export_20241202143051.zip",
+      "metaurls": [
+        "https://sfelections.org/results/20241105w/detail.html"
+      ],
+      "desc": "UNITED STATES REPRESENTATIVE, DISTRICT 15",
+      "abifloc": "sf2024-united-states-representative-district-15.abif",
+      "contestid": 7
+    }
+  ]
+}
