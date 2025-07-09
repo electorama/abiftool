@@ -1,9 +1,9 @@
 * Changelog for abiftool:
-** [0.31.0] (FIXMEdate; FIXMErev) Major refactoring, FPTP support, improved testing, and bug fixes
+** [0.31.0] (2025-07-08; 5ad495d) SF 2024 elections, FPTP support, improved testing, and bug fixes
+  * Handling of San Francisco's latest JSON-based CVRs.
+  * Initial implementation of First-Past-The-Post (FPTP) tabulation.
   * Substantial refactoring of abiflib, including renaming
     sub-libraries and adding deprecation stubs.
-  * Initial implementation of First-Past-The-Post (FPTP) tabulation.
-  * Handling of SF's latest JSON-based CVRs.
   * Much more robust pytests and more of them.
   * Many micro-features hidden in command-line options.
   * General code cleanup and major improvements throughout.
