@@ -141,13 +141,15 @@ def main():
     args = parser.parse_args()
     abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
 
-    if args.list_contests:
-        if args.container:
-            list_contests(args.container)
-            sys.exit()
-        else:
-            print("Error: The --list-contests flag requires a container specified with --container.")
-            sys.exit()
+    if not args.input_file and not args.list_contests and not args.container:
+        parser.error("Missing input file.  Please specify an input file or"
+                     "--container for archive files.")
+    elif args.list_contests and args.container:
+        list_contests(args.container)
+        sys.exit()
+    elif args.list_contests and not args.container:
+        print("Error: The --list-contests flag requires a container specified with --container.")
+        sys.exit()
 
     # Determine input format based on file extension or override from
     # the "-f/--fromfmt" option
