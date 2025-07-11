@@ -33,3 +33,7 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 py-modules = ["abiftool", "fetchmgr"]
 packages = ["abiflib"]
+include-package-data = true
+
+[tool.setuptools.data-files]
+"fetchspecs" = ["fetchspecs/*.fetchspec.json"]
