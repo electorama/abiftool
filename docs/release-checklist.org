@@ -1,0 +1,29 @@
+Checklist for every release
+
+* Stuff to add/check in each release before going through release process
+  * Add at least one notable election
+  * Note any API changes
+  * Ensure every test has a unique ID associated with it
+* Versioning & Changelog
+  * Bump version in pyproject.toml (or setup.py)
+  * Ensure MANIFEST.in has all necessary files
+  * Update CHANGELOG.org to match pyproject version
+  * Tag revision (example below):
+    * git tag -a v0.31.0 -m "Release 0.31.0: FIXME-summary-FIXME"
+    * git push --follow-tags
+  * Build artifacts with `python -m build`
+  * Check generated tarball for all critical files
+  * Check generated egg-info, ensuring SOURCE.txt is complete
+* Final testing
+  * pytest --maxfail=1 --disable-warnings -q
+  * Smoke test with at least 3 elections and visually inspect results
+* Publish to PyPI
+  * Check ~/.pypirc credentials.
+  * Verify package/version availability.
+  * Upload with `twine check dist/*` and `twine upload dist/*`
+  * Verify package uploaded correctly by installing with `pip install abiftool==0.3.0`
+* Write an announcement and publish in the following venues
+  * Election-Methods mailing list (https://electorama.com/em)
+  * Election-Software mailing list (https://electorama.com/es)
+  * VotingTheory.org forum
+  * Reddit /r/EndFPTP
