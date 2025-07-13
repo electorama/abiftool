@@ -25,45 +25,45 @@ import sys
 
 
 def _eliminate_cands_from_votelines(candlist, votelines):
-    '''Returns copy of votelines without candidate(s) in candlist'''
-    retval = deepcopy(votelines)
-    for cand in candlist:
-        for vln in retval:
-            if cand in vln['prefs']:
-                del vln['prefs'][cand]
-    return retval
+    '''Returns a new list of votelines without the specified candidates.'''
+    new_votelines = []
+    elim_set = set(candlist)
+    for vln in votelines:
+        new_prefs = {
+            cand: prefs
+            for cand, prefs in vln['prefs'].items()
+            if cand not in elim_set
+        }
+        new_voteline = {'qty': vln['qty'], 'prefs': new_prefs}
+        new_votelines.append(new_voteline)
+    return new_votelines
 
 
 def _discard_toprank_overvotes(votelines):
-    retval = deepcopy(votelines)
-    overvotes = 0
-    for i, vln in enumerate(retval):
+    '''Separates overvoted ballots and returns a tuple of (overvote_qty, valid_votelines).'''
+    valid_votelines = []
+    overvotes_qty = 0
+    for vln in votelines:
         prefs = vln['prefs']
-        rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
-        if len(rlist) > 0:
-            x = 0
-            xtok = rlist[x]
-            xrank = prefs[xtok]['rank']
-            y = len(rlist)
-            yrank = 9999999999  # close enough to infinity
-            # this technique should find the index of the last candidate
-            # in the rlist array that has the same rank as the first
-            # candidate in rlist.
-            while yrank > xrank:
-                y += -1
-                ytok = rlist[y]
-                yrank = prefs[ytok]['rank']
-            # if x < y, this means there is two or more elements in the
-            # rlist array with the same rank
-            if x == y:
-                rcand = rlist[x]
-            else:
-                overvotes += vln['qty']
-                del retval[i]
-        else:
-            rcand = prefs
+        if not prefs:
+            valid_votelines.append(vln)
+            continue
 
-    return (overvotes, retval)
+        # Find the highest rank (lowest rank number)
+        min_rank = min(p['rank'] for p in prefs.values())
+
+        # Count how many candidates share that highest rank
+        top_rank_count = sum(1 for p in prefs.values()
+                             if p['rank'] == min_rank)
+
+        if top_rank_count > 1:
+            # This is an overvote
+            overvotes_qty += vln['qty']
+        else:
+            # This is a valid voteline
+            valid_votelines.append(vln)
+
+    return (overvotes_qty, valid_votelines)
 
 
 def _get_valid_topcand_qty(voteline):
@@ -192,7 +192,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
         roundmeta[-1]['bottomtie'] = bottomcands
         has_tie = True
         roundmeta[-1]['tiecandlist'] = bottomcands
-        ntc = [cand for cand, votes in roundcount.items() \
+        ntc = [cand for cand, votes in roundcount.items()
                if bottomvotesper < votes <= penultvotesper]
 
         penultvotestot = sum(roundcount[cand] for cand in ntc)
@@ -207,18 +207,20 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
             unluckycand = None
             nextcands = list(set(candlist) - set(bottomcands))
             nextvotelines = \
-                _eliminate_cands_from_votelines(bottomcands, deepcopy(prunedvlns))
+                _eliminate_cands_from_votelines(
+                    bottomcands, deepcopy(prunedvlns))
         else:
             # FIXME - develop better logic to calculate what happens
             #         with each possible advancing candidate than
             #         selecting the next candidate randomly
             roundmeta[-1]['random_elim'] = True
             unluckycand = random.choice(bottomcands)
-            roundmeta[-1]['eliminated'] = [ unluckycand ]
+            roundmeta[-1]['eliminated'] = [unluckycand]
             nextcands = list(set(candlist) - set([unluckycand]))
             nextvotelines = \
-                _eliminate_cands_from_votelines([unluckycand], deepcopy(prunedvlns))
-        thisroundloserlist = [ unluckycand ]
+                _eliminate_cands_from_votelines(
+                    [unluckycand], deepcopy(prunedvlns))
+        thisroundloserlist = [unluckycand]
     else:
         roundmeta[-1]['eliminated'] = bottomcands
         nextcands = list(set(candlist) - set(bottomcands))
@@ -242,13 +244,15 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
         winner = [c for c, v in roundcount.items() if v == max_votes]
         retval = (winner, rounds, roundmeta)
         roundmeta[-1]['winner'] = winner
-        roundmeta[-1]['eliminated'] = set(mymeta['starting_cands']) - set(winner)
+        roundmeta[-1]['eliminated'] = set(
+            mymeta['starting_cands']) - set(winner)
     elif max_votes > total_votes / 2:
         # This is the normal end of the IRV elimination cycle
         winner = [c for c, v in roundcount.items() if v == max_votes]
         retval = (winner, rounds, roundmeta)
         roundmeta[-1]['winner'] = winner
-        roundmeta[-1]['eliminated'] = set(mymeta['starting_cands']) - set(winner)
+        roundmeta[-1]['eliminated'] = set(
+            mymeta['starting_cands']) - set(winner)
     else:
         # We need another round, hence recursion
         (winner, nextrounds, nextmeta) = \
@@ -266,7 +270,7 @@ def IRV_dict_from_jabmod(jabmod):
     candlist = list(jabmod['candidates'].keys())
     votelines = deepcopy(jabmod['votelines'])
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
-        _irv_count_internal(candlist, votelines, roundnum = 1)
+        _irv_count_internal(candlist, votelines, roundnum=1)
 
     winner = retval['winner']
     if len(winner) > 1:
@@ -281,6 +285,7 @@ def IRV_dict_from_jabmod(jabmod):
         "bottomtie" in rm for rm in retval.get("roundmeta", []))
 
     return retval
+
 
 def get_IRV_report(IRV_dict):
     winner = IRV_dict['winner']

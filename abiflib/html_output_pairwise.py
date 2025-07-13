@@ -27,14 +27,17 @@ try:
 except:
     pass
 
+
 def htmltable_pairwise_and_winlosstie(abifmodel,
-                                      add_desc = True,
-                                      snippet = False,
-                                      validate = False,
-                                      clean = False,
-                                      modlimit = 50,
-                                      svg_text = None,
-                                      modifiers = set()):
+                                      add_desc=True,
+                                      snippet=False,
+                                      validate=False,
+                                      clean=False,
+                                      modlimit=50,
+                                      svg_text=None,
+                                      modifiers=set(),
+                                      pairdict=None,
+                                      wltdict=None):
     '''Generate HTML summary of election as abifmodel
 
     The "abifmodel" is the internal data structure for abiflib,
@@ -51,7 +54,6 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         retval += f"{wltdict[cand]['ties']}"
         return retval
 
-
     def get_winlosstie_sorted_keys(pairdict, wltdict):
         '''Sort the candidates by win/loss/tie record'''
         # TODO, consider win-loss-tie, not just "wins"
@@ -63,14 +65,18 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
     if validate:
         validate_abifmodel(abifmodel)
     retval = ""
-    pairdict = pairwise_count_dict(abifmodel)
-    wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
+    if pairdict is None:
+        pairdict = pairwise_count_dict(abifmodel)
+    if wltdict is None:
+        wltdict = winlosstie_dict_from_pairdict(
+            abifmodel['candidates'], pairdict)
     try:
         mytitle = get_title_for_html(abifmodel)
     except:
         global_namespace = globals()
-        global_functions = [name for name, obj in global_namespace.items() if callable(obj)]
-        print(global_functions) 
+        global_functions = [name for name,
+                            obj in global_namespace.items() if callable(obj)]
+        print(global_functions)
         raise
     candtoks = get_winlosstie_sorted_keys(pairdict, wltdict)
     candnames = abifmodel.get('candidates', None)
@@ -122,7 +128,8 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
         if ck != candnames[ck]:
             candrow_label.string += f" [\"{ck}\"]"
         candrow.append(candrow_label)
-        candrow_wlt = soup.new_tag('td', attrs={'style': 'padding-right: 3em;'})
+        candrow_wlt = soup.new_tag(
+            'td', attrs={'style': 'padding-right: 3em;'})
         candrow_wlt['colspan'] = wltcolspan
         candrow_wlt.string = f"({wltstr(ck)})"
         wincaption = \
@@ -131,10 +138,10 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
             appendme = soup.new_tag('div')
             appendme.string = f"{ck} victories"
             wincaption.append(appendme)
-            #appendme = soup.new_tag('div',
+            # appendme = soup.new_tag('div',
             #                        style="float: center; white-space: nowrap;")
-            #appendme.string = "victories"
-            #wincaption.append(appendme)
+            # appendme.string = "victories"
+            # wincaption.append(appendme)
             appendme = soup.new_tag('div', style="float: center;")
             appendme.string = "↓"
             wincaption.append(appendme)
@@ -163,10 +170,10 @@ def htmltable_pairwise_and_winlosstie(abifmodel,
                     soup.new_tag('div', style='white-space: nowrap;')
                 winspan.string = f"{rk}: {rkscore}"
                 scorespan.append(winspan)
-                #breakspan = soup.new_tag('div')
-                #breakspan.string = " — "
-                #thiscell.append(breakspan)
-                lossspan = soup.new_tag('div', style ='white-space: nowrap;')
+                # breakspan = soup.new_tag('div')
+                # breakspan.string = " — "
+                # thiscell.append(breakspan)
+                lossspan = soup.new_tag('div', style='white-space: nowrap;')
                 lossspan.string = f"{ck}: {ckscore}"
                 if not rkscore > ckscore:
                     dagspan = soup.new_tag('sup')

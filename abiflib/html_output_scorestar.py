@@ -26,7 +26,7 @@ except:
     pass
 
 
-def html_score_and_star(jabmod):
+def html_score_and_star(jabmod, basicstar=None, scaled=None):
     retval = ""
     content = STAR_report(jabmod)
     escaped_content = [html.escape(line) for line in content]
@@ -34,15 +34,17 @@ def html_score_and_star(jabmod):
     # FIXME: proper escaping needed for the values
     # 2024-03-31
     # I REALLY SHOULD JUST USE FLASK FOR THIS
-    basicstar = STAR_result_from_abifmodel(jabmod)
+    if basicstar is None:
+        basicstar = STAR_result_from_abifmodel(jabmod)
     escaped_content.append(json.dumps(basicstar, indent=4))
-    scaled = scaled_scores(jabmod, target_scale=50)
+    if scaled is None:
+        scaled = scaled_scores(jabmod, target_scale=50)
     escaped_content.append(json.dumps(scaled, indent=4))
     soup = BeautifulSoup('', 'html.parser')
-    
+
     pre_tag = soup.new_tag('pre')
     pre_tag.string = ''.join(escaped_content)
-    
+
     soup.append(pre_tag)
     retval += str(soup)
     return retval

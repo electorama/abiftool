@@ -103,10 +103,12 @@ def winlosstie_dict_from_pairdict(candidates, pairdict):
     return sorted_dict
 
 
-def full_copecount_from_abifmodel(abifmodel):
+def full_copecount_from_abifmodel(abifmodel, pairdict=None):
     '''Consolidate pairwise tally and win-loss-tie structs'''
     copecount = {}
-    copecount['winningvotes'] = pairwise_count_dict(abifmodel)
+    if pairdict is None:
+        pairdict = pairwise_count_dict(abifmodel)
+    copecount['winningvotes'] = pairdict
     copecount['winlosstie'] = winlosstie_dict_from_pairdict(
         abifmodel['candidates'],
         copecount['winningvotes'])
@@ -136,9 +138,9 @@ def get_Copeland_winners(copecount):
 
 def Copeland_report(canddict, copecount):
     retval = ""
-    #retval += f"{canddict=}\n"
+    # retval += f"{canddict=}\n"
     copescores = calc_Copeland_scores(copecount)
-    #retval += f"odlWinner: {copescores[0][0]=} {copescores[0][1]=}\n"
+    # retval += f"odlWinner: {copescores[0][0]=} {copescores[0][1]=}\n"
     retval += f"Copeland Winner: {canddict[copescores[0][0]]} (score: {copescores[0][1]})\n"
     return retval
 
@@ -168,7 +170,6 @@ def main():
         tablelabel='   Loser ->\nv Winner')
 
     print(outstr)
-
 
 
 if __name__ == "__main__":
