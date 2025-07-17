@@ -22,10 +22,15 @@ import pathlib
 from pprint import pprint, pformat
 import random
 import sys
+import os
+import time
+import datetime
+from datetime import timezone
 
 
 def _eliminate_cands_from_votelines(candlist, votelines):
     '''Returns a new list of votelines without the specified candidates.'''
+    t0 = time.perf_counter()
     new_votelines = []
     elim_set = set(candlist)
     for vln in votelines:
@@ -36,11 +41,15 @@ def _eliminate_cands_from_votelines(candlist, votelines):
         }
         new_voteline = {'qty': vln['qty'], 'prefs': new_prefs}
         new_votelines.append(new_voteline)
+    t1 = time.perf_counter()
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"[irv_tally] _eliminate_cands_from_votelines: {t1-t0:.4f}s for {len(votelines)} votelines, elim {candlist}")
     return new_votelines
 
 
 def _discard_toprank_overvotes(votelines):
     '''Separates overvoted ballots and returns a tuple of (overvote_qty, valid_votelines).'''
+    t0 = time.perf_counter()
     valid_votelines = []
     overvotes_qty = 0
     for vln in votelines:
@@ -62,43 +71,39 @@ def _discard_toprank_overvotes(votelines):
         else:
             # This is a valid voteline
             valid_votelines.append(vln)
-
+    t1 = time.perf_counter()
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"[irv_tally] _discard_toprank_overvotes: {t1-t0:.4f}s for {len(votelines)} votelines")
     return (overvotes_qty, valid_votelines)
 
 
 def _get_valid_topcand_qty(voteline):
+    """Iteratively finds the top-ranked candidate in a voteline, handling ties."""
     prefs = voteline['prefs']
-    rlist = sorted(prefs.keys(), key=lambda key: prefs[key]['rank'])
 
-    if len(rlist) > 0:
-        x = 0
-        xtok = rlist[x]
-        xrank = prefs[xtok]['rank']
-        y = len(rlist)
-        yrank = 9999999999  # close enough to infinity
-        # this technique should find the index of the last candidate
-        # in the rlist array that has the same rank as the first
-        # candidate in rlist.
-        while yrank > xrank:
-            y += -1
-            ytok = rlist[y]
-            yrank = prefs[ytok]['rank']
-        # if x < y, this means there is two or more elements in the
-        # rlist array with the same rank
-        if x == y:
-            rcand = rlist[x]
+    if not prefs:
+        return (None, voteline['qty'])
+
+    # Sort candidates by rank
+    ranked_cands = sorted([(p['rank'], c) for c, p in prefs.items()])
+
+    i = 0
+    while i < len(ranked_cands):
+        current_rank, current_cand = ranked_cands[i]
+
+        # Check for a tie at the current rank
+        if i + 1 < len(ranked_cands) and ranked_cands[i+1][0] == current_rank:
+            # Tie found, skip all candidates at this rank
+            rank_to_skip = current_rank
+            while i < len(ranked_cands) and ranked_cands[i][0] == rank_to_skip:
+                i += 1
+            continue # Move to the next rank
         else:
-            klist = rlist[y+1:]
-            nextprefs = {k: prefs[k] for k in klist if k in prefs}
-            nextvln = {
-                'qty': voteline['qty'],
-                'prefs': nextprefs
-            }
-            (rcand, rqty) = _get_valid_topcand_qty(nextvln)
-    else:
-        rcand = prefs
-    rqty = voteline['qty']
-    return (rcand, rqty)
+            # No tie at this rank, this is our candidate
+            return (current_cand, voteline['qty'])
+
+    # If we get through the whole list, all were ties or list was empty
+    return (None, voteline['qty'])
 
 
 def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundnum=None):
@@ -110,6 +115,10 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     * rounds - round-by-round votecounts
     * roundmeta - metadata associated with all rounds
     """
+    t0 = time.perf_counter()
+    depth = len(rounds) if rounds else 0
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem02: Entering _irv_count_internal: depth={depth}")
     # 1. initializing/calculating rounds, roundmeta, and roundcount
     # 1a. rounds, roundmeta, and roundnum are passed in recursively; init if needed
     if rounds is None:
@@ -131,9 +140,18 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     mymeta['ballotcount'] = 0
 
     # 3. Overvote pruning and counting remaining ballots
+    t_ov0 = time.perf_counter()
     (ov, prunedvlns) = _discard_toprank_overvotes(votelines)
+    t_ov1 = time.perf_counter()
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"[irv_tally]   _discard_toprank_overvotes: {t_ov1-t_ov0:.4f}s at depth={depth}")
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem03: After _discard_toprank_overvotes")
     mymeta['overvoteqty'] += ov
+    t_topcand0 = time.perf_counter()
+    get_valid_topcand_qty_calls = 0
     for (i, vln) in enumerate(prunedvlns):
+        get_valid_topcand_qty_calls += 1
         (rcand, rqty) = _get_valid_topcand_qty(vln)
 
         mymeta['ballotcount'] += rqty
@@ -141,6 +159,11 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
             roundcount[rcand] += rqty
         else:
             mymeta['exhaustedqty'] += rqty
+    t_topcand1 = time.perf_counter()
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"[irv_tally]   _get_valid_topcand_qty: {t_topcand1-t_topcand0:.4f}s for {get_valid_topcand_qty_calls} prunedvlns at depth={depth}")
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem04: After _get_valid_topcand_qty loop")
     total_votes = sum(roundcount.values())
     mymeta['countedqty'] = total_votes - mymeta['exhaustedqty']
 
@@ -206,9 +229,9 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
             roundmeta[-1]['eliminated'] = bottomcands
             unluckycand = None
             nextcands = list(set(candlist) - set(bottomcands))
-            nextvotelines = \
-                _eliminate_cands_from_votelines(
-                    bottomcands, deepcopy(prunedvlns))
+            nextvotelines =                 _eliminate_cands_from_votelines(                    bottomcands, deepcopy(prunedvlns))
+            if os.environ.get("ABIFTOOL_DEBUG"):
+                print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem05: After eliminate_cands_from_votelines (batch)")
         else:
             # FIXME - develop better logic to calculate what happens
             #         with each possible advancing candidate than
@@ -217,15 +240,16 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
             unluckycand = random.choice(bottomcands)
             roundmeta[-1]['eliminated'] = [unluckycand]
             nextcands = list(set(candlist) - set([unluckycand]))
-            nextvotelines = \
-                _eliminate_cands_from_votelines(
-                    [unluckycand], deepcopy(prunedvlns))
+            nextvotelines =                 _eliminate_cands_from_votelines(                    [unluckycand], deepcopy(prunedvlns))
+            if os.environ.get("ABIFTOOL_DEBUG"):
+                print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem06: After eliminate_cands_from_votelines (random)")
         thisroundloserlist = [unluckycand]
     else:
         roundmeta[-1]['eliminated'] = bottomcands
         nextcands = list(set(candlist) - set(bottomcands))
-        nextvotelines = \
-            _eliminate_cands_from_votelines(bottomcands, prunedvlns)
+        nextvotelines =             _eliminate_cands_from_votelines(bottomcands, prunedvlns)
+        if os.environ.get("ABIFTOOL_DEBUG"):
+            print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem07: After eliminate_cands_from_votelines (no tie)")
         thisroundloserlist = bottomcands
     # now populate 'all_eliminated'
     if "all_eliminated" not in roundmeta[-1]:
@@ -255,20 +279,34 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
             mymeta['starting_cands']) - set(winner)
     else:
         # We need another round, hence recursion
+        t_rec0 = time.perf_counter()
+        if os.environ.get("ABIFTOOL_DEBUG"):
+            print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem08: Before recursive call to _irv_count_internal")
         (winner, nextrounds, nextmeta) = \
             _irv_count_internal(nextcands,
                                 nextvotelines,
                                 rounds=rounds,
                                 roundmeta=roundmeta)
+        t_rec1 = time.perf_counter()
+        if os.environ.get("ABIFTOOL_DEBUG"):
+            print(f"[irv_tally]   recursion: {t_rec1-t_rec0:.4f}s at depth={depth}")
+        if os.environ.get("ABIFTOOL_DEBUG"):
+            print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem09: After recursive call to _irv_count_internal")
         retval = (winner, rounds, roundmeta)
+    t1 = time.perf_counter()
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"[irv_tally] Exiting _irv_count_internal: depth={depth}, elapsed={t1-t0:.4f}s, cands={candlist}")
     return retval
 
 
 def IRV_dict_from_jabmod(jabmod):
+    t0 = time.perf_counter()
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem01: Entering IRV_dict_from_jabmod")
     retval = {}
     canddict = retval['canddict'] = jabmod['candidates']
     candlist = list(jabmod['candidates'].keys())
-    votelines = deepcopy(jabmod['votelines'])
+    votelines = jabmod['votelines']
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
         _irv_count_internal(candlist, votelines, roundnum=1)
 
@@ -284,6 +322,11 @@ def IRV_dict_from_jabmod(jabmod):
     retval['has_tie'] = any(
         "bottomtie" in rm for rm in retval.get("roundmeta", []))
 
+    t1 = time.perf_counter()
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"[irv_tally] IRV_dict_from_jabmod: {t1-t0:.4f}s for {len(votelines)} votelines, {len(candlist)} candidates")
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem10: Exiting IRV_dict_from_jabmod")
     return retval
 
 

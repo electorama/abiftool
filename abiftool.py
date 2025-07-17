@@ -140,6 +140,16 @@ def main():
 
     args = parser.parse_args()
     abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        import cProfile
+        rev = os.environ.get("ABIFTOOL_THISREV", "unknown-rev")
+        time = os.environ.get("ABIFTOOL_THISTIME", "unknown-time")
+        cprof_dir = 'cprof'
+        if not os.path.exists(cprof_dir):
+            os.makedirs(cprof_dir)
+        profile_filename = os.path.join(cprof_dir, f'{rev}-{time}.cprof')
+        pr = cProfile.Profile()
+        pr.enable()
 
     if not args.input_file and not args.list_contests and not args.container:
         parser.error("Missing input file.  Please specify an input file or "
@@ -326,6 +336,10 @@ def main():
         outstr += json.dumps(wltdict, indent=4)
     else:
         outstr += f"Cannot convert to {output_format} yet."
+
+    if os.environ.get("ABIFTOOL_DEBUG"):
+        pr.disable()
+        pr.dump_stats(profile_filename)
 
     print(outstr)
     if args.debug:
