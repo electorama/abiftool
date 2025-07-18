@@ -1,3 +1,21 @@
+def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
+    '''Simple key-value translation of metadata lines
+
+    This function handles the metadata lines that begin with "{".
+    Each metadata line should look vaguely like a line from a "JSON
+    Lines" file.
+
+    '''
+    initval = corefunc_init(tag="f03")
+    # Rename ballotcount that is passed in, since this tool is going
+    # to recount the ballots.
+    if mkey == 'ballotcount':
+        mkey = 'ballotcount_abif_metadata'
+    if 'metadata' in abifmodel:
+        abifmodel['metadata'][mkey] = mvalue
+    else:
+        abifmodel['metadata'] = {mkey: mvalue}
+    return abifmodel
 #!/usr/bin/env python3
 '''abiflib/core.py - core ABIF<=>jabmod conversion functions '''
 
@@ -26,6 +44,18 @@ import os
 import re
 import sys
 import urllib.parse
+
+
+
+
+# Compile comment, metadata, and candline regexes at module scope for safe optimization
+COMMENT_REGEX = r"^(?P<beforesep>.*?)(?P<comsep>\#)(?P<whitespace>\s*)(?P<aftersep>.*)$"
+METADATA_REGEX = r"^@([A-Za-z0-9_]+)\s*:\s*(.*)$"
+CANDLINE_REGEX = r"^=([A-Za-z0-9_]+):(?:\[(.*)\]|(.*))$"  # Accepts =A:Candidate A or =A:[Candidate A]
+CANDLINE_REGEX = r"^=([A-Za-z0-9_]+):(?:\[(.*)\]|(.*))$"
+commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
+metadataregexp = re.compile(METADATA_REGEX, re.VERBOSE)
+candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
 
 ABIF_VERSION = "0.1"
 ABIF_MODEL_LIMIT = 2500
@@ -57,6 +87,20 @@ def corefunc_init(tag="unmarked"):
 # Functions for parsing/reading abif into jabmod....
 #
 
+def _process_abif_comment_line(abifmodel=None,
+                               linecomment="",
+                               linenum=0,
+                               storecomments=False):
+    '''Store abif comments in jabmod metadata'''
+    initval = corefunc_init(tag="f02")
+    if not abifmodel:
+        abifmodel = get_emptyish_abifmodel()
+    commenttuple = (linenum, linecomment)
+    if linecomment and storecomments:
+        if not 'comments' in abifmodel['metadata']:
+            abifmodel['metadata']['comments'] = []
+        abifmodel['metadata']['comments'].append(commenttuple)
+    return abifmodel
 def convert_abif_to_jabmod(inputstr,
                            cleanws=False,
                            add_ratings=False,
@@ -67,12 +111,16 @@ def convert_abif_to_jabmod(inputstr,
     'jabmod' stands for 'JSON ABIF Model', and is the internal abiflib
     data structure which is used throughout abiflib.
     """
-    initval = corefunc_init(tag="f01")
-    global COMMENT_REGEX, METADATA_REGEX
-    global CANDLINE_REGEX, VOTELINE_REGEX
-    commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
-    metadataregexp = re.compile(METADATA_REGEX, re.VERBOSE)
-    candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
+    debug = os.environ.get('ABIFTOOL_DEBUG')
+    if debug:
+        print(f"DEBUG: Entered convert_abif_to_jabmod with inputstr of length {len(inputstr)}")
+    lines = inputstr.splitlines()
+    if debug:
+        print(f"DEBUG: Number of lines in input: {len(lines)}")
+        for idx, line in enumerate(lines[:5]):
+            print(f"DEBUG: Line {idx}: '{line}'")
+    global VOTELINE_REGEX
+    # commentregexp, metadataregexp, and candlineregexp are compiled at module scope for now
     votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
 
     abifmodel = get_emptyish_abifmodel()
@@ -102,9 +150,15 @@ def convert_abif_to_jabmod(inputstr,
                                                storecomments=storecomments)
 
         # now to deal with the substance
-        if (match := candlineregexp.match(strpdline)):
+        if debug:
+            print(f"DEBUG: Processing line {i}: '{strpdline}'")
+        candline_match = candlineregexp.match(strpdline)
+        if candline_match:
+            if debug:
+                print(f"DEBUG: candlineregexp matched: '{strpdline}' -> {candline_match.groups()}")
             matchgroup = 'candlineregexp'
-            candtoken, canddesc = match.groups()
+            candtoken, bracketed_desc, unbracketed_desc = candline_match.groups()
+            canddesc = bracketed_desc if bracketed_desc is not None else unbracketed_desc
             abifmodel = _process_abif_candline(candtoken,
                                                canddesc,
                                                abifmodel,
@@ -124,6 +178,10 @@ def convert_abif_to_jabmod(inputstr,
                                                linecomment)
             v += 1
         else:
+            if debug:
+                if ':' in strpdline:
+                    print(f"DEBUG: Line contains colon but did not match candlineregexp: '{strpdline}'")
+                print(f"DEBUG: No regex matched for: '{strpdline}'")
             matchgroup = 'empty'
 
     # Add in Borda-ish score if requested by calling function
@@ -137,34 +195,6 @@ def convert_abif_to_jabmod(inputstr,
         abiflib_test_log(f"Ignoring {extradata=}")
 
     return abifmodel
-
-
-def _process_abif_comment_line(abifmodel=None,
-                               linecomment="",
-                               linenum=0,
-                               storecomments=False):
-    '''Store abif comments in jabmod metadata'''
-    initval = corefunc_init(tag="f02")
-    if not abifmodel:
-        abifmodel = get_emptyish_abifmodel()
-    commenttuple = (linenum, linecomment)
-    if linecomment and storecomments:
-        if not 'comments' in abifmodel['metadata']:
-            abifmodel['metadata']['comments'] = []
-        abifmodel['metadata']['comments'].append(commenttuple)
-    return abifmodel
-
-
-def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
-    '''Simple key-value translation of metadata lines
-
-    This function handles the metadata lines that begin with "{".
-    Each metadata line should look vaguely like a line from a "JSON
-    Lines" file.
-
-    '''
-    initval = corefunc_init(tag="f03")
-    # Rename ballotcount that is passed in, since this tool is going
     # to recount the ballots.
     if mkey == 'ballotcount':
         mkey = 'ballotcount_abif_metadata'

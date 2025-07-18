@@ -27,26 +27,34 @@ import time
 import datetime
 from datetime import timezone
 
+ 
+# Add fallback for @profile if not running under kernprof
+try:
+    profile
+except NameError:
+    def profile(func):
+        return func
 
+@profile
 def _eliminate_cands_from_votelines(candlist, votelines):
     '''Returns a new list of votelines without the specified candidates.'''
     t0 = time.perf_counter()
-    new_votelines = []
     elim_set = set(candlist)
+    new_votelines = []
     for vln in votelines:
-        new_prefs = {
-            cand: prefs
-            for cand, prefs in vln['prefs'].items()
-            if cand not in elim_set
-        }
-        new_voteline = {'qty': vln['qty'], 'prefs': new_prefs}
-        new_votelines.append(new_voteline)
+        prefs = vln['prefs']
+        # Only filter if needed
+        if elim_set.isdisjoint(prefs):
+            new_votelines.append(vln)
+        else:
+            new_prefs = {cand: val for cand, val in prefs.items() if cand not in elim_set}
+            new_votelines.append({'qty': vln['qty'], 'prefs': new_prefs})
     t1 = time.perf_counter()
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"[irv_tally] _eliminate_cands_from_votelines: {t1-t0:.4f}s for {len(votelines)} votelines, elim {candlist}")
     return new_votelines
 
-
+@profile
 def _discard_toprank_overvotes(votelines):
     '''Separates overvoted ballots and returns a tuple of (overvote_qty, valid_votelines).'''
     t0 = time.perf_counter()
@@ -58,12 +66,16 @@ def _discard_toprank_overvotes(votelines):
             valid_votelines.append(vln)
             continue
 
-        # Find the highest rank (lowest rank number)
-        min_rank = min(p['rank'] for p in prefs.values())
-
-        # Count how many candidates share that highest rank
-        top_rank_count = sum(1 for p in prefs.values()
-                             if p['rank'] == min_rank)
+        # Single pass: find min_rank and count how many have it
+        min_rank = None
+        top_rank_count = 0
+        for p in prefs.values():
+            r = p['rank']
+            if min_rank is None or r < min_rank:
+                min_rank = r
+                top_rank_count = 1
+            elif r == min_rank:
+                top_rank_count += 1
 
         if top_rank_count > 1:
             # This is an overvote
@@ -76,36 +88,37 @@ def _discard_toprank_overvotes(votelines):
         print(f"[irv_tally] _discard_toprank_overvotes: {t1-t0:.4f}s for {len(votelines)} votelines")
     return (overvotes_qty, valid_votelines)
 
-
+@profile
 def _get_valid_topcand_qty(voteline):
-    """Iteratively finds the top-ranked candidate in a voteline, handling ties."""
+    """Finds the top-ranked candidate in a voteline, handling ties."""
     prefs = voteline['prefs']
 
     if not prefs:
         return (None, voteline['qty'])
 
-    # Sort candidates by rank
-    ranked_cands = sorted([(p['rank'], c) for c, p in prefs.items()])
+    # Single pass: find min_rank and collect all candidates with it
+    min_rank = None
+    top_cands = []
+    for c, p in prefs.items():
+        r = p['rank']
+        if min_rank is None or r < min_rank:
+            min_rank = r
+            top_cands = [c]
+        elif r == min_rank:
+            top_cands.append(c)
 
-    i = 0
-    while i < len(ranked_cands):
-        current_rank, current_cand = ranked_cands[i]
+    if len(top_cands) == 1:
+        return (top_cands[0], voteline['qty'])
+    else:
+        # Tie at top rank, skip to next rank
+        # Remove all tied candidates and recurse
+        new_prefs = {c: p for c, p in prefs.items() if p['rank'] != min_rank}
+        if not new_prefs:
+            return (None, voteline['qty'])
+        # Recurse with reduced prefs
+        return _get_valid_topcand_qty({'qty': voteline['qty'], 'prefs': new_prefs})
 
-        # Check for a tie at the current rank
-        if i + 1 < len(ranked_cands) and ranked_cands[i+1][0] == current_rank:
-            # Tie found, skip all candidates at this rank
-            rank_to_skip = current_rank
-            while i < len(ranked_cands) and ranked_cands[i][0] == rank_to_skip:
-                i += 1
-            continue # Move to the next rank
-        else:
-            # No tie at this rank, this is our candidate
-            return (current_cand, voteline['qty'])
-
-    # If we get through the whole list, all were ties or list was empty
-    return (None, voteline['qty'])
-
-
+@profile
 def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundnum=None):
     """
     IRV count of given votelines
@@ -148,17 +161,39 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem03: After _discard_toprank_overvotes")
     mymeta['overvoteqty'] += ov
+    # Batch process ballots with the same top candidate(s)
+    from collections import defaultdict
     t_topcand0 = time.perf_counter()
-    get_valid_topcand_qty_calls = 0
-    for (i, vln) in enumerate(prunedvlns):
-        get_valid_topcand_qty_calls += 1
-        (rcand, rqty) = _get_valid_topcand_qty(vln)
+    grouped = defaultdict(list)
+    for vln in prunedvlns:
+        # Get tuple of top candidates (handles ties)
+        prefs = vln['prefs']
+        if not prefs:
+            grouped[()].append(vln)
+            continue
+        min_rank = min(p['rank'] for p in prefs.values())
+        top_cands = tuple(sorted([c for c, p in prefs.items() if p['rank'] == min_rank]))
+        grouped[top_cands].append(vln)
 
-        mymeta['ballotcount'] += rqty
-        if rcand:
-            roundcount[rcand] += rqty
+    get_valid_topcand_qty_calls = 0
+    for top_cands, ballots in grouped.items():
+        total_qty = sum(v['qty'] for v in ballots)
+        mymeta['ballotcount'] += total_qty
+        if len(top_cands) == 1:
+            # Single top candidate, add all at once
+            roundcount[top_cands[0]] += total_qty
+        elif len(top_cands) == 0:
+            # Exhausted ballots
+            mymeta['exhaustedqty'] += total_qty
         else:
-            mymeta['exhaustedqty'] += rqty
+            # Tie at top rank, must process recursively as before
+            for vln in ballots:
+                get_valid_topcand_qty_calls += 1
+                (rcand, rqty) = _get_valid_topcand_qty(vln)
+                if rcand:
+                    roundcount[rcand] += rqty
+                else:
+                    mymeta['exhaustedqty'] += rqty
     t_topcand1 = time.perf_counter()
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"[irv_tally]   _get_valid_topcand_qty: {t_topcand1-t_topcand0:.4f}s for {get_valid_topcand_qty_calls} prunedvlns at depth={depth}")
@@ -229,7 +264,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
             roundmeta[-1]['eliminated'] = bottomcands
             unluckycand = None
             nextcands = list(set(candlist) - set(bottomcands))
-            nextvotelines =                 _eliminate_cands_from_votelines(                    bottomcands, deepcopy(prunedvlns))
+            nextvotelines =                 _eliminate_cands_from_votelines(                    bottomcands, prunedvlns[:])
             if os.environ.get("ABIFTOOL_DEBUG"):
                 print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem05: After eliminate_cands_from_votelines (batch)")
         else:
@@ -240,7 +275,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
             unluckycand = random.choice(bottomcands)
             roundmeta[-1]['eliminated'] = [unluckycand]
             nextcands = list(set(candlist) - set([unluckycand]))
-            nextvotelines =                 _eliminate_cands_from_votelines(                    [unluckycand], deepcopy(prunedvlns))
+            nextvotelines =                 _eliminate_cands_from_votelines(                    [unluckycand], prunedvlns[:])
             if os.environ.get("ABIFTOOL_DEBUG"):
                 print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem06: After eliminate_cands_from_votelines (random)")
         thisroundloserlist = [unluckycand]
