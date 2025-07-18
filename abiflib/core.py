@@ -1,3 +1,8 @@
+try:
+    from line_profiler import profile
+except ImportError:
+    def profile(func):
+        return func
 def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
     '''Simple key-value translation of metadata lines
 
@@ -48,14 +53,20 @@ import urllib.parse
 
 
 
-# Compile comment, metadata, and candline regexes at module scope for safe optimization
+
+# Compile comment, metadata, candline, and voteline regexes at module scope for safe optimization
 COMMENT_REGEX = r"^(?P<beforesep>.*?)(?P<comsep>\#)(?P<whitespace>\s*)(?P<aftersep>.*)$"
 METADATA_REGEX = r"^@([A-Za-z0-9_]+)\s*:\s*(.*)$"
-CANDLINE_REGEX = r"^=([A-Za-z0-9_]+):(?:\[(.*)\]|(.*))$"  # Accepts =A:Candidate A or =A:[Candidate A]
 CANDLINE_REGEX = r"^=([A-Za-z0-9_]+):(?:\[(.*)\]|(.*))$"
 commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
 metadataregexp = re.compile(METADATA_REGEX, re.VERBOSE)
 candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
+# VOTELINE_REGEX must be defined before this file is loaded; fallback if not
+try:
+    VOTELINE_REGEX
+except NameError:
+    VOTELINE_REGEX = r"^(\d+)\s*:(.*)$"  # fallback default
+votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
 
 ABIF_VERSION = "0.1"
 ABIF_MODEL_LIMIT = 2500
@@ -101,6 +112,7 @@ def _process_abif_comment_line(abifmodel=None,
             abifmodel['metadata']['comments'] = []
         abifmodel['metadata']['comments'].append(commenttuple)
     return abifmodel
+@profile
 def convert_abif_to_jabmod(inputstr,
                            cleanws=False,
                            add_ratings=False,
@@ -111,6 +123,7 @@ def convert_abif_to_jabmod(inputstr,
     'jabmod' stands for 'JSON ABIF Model', and is the internal abiflib
     data structure which is used throughout abiflib.
     """
+
     debug = os.environ.get('ABIFTOOL_DEBUG')
     if debug:
         print(f"DEBUG: Entered convert_abif_to_jabmod with inputstr of length {len(inputstr)}")
@@ -119,21 +132,23 @@ def convert_abif_to_jabmod(inputstr,
         print(f"DEBUG: Number of lines in input: {len(lines)}")
         for idx, line in enumerate(lines[:5]):
             print(f"DEBUG: Line {idx}: '{line}'")
-    global VOTELINE_REGEX
-    # commentregexp, metadataregexp, and candlineregexp are compiled at module scope for now
-    votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
 
     abifmodel = get_emptyish_abifmodel()
-
-    # 'v' is the voteline number
     v = 0
-    for i, fullline in enumerate(inputstr.splitlines()):
+    for i, fullline in enumerate(lines):
         matchgroup = None
         linecomment = None
         cparts = None
         # if "--cleanws" flag is given, strip leading whitespace
         if cleanws:
             fullline = re.sub(r"^\s+", "", fullline)
+        # Quick skip: if line is empty or starts with '#' (comment), skip regexes
+        if not fullline or fullline.lstrip().startswith('#'):
+            abifmodel = _process_abif_comment_line(abifmodel=abifmodel,
+                                                   linecomment=fullline,
+                                                   linenum=i,
+                                                   storecomments=storecomments)
+            continue
         # Strip the comments out first
         if (match := commentregexp.match(fullline)):
             matchgroup = 'commentregexp'
@@ -152,6 +167,41 @@ def convert_abif_to_jabmod(inputstr,
         # now to deal with the substance
         if debug:
             print(f"DEBUG: Processing line {i}: '{strpdline}'")
+        # Quick skip: check first char to avoid unnecessary regexes
+        firstchar = strpdline[:1]
+        if firstchar == '=':
+            candline_match = candlineregexp.match(strpdline)
+            if candline_match:
+                if debug:
+                    print(f"DEBUG: candlineregexp matched: '{strpdline}' -> {candline_match.groups()}")
+                matchgroup = 'candlineregexp'
+                candtoken, bracketed_desc, unbracketed_desc = candline_match.groups()
+                canddesc = bracketed_desc if bracketed_desc is not None else unbracketed_desc
+                abifmodel = _process_abif_candline(candtoken,
+                                                   canddesc,
+                                                   abifmodel,
+                                                   linecomment)
+                continue
+        elif firstchar == '@':
+            match = metadataregexp.match(strpdline)
+            if match:
+                matchgroup = 'metadataregexp'
+                mkey, mvalue = match.groups()
+                abifmodel = _process_abif_metadata(
+                    mkey, mvalue, abifmodel, linecomment)
+                continue
+        elif firstchar.isdigit():
+            match = votelineregexp.match(strpdline)
+            if match:
+                matchgroup = 'votelineregexp'
+                qty, prefstr = match.groups()
+                abifmodel = _process_abif_prefline(qty,
+                                                   prefstr,
+                                                   abifmodel,
+                                                   linecomment)
+                v += 1
+                continue
+        # Fallback: try all regexes if not caught by above
         candline_match = candlineregexp.match(strpdline)
         if candline_match:
             if debug:
@@ -171,7 +221,6 @@ def convert_abif_to_jabmod(inputstr,
         elif (match := votelineregexp.match(strpdline)):
             matchgroup = 'votelineregexp'
             qty, prefstr = match.groups()
-
             abifmodel = _process_abif_prefline(qty,
                                                prefstr,
                                                abifmodel,
@@ -290,6 +339,7 @@ def add_ratings_to_jabmod_votelines(inmod, add_ratings=True):
     return outmod
 
 
+@profile
 def _extract_candprefs_from_prefstr(prefstr):
     '''Extract candidate tokens from prefstr portion of line'''
     initval = corefunc_init(tag="f08a")
@@ -372,6 +422,7 @@ def _determine_rank_or_rate(prefstr):
     return rank_or_rate, delimeters
 
 
+@profile
 def _parse_prefstr_to_dict(prefstr, qty=0,
                            abifmodel=None, linecomment=None):
     '''Convert prefstr portion of .abif voteline to jabvoteline
@@ -416,6 +467,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
     return prefstrdict
 
 
+@profile
 def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
