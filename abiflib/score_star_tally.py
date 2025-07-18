@@ -25,53 +25,83 @@ import sys
 
 
 def basic_score_result_from_abifmodel(abifmodel):
-    retval = {candtok: {} for candtok in abifmodel['candidates'].keys()}
-
-    for cand in abifmodel['candidates'].keys():
-        retval[cand]['candname'] = abifmodel['candidates'][cand]
-        retval[cand]['score'] = 0
-        retval[cand]['votercount'] = 0
-    for i, voteline in enumerate(abifmodel['votelines']):
+    candidates = abifmodel['candidates']
+    votelines = abifmodel['votelines']
+    retval = {cand: {'candname': candidates[cand], 'score': 0, 'votercount': 0} for cand in candidates}
+    for voteline in votelines:
         qty = voteline['qty']
-        for cand, candval in voteline['prefs'].items():
-            rating = int(candval.get('rating', 0))
-            retval[cand]['score'] += rating * qty
-            if rating > 0:
-                retval[cand]['votercount'] += qty
+        prefs = voteline['prefs']
+        for cand, candval in prefs.items():
+            entry = retval.get(cand)
+            if entry is not None:
+                rating = candval.get('rating')
+                if rating is not None:
+                    rating = int(rating)
+                    entry['score'] += rating * qty
+                    if rating > 0:
+                        entry['votercount'] += qty
     return retval
 
 
 def enhanced_score_result_from_abifmodel(abifmodel):
     retval = {}
     newscores = basic_score_result_from_abifmodel(abifmodel)
-    ranklist = sorted(newscores.keys(), key=lambda x: newscores[x]["score"], reverse=True)
+    # Use a tuple list for sorting to avoid repeated dict lookups
+    score_items = [(cand, newscores[cand]['score']) for cand in newscores]
+    score_items.sort(key=lambda x: x[1], reverse=True)
+    ranklist = [cand for cand, _ in score_items]
     retval['scores'] = newscores
-
-    scores = {ct: newscores[ct]['score'] for ct in abifmodel['candidates'].keys()}
 
     # Calculate the ranks, ensuring that equal scores results in equal ranks
     rank = 0
-    for i, c in enumerate(ranklist):
-        if i > 0:
-            pscore = newscores[ranklist[i-1]]['score']
-        else:
-            pscore = math.inf
-        tscore = newscores[c]['score']
-        if pscore > tscore:
+    prev_score = None
+    for i, cand in enumerate(ranklist):
+        tscore = newscores[cand]['score']
+        if prev_score is None:
+            prev_score = tscore
+        elif prev_score > tscore:
             rank += 1
-        newscores[c]['rank'] = rank
+            prev_score = tscore
+        newscores[cand]['rank'] = rank
     retval['ranklist'] = ranklist
-    retval['total_all_scores'] = sum(x['score']
-                                     for x in retval['scores'].values())
+    retval['total_all_scores'] = sum(x['score'] for x in newscores.values())
     retval['totalvoters'] = abifmodel['metadata']['ballotcount']
     return retval
 
 
 def STAR_result_from_abifmodel(abifmodel):
+    import time
     retval = enhanced_score_result_from_abifmodel(abifmodel)
     bc = retval['totalvoters']
     retval['round1winners'] = retval['ranklist'][0:2]
-    copecount = full_copecount_from_abifmodel(abifmodel)
+    # Optimization: Only compute the pairwise result for the top two if possible
+    finalists = retval['ranklist'][0:2]
+    copecount = None
+    if len(finalists) == 2:
+        fin1, fin2 = finalists
+        # Only compute the head-to-head for the two finalists
+        # Use the same logic as pairwise_count_dict but just for these two
+        from abiflib.pairwise_tally import pairwise_count_dict
+        pairdict = {fin1: {fin2: 0}, fin2: {fin1: 0}}
+        for vl in abifmodel['votelines']:
+            qty = vl['qty']
+            prefs = vl['prefs']
+            maxrank = sys.maxsize
+            arank = prefs.get(fin1, {}).get('rank', maxrank)
+            brank = prefs.get(fin2, {}).get('rank', maxrank)
+            if arank < brank:
+                pairdict[fin1][fin2] += qty
+            elif brank < arank:
+                pairdict[fin2][fin1] += qty
+        copecount = {'winningvotes': pairdict}
+        if os.environ.get("ABIFTOOL_DEBUG"):
+            print(f"[score_star_tally] fast head-to-head: {fin1} vs {fin2}")
+    else:
+        t0 = time.perf_counter()
+        copecount = full_copecount_from_abifmodel(abifmodel)
+        t1 = time.perf_counter()
+        if os.environ.get("ABIFTOOL_DEBUG"):
+            print(f"[score_star_tally] full_copecount_from_abifmodel: {t1-t0:.4f}s")
 
     if len(retval['ranklist']) == 0:
         fin1 = retval['fin1'] = None

@@ -142,12 +142,14 @@ def main():
     abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
     if os.environ.get("ABIFTOOL_DEBUG"):
         import cProfile
-        rev = os.environ.get("ABIFTOOL_THISREV", "unknown-rev")
-        time = os.environ.get("ABIFTOOL_THISTIME", "unknown-time")
-        cprof_dir = 'cprof'
-        if not os.path.exists(cprof_dir):
-            os.makedirs(cprof_dir)
-        profile_filename = os.path.join(cprof_dir, f'{rev}-{time}.cprof')
+        profile_filename = os.environ.get("AB_CPROF_OUT")
+        if not profile_filename:
+            rev = os.environ.get("ABIFTOOL_THISREV", "unknown-rev")
+            time = os.environ.get("ABIFTOOL_THISTIME", "unknown-time")
+            cprof_dir = 'cprof'
+            if not os.path.exists(cprof_dir):
+                os.makedirs(cprof_dir)
+            profile_filename = os.path.join(cprof_dir, f'{rev}-{time}.cprof')
         pr = cProfile.Profile()
         pr.enable()
 

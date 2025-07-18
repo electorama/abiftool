@@ -29,43 +29,24 @@ def pairwise_count_dict(abifmodel):
     '''Convert abifmodel into pairwise matrix of vote counts'''
     candidates = abifmodel['candidates']
     votelines = abifmodel['votelines']
-
     candtoks = list(candidates.keys())
 
     # Initialize the return value matrix
-    retval = {}
-    for atok in candtoks:
-        retval[atok] = {}
-        for btok in candtoks:
-            if atok == btok:
-                retval[atok][btok] = None
-            else:
-                retval[atok][btok] = 0
+    retval = {atok: {btok: (None if atok == btok else 0) for btok in candtoks} for atok in candtoks}
 
-    # Now add voteline qtys for each higher ranked cand
-    for i, line in enumerate(votelines):
+    maxrank = sys.maxsize
+    for line in votelines:
         thisqty = line['qty']
         lineprefs = line['prefs']
-        maxrank = sys.maxsize
+        # Precompute all ranks for this ballot
+        ranks = {cand: lineprefs[cand].get('rank', maxrank) if cand in lineprefs else maxrank for cand in candtoks}
         for atok in candtoks:
+            arank = ranks[atok]
             for btok in candtoks:
-                if atok in lineprefs:
-                    arank = lineprefs[atok].get('rank')
-                else:
-                    arank = maxrank
-                if btok in lineprefs:
-                    brank = lineprefs[btok].get('rank')
-                else:
-                    brank = maxrank
-                # note that we're just ignoring arank > brank, since
-                # the larger loop is only responsible for adding votes
-                # when atok has a higher rank (lower number) than btok
                 if atok == btok:
-                    retval[atok][btok] = None
-                elif arank is None or brank is None:
-                    # FIXME: this condition was kludged in to make this run
-                    retval[atok][btok] = 0
-                elif arank < brank:
+                    continue
+                brank = ranks[btok]
+                if arank < brank:
                     retval[atok][btok] += thisqty
     return retval
 
