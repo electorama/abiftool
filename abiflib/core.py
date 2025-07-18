@@ -1,26 +1,3 @@
-try:
-    from line_profiler import profile
-except ImportError:
-    def profile(func):
-        return func
-def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
-    '''Simple key-value translation of metadata lines
-
-    This function handles the metadata lines that begin with "{".
-    Each metadata line should look vaguely like a line from a "JSON
-    Lines" file.
-
-    '''
-    initval = corefunc_init(tag="f03")
-    # Rename ballotcount that is passed in, since this tool is going
-    # to recount the ballots.
-    if mkey == 'ballotcount':
-        mkey = 'ballotcount_abif_metadata'
-    if 'metadata' in abifmodel:
-        abifmodel['metadata'][mkey] = mvalue
-    else:
-        abifmodel['metadata'] = {mkey: mvalue}
-    return abifmodel
 #!/usr/bin/env python3
 '''abiflib/core.py - core ABIF<=>jabmod conversion functions '''
 
@@ -51,6 +28,31 @@ import sys
 import urllib.parse
 
 
+try:
+    from line_profiler import profile
+except ImportError:
+    def profile(func):
+        return func
+
+
+def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
+    '''Simple key-value translation of metadata lines
+
+    This function handles the metadata lines that begin with "{".
+    Each metadata line should look vaguely like a line from a "JSON
+    Lines" file.
+
+    '''
+    initval = corefunc_init(tag="f03")
+    # Rename ballotcount that is passed in, since this tool is going
+    # to recount the ballots.
+    if mkey == 'ballotcount':
+        mkey = 'ballotcount_abif_metadata'
+    if 'metadata' in abifmodel:
+        abifmodel['metadata'][mkey] = mvalue
+    else:
+        abifmodel['metadata'] = {mkey: mvalue}
+    return abifmodel
 
 
 
@@ -278,8 +280,16 @@ def get_emptyish_abifmodel():
 def _add_ranks_to_prefjab_by_rating(inprefjab):
     '''Use candidate ratings to provide rankings'''
     initval = corefunc_init(tag="f06")
-    retval = inprefjab.copy()
+    # Only assign ranks if at least one candidate has a rating but no rank
+    needs_ranking = False
+    for v in inprefjab.values():
+        if v.get("rating") is not None and v.get("rank") is None:
+            needs_ranking = True
+            break
+    if not needs_ranking:
+        return inprefjab
 
+    retval = inprefjab.copy()
     # Sort cands by rating (descending order)
     cands = sorted(retval,
                    key=lambda x: int(retval[x].get("rating", 0)),
@@ -298,7 +308,7 @@ def _add_ranks_to_prefjab_by_rating(inprefjab):
             thisrank = prevrank
         else:
             raise ABIFVotelineException(message=f"Error: {i=} {c=} {thisrank=}")
-        if not retval[c].get("rank"):
+        if retval[c].get("rank") is None:
             retval[c]["rank"] = thisrank
         prevrate = thisrate
         prevrank = thisrank
@@ -442,7 +452,7 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         (cand, candrating) = candpref
         candkeys.append(cand)
         prefs[cand] = {}
-        if candrating:
+        if candrating is not None:
             prefs[cand]["rating"] = candrating
         if rank_or_rate == "rankone":
             rank = 1
@@ -455,14 +465,15 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         if i < len(candpreflist) - 1:
             prefs[cand]["nextdelim"] = delimeters[i]
 
-    prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    # Only call _add_ranks_to_prefjab_by_rating if needed
+    needs_ranking = False
+    for v in prefs.values():
+        if v.get("rating") is not None and v.get("rank") is None:
+            needs_ranking = True
+            break
+    if needs_ranking:
+        prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
 
-    if len(candkeys) > 0:
-        firstcandprefs = prefs.get(candkeys[0])
-        if firstcandprefs.get('rating') and not firstcandprefs.get('rank'):
-            prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
-    else:
-        prefs = {}
     prefstrdict = {"prefs": prefs, "cands": candkeys}
     return prefstrdict
 
@@ -585,8 +596,11 @@ def _prefstr_from_ranked_line(sortedprefs):
             rank = data['rank']
 
         prefstrfromranks += _abif_token_quote(name)
+        # Only emit /rating if it was present in the input (not defaulted to 0)
         if 'rating' in data and data['rating'] is not None:
-            prefstrfromranks += f"/{data['rating']}"
+            # Only emit if not zero, or if it was explicitly present as zero
+            if data['rating'] != 0 and data['rating'] != '0':
+                prefstrfromranks += f"/{data['rating']}"
         if i < len(sortedprefs) - 1:
             nextrank = sortedprefs[i+1][1]['rank']
             if rank < nextrank:
@@ -609,7 +623,7 @@ def _prefstr_from_ratings(sortedprefs):
     for name, data in sortedprefs:
         try:
             rating = int(data['rating'])
-        except TypeError:
+        except (TypeError, ValueError, KeyError):
             rating = None
 
         if rating != current_rating:
@@ -630,8 +644,10 @@ def _prefstr_from_ratings(sortedprefs):
             for k, ckey in enumerate(thistier.keys()):
                 candqtoken = _abif_token_quote(ckey)
                 prefstrfromratings += candqtoken
-                rating = thistier[ckey]['rating']
-                prefstrfromratings += f'/{rating}'
+                rating = thistier[ckey].get('rating', None)
+                # Only emit /rating if not None and not zero
+                if rating is not None and rating != 0 and rating != '0':
+                    prefstrfromratings += f'/{rating}'
             tierblobcount = len(tierblob) - 1
             if j < tierblobcount:
                 prefstrfromratings += '='
