@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
+import re
 import datetime
 import argparse
 import pathlib
@@ -40,14 +41,13 @@ def _eliminate_cands_from_votelines(candlist, votelines):
     t0 = time.perf_counter()
     elim_set = set(candlist)
     new_votelines = []
-    for vln in votelines:
-        prefs = vln['prefs']
-        # Only filter if needed
-        if elim_set.isdisjoint(prefs):
-            new_votelines.append(vln)
-        else:
-            new_prefs = {cand: val for cand, val in prefs.items() if cand not in elim_set}
-            new_votelines.append({'qty': vln['qty'], 'prefs': new_prefs})
+    append = new_votelines.append  # Localize for speed
+    # Use list comprehension for speed, and skip copying if no candidates are eliminated
+    return [
+        {'qty': vln['qty'], 'prefs': {cand: prefs for cand, prefs in vln['prefs'].items() if cand not in elim_set}}
+        if any(cand in elim_set for cand in vln['prefs']) else vln
+        for vln in votelines
+    ]
     t1 = time.perf_counter()
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"[irv_tally] _eliminate_cands_from_votelines: {t1-t0:.4f}s for {len(votelines)} votelines, elim {candlist}")
@@ -92,30 +92,23 @@ def _get_valid_topcand_qty(voteline):
     """Finds the top-ranked candidate in a voteline, handling ties (iterative version)."""
     qty = voteline['qty']
     prefs = voteline['prefs']
-
-    while True:
-        if not prefs:
-            return (None, qty)
-
-        # Find min_rank and collect all candidates with it
-        min_rank = None
-        top_cands = []
-        for c, p in prefs.items():
+    if not prefs:
+        return (None, qty)
+    # Convert to a list of (candidate, rank) pairs for in-place filtering
+    items = list(prefs.items())
+    while items:
+        min_rank = float('inf')
+        for _, p in items:
             r = p['rank']
-            if min_rank is None or r < min_rank:
+            if r < min_rank:
                 min_rank = r
-                top_cands = [c]
-            elif r == min_rank:
-                top_cands.append(c)
-
+        # Collect all candidates with min_rank
+        top_cands = [c for c, p in items if p['rank'] == min_rank]
         if len(top_cands) == 1:
             return (top_cands[0], qty)
-        else:
-            # Tie at top rank, skip to next rank
-            # Remove all tied candidates and continue
-            prefs = {c: p for c, p in prefs.items() if p['rank'] != min_rank}
-            if not prefs:
-                return (None, qty)
+        # Remove all tied candidates in-place
+        items = [(c, p) for c, p in items if p['rank'] != min_rank]
+    return (None, qty)
 
 @profile
 def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundnum=None):
@@ -160,39 +153,16 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem03: After _discard_toprank_overvotes")
     mymeta['overvoteqty'] += ov
-    # Batch process ballots with the same top candidate(s)
-    from collections import defaultdict
-    t_topcand0 = time.perf_counter()
-    grouped = defaultdict(list)
-    for vln in prunedvlns:
-        # Get tuple of top candidates (handles ties)
-        prefs = vln['prefs']
-        if not prefs:
-            grouped[()].append(vln)
-            continue
-        min_rank = min(p['rank'] for p in prefs.values())
-        top_cands = tuple(sorted([c for c, p in prefs.items() if p['rank'] == min_rank]))
-        grouped[top_cands].append(vln)
-
+    # Count top-ranked candidates in pruned votelines
     get_valid_topcand_qty_calls = 0
-    for top_cands, ballots in grouped.items():
-        total_qty = sum(v['qty'] for v in ballots)
-        mymeta['ballotcount'] += total_qty
-        if len(top_cands) == 1:
-            # Single top candidate, add all at once
-            roundcount[top_cands[0]] += total_qty
-        elif len(top_cands) == 0:
-            # Exhausted ballots
-            mymeta['exhaustedqty'] += total_qty
+    t_topcand0 = time.perf_counter()
+    for vln in prunedvlns:
+        get_valid_topcand_qty_calls += 1
+        (rcand, rqty) = _get_valid_topcand_qty(vln)
+        if rcand:
+            roundcount[rcand] += rqty
         else:
-            # Tie at top rank, must process recursively as before
-            for vln in ballots:
-                get_valid_topcand_qty_calls += 1
-                (rcand, rqty) = _get_valid_topcand_qty(vln)
-                if rcand:
-                    roundcount[rcand] += rqty
-                else:
-                    mymeta['exhaustedqty'] += rqty
+            mymeta['exhaustedqty'] += rqty
     t_topcand1 = time.perf_counter()
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"[irv_tally]   _get_valid_topcand_qty: {t_topcand1-t_topcand0:.4f}s for {get_valid_topcand_qty_calls} prunedvlns at depth={depth}")

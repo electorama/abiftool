@@ -47,7 +47,7 @@ Is_Provisional,83,1
 from abiflib import *
 import argparse
 from collections import OrderedDict
-from copy import deepcopy
+ 
 import csv
 import fileinput
 from io import StringIO
@@ -175,7 +175,7 @@ def _sftxt_convert_to_ballots(imagelines, candpool, contestid=None):
     for field in ballotfields:
         emptyballot[field] = None
 
-    thisballot = deepcopy(emptyballot)
+    thisballot = emptyballot.copy()
     lastballot = thisballot
     for imageline in imagelines:
         # skip over all imagelines that aren't associated with the
@@ -193,7 +193,7 @@ def _sftxt_convert_to_ballots(imagelines, candpool, contestid=None):
             if thisballot['Pref_Voter_Id'] != None:
                 yield(thisballot)
             lastballot = thisballot
-            thisballot = deepcopy(emptyballot)
+            thisballot = emptyballot.copy()
             for field in ballotfields:
                 thisballot[field] = imageline[field]
             thisballot['votes'] = []

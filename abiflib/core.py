@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 from abiflib import *
 from pprint import pprint, pformat
 import copy
@@ -26,6 +27,26 @@ import os
 import re
 import sys
 import urllib.parse
+
+
+# --- Move these to the top so all functions can reference them ---
+class ABIFVotelineException(Exception):
+    def __init__(self, value, message="ABIFVotelineException glares at you"):
+        global DEBUGARRAY
+        self.value = value
+        self.message = message
+        self.debugarray = DEBUGARRAY
+        super().__init__(self.message)
+
+def corefunc_init(tag="unmarked"):
+    '''Initialization for all abiflib/core.py functions
+
+    This function was added as a place to aggregate logging
+    functionality for all functions in abiflib/core.py
+
+    '''
+    #abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
+    return {'tag': tag}
 
 
 try:
@@ -56,44 +77,45 @@ def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
 
 
 
-# Compile comment, metadata, candline, and voteline regexes at module scope for safe optimization
-COMMENT_REGEX = r"^(?P<beforesep>.*?)(?P<comsep>\#)(?P<whitespace>\s*)(?P<aftersep>.*)$"
-METADATA_REGEX = r"^@([A-Za-z0-9_]+)\s*:\s*(.*)$"
-CANDLINE_REGEX = r"^=([A-Za-z0-9_]+):(?:\[(.*)\]|(.*))$"
+
+# Compile all regexes at module scope for performance
+from abiflib.abifregex import COMMENT_REGEX, METADATA_REGEX, CANDLINE_REGEX, VOTELINE_REGEX, VOTERID_REGEX
 commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
 metadataregexp = re.compile(METADATA_REGEX, re.VERBOSE)
 candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
-# VOTELINE_REGEX must be defined before this file is loaded; fallback if not
-try:
-    VOTELINE_REGEX
-except NameError:
-    VOTELINE_REGEX = r"^(\d+)\s*:(.*)$"  # fallback default
 votelineregexp = re.compile(VOTELINE_REGEX, re.VERBOSE)
+voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
+# Precompile candidate preference pattern used in _extract_candprefs_from_prefstr
+CANDPREF_PATTERN = re.compile(r'\[([^\]]+)\](?:/(\d+))?|"([^\"]+)"(?:/(\d+))?|([^\[\]",=>/]+)(?:/(\d+))?')
 
-ABIF_VERSION = "0.1"
-ABIF_MODEL_LIMIT = 2500
-
-
-class ABIFVotelineException(Exception):
-    """Raised when votelines are missing from ABIF."""
-
-    def __init__(self, value, message="ABIFVotelineException glares at you"):
-        global DEBUGARRAY
-        self.value = value
-        self.message = message
-        self.debugarray = DEBUGARRAY
-        super().__init__(self.message)
-
-
-def corefunc_init(tag="unmarked"):
-    '''Initialization for all abiflib/core.py functions
-
-    This function was added as a place to aggregate logging
-    functionality for all functions in abiflib/core.py
-
-    '''
-    #abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
-    return {'tag': tag}
+# Fast-path ballot parsing for simple cases (no brackets, quotes, or ratings)
+def _extract_candprefs_from_prefstr(prefstr):
+    '''Extract candidate tokens from prefstr portion of line'''
+    # Fast path: no brackets, quotes, or ratings
+    if not any(x in prefstr for x in '["=/'):
+        # Split on '>' and filter out empty tokens
+        return [(cand, None) for cand in (c.strip() for c in prefstr.split('>')) if cand]
+    # Fallback to full regex for complex cases
+    initval = corefunc_init(tag="f08a")
+    retval = []
+    for m in CANDPREF_PATTERN.finditer(prefstr):
+        # Avoid .strip() if regex already excludes whitespace
+        if m.group(1):
+            ccand = m.group(1)
+            if ccand:
+                rating = int(m.group(2)) if m.group(2) else None
+                retval.append((ccand, rating))
+        elif m.group(3):
+            ccand = m.group(3)
+            if ccand:
+                rating = int(m.group(4)) if m.group(4) else None
+                retval.append((ccand, rating))
+        elif m.group(5):
+            ccand = m.group(5)
+            if ccand:
+                rating = int(m.group(6)) if m.group(6) else None
+                retval.append((ccand, rating))
+    return retval
 
 
 ########################
@@ -177,8 +199,7 @@ def convert_abif_to_jabmod(inputstr,
                 if debug:
                     print(f"DEBUG: candlineregexp matched: '{strpdline}' -> {candline_match.groups()}")
                 matchgroup = 'candlineregexp'
-                candtoken, bracketed_desc, unbracketed_desc = candline_match.groups()
-                canddesc = bracketed_desc if bracketed_desc is not None else unbracketed_desc
+                candtoken, canddesc = candline_match.groups()
                 abifmodel = _process_abif_candline(candtoken,
                                                    canddesc,
                                                    abifmodel,
@@ -209,8 +230,7 @@ def convert_abif_to_jabmod(inputstr,
             if debug:
                 print(f"DEBUG: candlineregexp matched: '{strpdline}' -> {candline_match.groups()}")
             matchgroup = 'candlineregexp'
-            candtoken, bracketed_desc, unbracketed_desc = candline_match.groups()
-            canddesc = bracketed_desc if bracketed_desc is not None else unbracketed_desc
+            candtoken, canddesc = candline_match.groups()
             abifmodel = _process_abif_candline(candtoken,
                                                canddesc,
                                                abifmodel,
@@ -329,23 +349,34 @@ def add_ratings_to_jabmod_votelines(inmod, add_ratings=True):
                 inmod_has_rating = True
 
     numcands = len(inmod['candidates'])
-    outmod = copy.deepcopy(inmod)
-    for vl in outmod['votelines']:
+    # Custom shallow copy: copy top-level dict, and make a new votelines list with copied prefs dicts
+    outmod = dict(inmod)
+    outmod['votelines'] = []
+    for vl in inmod['votelines']:
+        new_vl = dict(vl)
+        new_prefs = {}
         for k, v in vl['prefs'].items():
+            new_pref = dict(v)
             # The ratings that get added should depend on whether
             # inmod has ratings.  If it has ratings for some entries,
             # then assume a default of zero for the entries that don't
             # have ratings.  If there are no ratings throughout, then
             # assume the ratings to be added are Borda-ish.
-            if not v.get('rating'):
+            if not new_pref.get('rating'):
                 if inmod_has_rating:
-                    v['rating'] = 0
+                    new_pref['rating'] = 0
                 elif add_ratings:
                     if numcands == 1:
-                        v['rating'] = 1
+                        new_pref['rating'] = 1
                     else:
-                        v['rating'] = numcands - v['rank']
+                        new_pref['rating'] = numcands - new_pref['rank']
+                    # Ensure metadata exists and is a dict
+                    if 'metadata' not in outmod or not isinstance(outmod['metadata'], dict):
+                        outmod['metadata'] = {}
                     outmod['metadata']['is_ranking_to_rating'] = True
+            new_prefs[k] = new_pref
+        new_vl['prefs'] = new_prefs
+        outmod['votelines'].append(new_vl)
     return outmod
 
 
@@ -354,10 +385,8 @@ def _extract_candprefs_from_prefstr(prefstr):
     '''Extract candidate tokens from prefstr portion of line'''
     initval = corefunc_init(tag="f08a")
     retval = []
-    # Use a regex to match candidate tokens with optional /N rating, handling brackets and quotes
-    # This will match [Name]/N, [Name], "Name"/N, "Name", Name/N, or Name
-    pattern = re.compile(r'\[([^\]]+)\](?:/(\d+))?|"([^"]+)"(?:/(\d+))?|([^\[\]",=>/]+)(?:/(\d+))?')
-    for m in pattern.finditer(prefstr):
+    # Use precompiled regex for candidate tokens
+    for m in CANDPREF_PATTERN.finditer(prefstr):
         if m.group(1):  # [Name] or [Name]/N
             ccand = m.group(1).strip()
             if ccand:
@@ -404,36 +433,36 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         abifmodel = get_emptyish_abifmodel()
 
     rank_or_rate, delimeters = _determine_rank_or_rate(prefstr)
-
     candpreflist = _extract_candprefs_from_prefstr(prefstr)
     candkeys = []
-    for (i, candpref) in enumerate(candpreflist):
-        (cand, candrating) = candpref
+    n = len(candpreflist)
+    for i in range(n):
+        cand, candrating = candpreflist[i]
         candkeys.append(cand)
-        prefs[cand] = {}
+        prefs_cand = {}
         if candrating is not None:
-            prefs[cand]["rating"] = int(candrating)
+            prefs_cand["rating"] = candrating
         if rank_or_rate == "rankone":
-            rank = 1
-            prefs[cand]["rank"] = rank
+            prefs_cand["rank"] = 1
         elif rank_or_rate == "rank":
-            prefs[cand]["rank"] = rank
-            if i < len(candpreflist) - 1 and i < len(delimeters) and delimeters[i] == ">":
+            prefs_cand["rank"] = rank
+            if i < n - 1 and delimeters[i] == ">":
                 rank += 1
-                prefs[cand]["nextdelim"] = delimeters[i]
-        if i < len(candpreflist) - 1 and i < len(delimeters):
-            prefs[cand]["nextdelim"] = delimeters[i]
+                prefs_cand["nextdelim"] = delimeters[i]
+        if i < n - 1:
+            prefs_cand["nextdelim"] = delimeters[i]
+        prefs[cand] = prefs_cand
 
-    # Debug output for test diagnosis (removed for production)
+    prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
 
-    # Only call _add_ranks_to_prefjab_by_rating if needed
-    needs_ranking = False
-    for v in prefs.values():
-        if v.get("rating") is not None and v.get("rank") is None:
-            needs_ranking = True
-            break
-    if needs_ranking:
-        prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    if candkeys:
+        firstcandprefs = prefs.get(candkeys[0], {})
+        if firstcandprefs.get('rating') is not None and not firstcandprefs.get('rank'):
+            prefs = _add_ranks_to_prefjab_by_rating(inprefjab=prefs)
+    else:
+        prefs = {}
+    prefstrdict = {"prefs": prefs, "cands": candkeys}
+    return prefstrdict
 
     prefstrdict = {"prefs": prefs, "cands": candkeys}
     return prefstrdict
@@ -444,33 +473,34 @@ def _process_abif_prefline(qty, prefstr,
                            abifmodel=None, linecomment=None):
     '''Add prefline with qty to the provided abifmodel/jabmod'''
     initval = corefunc_init(tag="f09")
-    voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
     voterid = None
     if linecomment is not None:
-        if (match := voteridregexp.match(linecomment)):
-            cparts = match.groupdict()
-            voterid = cparts['voterid']
+        match = voteridregexp.match(linecomment)
+        if match:
+            voterid = match.groupdict()['voterid']
 
     if not abifmodel:
         abifmodel = get_emptyish_abifmodel()
 
-    abifmodel['metadata']['ballotcount'] += int(qty)
-    linepair = {}
-    linepair['qty'] = int(qty)
+    abifmodel_metadata = abifmodel['metadata']
+    abifmodel_candidates = abifmodel['candidates']
+    abifmodel_votelines = abifmodel['votelines']
+    abifmodel_metadata['ballotcount'] += int(qty)
+
     prefstrdict = _parse_prefstr_to_dict(prefstr,
                                          qty=qty,
                                          abifmodel=abifmodel,
                                          linecomment=linecomment)
-    linepair['comment'] = linecomment
-    linepair['prefs'] = prefstrdict['prefs']
-    linepair['prefstr'] = prefstr.rstrip()
+    linepair = {'qty': int(qty), 'prefs': prefstrdict['prefs'], 'prefstr': prefstr.rstrip()}
+    if linecomment is not None:
+        linepair['comment'] = linecomment
     if voterid is not None:
         linepair['voterid'] = voterid
-    abifmodel['votelines'].append(linepair)
+    abifmodel_votelines.append(linepair)
     # merge candidate list into abifmodel['candidates']
     for x in prefstrdict['cands']:
-        if x not in abifmodel['candidates']:
-            abifmodel['candidates'][x] = x
+        if x not in abifmodel_candidates:
+            abifmodel_candidates[x] = x
     return abifmodel
 
 
