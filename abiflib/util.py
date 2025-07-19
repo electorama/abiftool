@@ -18,6 +18,7 @@
 from abiflib import *
 import copy
 import json
+import os
 from pprint import pprint
 import re
 import sys
@@ -60,6 +61,11 @@ def candlist_text_from_abif(jabmod):
     return output
 
 
+def get_abiftool_dir():
+    """Return the abiftool directory based on the location of this file."""
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+
 def utf8_string_to_abif_token(longstring, max_length=20, add_sha1=False):
     '''Convert a name into a short token for use in abif'''
     # TODO: replace _short_token in sftxt.py with this
@@ -74,5 +80,4 @@ def utf8_string_to_abif_token(longstring, max_length=20, add_sha1=False):
         cleanstr = re.sub('WRITE_IN_', "wi_", cleanstr)
         retval = cleanstr[:max_length]
     return retval
-
 

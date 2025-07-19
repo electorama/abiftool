@@ -31,6 +31,7 @@ except ModuleNotFoundError as e:
     sys.exit()
 
 import argparse
+from datetime import datetime, timezone
 import json
 import re
 import urllib.parse
@@ -112,6 +113,8 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
 
+    parser.add_argument('--profile-output', help='Write cProfile output to this file')
+
     validinfmts = get_keys_from_dict_list(INPUT_FORMATS)
     validoutfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
     validmod = get_keys_from_dict_list(MODIFIERS)
@@ -140,16 +143,19 @@ def main():
 
     args = parser.parse_args()
     abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
-    if os.environ.get("ABIFTOOL_DEBUG"):
+    pr = None
+    profile_filename = None
+    if os.environ.get("ABIFTOOL_DEBUG") or args.profile_output:
         import cProfile
-        profile_filename = os.environ.get("AB_CPROF_OUT")
-        if not profile_filename:
-            rev = os.environ.get("ABIFTOOL_THISREV", "unknown-rev")
-            time = os.environ.get("ABIFTOOL_THISTIME", "unknown-time")
-            cprof_dir = 'cprof'
-            if not os.path.exists(cprof_dir):
-                os.makedirs(cprof_dir)
-            profile_filename = os.path.join(cprof_dir, f'{rev}-{time}.cprof')
+        if args.profile_output:
+            profile_filename = args.profile_output
+        else:
+            if not profile_filename:
+                cprof_dir = 'timing'
+                timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+                if not os.path.exists(cprof_dir):
+                    os.makedirs(cprof_dir)
+                profile_filename = os.path.join(cprof_dir, f'c{timestamp}.cprof')
         pr = cProfile.Profile()
         pr.enable()
 
@@ -339,7 +345,7 @@ def main():
     else:
         outstr += f"Cannot convert to {output_format} yet."
 
-    if os.environ.get("ABIFTOOL_DEBUG"):
+    if pr is not None and profile_filename:
         pr.disable()
         pr.dump_stats(profile_filename)
 

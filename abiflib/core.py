@@ -354,66 +354,25 @@ def _extract_candprefs_from_prefstr(prefstr):
     '''Extract candidate tokens from prefstr portion of line'''
     initval = corefunc_init(tag="f08a")
     retval = []
-    tokenlist = re.split(r"(\[|\]|\>|\=|\,)", prefstr)
-    inbrackets = False
-    inquotes = False
-    quotetok = ""
-    prefnum = 0
-    currating = None
-    ccand = None
-    for tok in tokenlist:
-        if inbrackets:
-            if re.match(r"^\[", tok) and not inbrackets:
-                # Start of square bracketed part
-                inbrackets = True
-                quotetok = ""
-                currating = None
-                continue
-            elif re.match(r"^\]", tok) and inbrackets:
-                # End of square bracketed part
-                inbrackets = False
-                ccand = quotetok
-                retval.append( (ccand, currating) )
-                quotetok = ""
-                continue
-            else:
-                quotetok += tok
-        elif inquotes:
-            if re.match(r"^\s*\"", tok):
-                if not inquotes:
-                    # this must be the starting quote
-                    quotetok = ""
-                else:
-                    # this must be the ending quote
-                    retval[-1] = (quotetok, currating)
-                    quotetok = ""
-                inquotes = ( not inquotes )
-                continue
-            else:
-                quotetok += tok
-        else:
-            tok = tok.strip()
-            subchars = r'<>='
-            if m := re.match(r'\s*\"([^\"]*)\"/(\d+)', tok):
-                ccand = m.group(1)
-                rating = m.group(2)
+    # Use a regex to match candidate tokens with optional /N rating, handling brackets and quotes
+    # This will match [Name]/N, [Name], "Name"/N, "Name", Name/N, or Name
+    pattern = re.compile(r'\[([^\]]+)\](?:/(\d+))?|"([^"]+)"(?:/(\d+))?|([^\[\]",=>/]+)(?:/(\d+))?')
+    for m in pattern.finditer(prefstr):
+        if m.group(1):  # [Name] or [Name]/N
+            ccand = m.group(1).strip()
+            if ccand:
+                rating = int(m.group(2)) if m.group(2) else None
                 retval.append((ccand, rating))
-            elif m := re.match(r'\s*\"([^\"]*)\"', tok):
-                ccand = m.group(1)
-                rating = None
-            elif re.match(r"^\s*[^\[\]\>\=\,]", tok):
-                ctok = re.sub(r"/\d+$", '', tok)
-                if ctok != '':
-                    ccand = ctok
-                    retval.append( (ccand, None) )
-                if m := re.search(r"/(\d+)$", tok):
-                    retval[-1] = ( ccand, int(m.group(1)) )
-            elif re.match(r"^\[", tok):
-                inbrackets = True
-            elif re.match(r"^\s*\"", tok):
-                inquotes = True
-            else:
-                pass
+        elif m.group(3):  # "Name" or "Name"/N
+            ccand = m.group(3).strip()
+            if ccand:
+                rating = int(m.group(4)) if m.group(4) else None
+                retval.append((ccand, rating))
+        elif m.group(5):  # Name or Name/N
+            ccand = m.group(5).strip()
+            if ccand:
+                rating = int(m.group(6)) if m.group(6) else None
+                retval.append((ccand, rating))
     return retval
 
 
@@ -453,17 +412,19 @@ def _parse_prefstr_to_dict(prefstr, qty=0,
         candkeys.append(cand)
         prefs[cand] = {}
         if candrating is not None:
-            prefs[cand]["rating"] = candrating
+            prefs[cand]["rating"] = int(candrating)
         if rank_or_rate == "rankone":
             rank = 1
             prefs[cand]["rank"] = rank
         elif rank_or_rate == "rank":
             prefs[cand]["rank"] = rank
-            if i < len(candpreflist) - 1 and delimeters[i] == ">":
+            if i < len(candpreflist) - 1 and i < len(delimeters) and delimeters[i] == ">":
                 rank += 1
                 prefs[cand]["nextdelim"] = delimeters[i]
-        if i < len(candpreflist) - 1:
+        if i < len(candpreflist) - 1 and i < len(delimeters):
             prefs[cand]["nextdelim"] = delimeters[i]
+
+    # Debug output for test diagnosis (removed for production)
 
     # Only call _add_ranks_to_prefjab_by_rating if needed
     needs_ranking = False

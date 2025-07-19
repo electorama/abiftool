@@ -16,15 +16,14 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
+import datetime
 import argparse
-from copy import deepcopy
 import pathlib
 from pprint import pprint, pformat
 import random
 import sys
 import os
 import time
-import datetime
 from datetime import timezone
 
  
@@ -90,33 +89,33 @@ def _discard_toprank_overvotes(votelines):
 
 @profile
 def _get_valid_topcand_qty(voteline):
-    """Finds the top-ranked candidate in a voteline, handling ties."""
+    """Finds the top-ranked candidate in a voteline, handling ties (iterative version)."""
+    qty = voteline['qty']
     prefs = voteline['prefs']
 
-    if not prefs:
-        return (None, voteline['qty'])
+    while True:
+        if not prefs:
+            return (None, qty)
 
-    # Single pass: find min_rank and collect all candidates with it
-    min_rank = None
-    top_cands = []
-    for c, p in prefs.items():
-        r = p['rank']
-        if min_rank is None or r < min_rank:
-            min_rank = r
-            top_cands = [c]
-        elif r == min_rank:
-            top_cands.append(c)
+        # Find min_rank and collect all candidates with it
+        min_rank = None
+        top_cands = []
+        for c, p in prefs.items():
+            r = p['rank']
+            if min_rank is None or r < min_rank:
+                min_rank = r
+                top_cands = [c]
+            elif r == min_rank:
+                top_cands.append(c)
 
-    if len(top_cands) == 1:
-        return (top_cands[0], voteline['qty'])
-    else:
-        # Tie at top rank, skip to next rank
-        # Remove all tied candidates and recurse
-        new_prefs = {c: p for c, p in prefs.items() if p['rank'] != min_rank}
-        if not new_prefs:
-            return (None, voteline['qty'])
-        # Recurse with reduced prefs
-        return _get_valid_topcand_qty({'qty': voteline['qty'], 'prefs': new_prefs})
+        if len(top_cands) == 1:
+            return (top_cands[0], qty)
+        else:
+            # Tie at top rank, skip to next rank
+            # Remove all tied candidates and continue
+            prefs = {c: p for c, p in prefs.items() if p['rank'] != min_rank}
+            if not prefs:
+                return (None, qty)
 
 @profile
 def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundnum=None):
