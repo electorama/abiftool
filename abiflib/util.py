@@ -19,6 +19,7 @@ from abiflib import *
 import copy
 import json
 import os
+from pathlib import Path
 from pprint import pprint
 import re
 import sys
@@ -62,8 +63,27 @@ def candlist_text_from_abif(jabmod):
 
 
 def get_abiftool_dir():
-    """Return the abiftool directory based on the location of this file."""
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    """Find the abiftool directory by finding abiftool.py."""
+    # TODO: replace kludge.  There has got to be a better way of
+    # finding all of the abif files downloaded with fetchmgr.py
+
+    # 1. See if abiftool.py is in the parent to util.py
+    util_dir = Path(__file__).parent
+    parent_dir = util_dir.parent
+    abiftool_py = parent_dir / 'abiftool.py'
+    if abiftool_py.is_file():
+        return str(parent_dir)
+
+    # 2. See if abiflib is a symlink to make "import abiflib" work
+    real_util_dir = Path(os.path.realpath(util_dir))
+    real_parent = real_util_dir.parent
+    abiftool_py_real = real_parent / 'abiftool.py'
+    if abiftool_py_real.is_file():
+        return str(real_parent)
+
+    # 3. Give up
+    raise FileNotFoundError(
+        "abiftool.py not found in {parent_dir} or {real_parent}.")
 
 
 def utf8_string_to_abif_token(longstring, max_length=20, add_sha1=False):
