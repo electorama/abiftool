@@ -1,4 +1,5 @@
 * Changelog for abiftool:
+** [0.32.0] (2025-07-22; FIXME) Performance fixes
 ** [0.31.0] (2025-07-11; ee91f7e) SF 2024 elections, FPTP support, improved testing, and bug fixes
   * Handling of San Francisco's latest JSON-based CVRs.
   * Initial implementation of First-Past-The-Post (FPTP) tabulation.
