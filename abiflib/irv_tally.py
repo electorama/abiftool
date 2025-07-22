@@ -311,8 +311,15 @@ def IRV_dict_from_jabmod(jabmod):
     canddict = retval['canddict'] = jabmod['candidates']
     candlist = list(jabmod['candidates'].keys())
     votelines = jabmod['votelines']
+
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
         _irv_count_internal(candlist, votelines, roundnum=1)
+
+    # Sort candidate keys in each round by descending order of topranks
+    if retval['rounds']:
+        for idx, round_dict in enumerate(retval['rounds']):
+            sorted_items = sorted(round_dict.items(), key=lambda item: item[1], reverse=True)
+            retval['rounds'][idx] = {k: v for k, v in sorted_items}
 
     winner = retval['winner']
     if len(winner) > 1:
