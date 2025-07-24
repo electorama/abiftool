@@ -236,6 +236,38 @@ def _process_excel_file(excel_path, contestid=None):
     
     return abifmodel
 
+def _create_readable_token(candidate_name, candidate_id):
+    """Create a human-readable token from candidate name and ID."""
+    # Extract initials from the candidate name
+    words = candidate_name.split()
+    initials = ""
+    
+    for word in words:
+        # Skip common prefixes and suffixes
+        word_clean = word.strip('.,()[]')
+        if word_clean.upper() not in ['JR', 'SR', 'III', 'IV', 'MD', 'ESQ', 'PHD']:
+            if word_clean and word_clean[0].isalpha():
+                initials += word_clean[0].upper()
+    
+    # Fallback: if we can't extract good initials, use first few chars
+    if not initials or len(initials) < 2:
+        # Remove common words and get first letters
+        name_clean = candidate_name.replace(' Jr.', '').replace(' Sr.', '').replace(' III', '')
+        words = [w for w in name_clean.split() if w.lower() not in ['the', 'of', 'for']]
+        initials = ''.join(w[0].upper() for w in words[:3] if w and w[0].isalpha())
+    
+    # Ensure we have at least 2 characters
+    if len(initials) < 2:
+        initials = candidate_name[:2].upper().replace(' ', '').replace('.', '')
+    
+    # Limit to 3-4 initials max to keep tokens reasonable
+    if len(initials) > 4:
+        initials = initials[:4]
+    
+    # Combine with candidate ID
+    token = f"{initials}{candidate_id}"
+    return token
+
 def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None):
     """Process a pandas DataFrame to extract mayor's race voting patterns."""
     if candidate_id_to_name is None:
@@ -271,40 +303,37 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None):
     print(f"[nycdem_fmt] Mayor ranking columns: {[str(c)[:50] + '...' if len(str(c)) > 50 else str(c) for c in mayor_rank_cols]}")
     
     # Build candidate list from all unique values in ranking columns
-    all_candidates = set()
+    all_candidate_ids = set()
     for col in mayor_rank_cols:
         candidates_in_col = df[col].dropna().astype(str).str.strip()
         # Filter out non-candidate values
         candidates_in_col = candidates_in_col[
             ~candidates_in_col.str.lower().isin(['', 'undervote', 'overvote', 'nan'])
         ]
-        all_candidates.update(candidates_in_col)
+        all_candidate_ids.update(candidates_in_col)
     
-    print(f"[nycdem_fmt] Found {len(all_candidates)} unique candidate IDs: {sorted(all_candidates)}")
+    print(f"[nycdem_fmt] Found {len(all_candidate_ids)} unique candidate IDs: {sorted(all_candidate_ids)}")
     
-    # Create candidate mapping with short tokens and real names
-    for cand_id in sorted(all_candidates):
-        if cand_id not in candidate_tokens:
-            # Use the candidate ID as the token (since it's already short)
-            token = cand_id
-            # Use real name if available, otherwise use ID
-            cand_name = candidate_id_to_name.get(cand_id, cand_id)
-            candidate_tokens[cand_name] = token  # Store name -> token mapping
-    
-    print(f"[nycdem_fmt] Candidate mapping (first 5): {dict(list(candidate_tokens.items())[:5])}")
-    
-    # Create reverse mapping for processing ballots (ID -> token)
+    # Create candidate mapping with readable tokens
     id_to_token = {}
-    for cand_name, token in candidate_tokens.items():
-        # Find the candidate ID that maps to this name
-        for cand_id, name in candidate_id_to_name.items():
-            if name == cand_name:
-                id_to_token[cand_id] = token
-                break
-        else:
-            # If no name mapping found, the name is probably the ID itself
-            if cand_name in all_candidates:
-                id_to_token[cand_name] = token
+    for cand_id in sorted(all_candidate_ids):
+        if cand_id not in id_to_token:
+            # Get the candidate name if available
+            cand_name = candidate_id_to_name.get(cand_id, cand_id)
+            
+            # Create readable token
+            if cand_name != cand_id:  # We have a real name
+                token = _create_readable_token(cand_name, cand_id)
+                print(f"[nycdem_fmt] {cand_id} -> {cand_name} -> {token}")
+            else:  # No name mapping, use ID with placeholder
+                token = f"CAND{cand_id}"
+                cand_name = f"Candidate {cand_id}"
+                print(f"[nycdem_fmt] {cand_id} -> {token} (no name mapping)")
+            
+            id_to_token[cand_id] = token
+            candidate_tokens[token] = cand_name
+    
+    print(f"[nycdem_fmt] Final candidate mapping (first 5): {dict(list(candidate_tokens.items())[:5])}")
     
     # Process ballots - count identical rankings to create votelines
     ballot_patterns = {}
