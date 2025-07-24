@@ -11,6 +11,8 @@ authors = [
 dependencies = [
     "BeautifulSoup4",
     "graphviz",
+    "openpyxl",
+    "pandas",
     "requests",
     "Texttable"
 ]

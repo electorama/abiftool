@@ -208,6 +208,16 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             abifstr = abiflib.convert_jabmod_to_abif(jabmod)
             with open(outfile, 'w') as f:
                 f.write(abifstr)
+        elif srcfmt == 'nycdems':
+            outfile = os.path.join(abifsubdir, extfile['abifloc'])
+            infilestr = " ".join(infiles)
+            contestid = int(extfile.get('contestid')) if extfile.get('contestid') else None
+            sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile}\n")
+            jabmod = abiflib.nycdem_fmt.convert_nycdem_to_jabmod(infiles[0], contestid=contestid)
+            jabmod = abiflib.consolidate_jabmod_voteline_objects(jabmod)
+            abifstr = abiflib.convert_jabmod_to_abif(jabmod)
+            with open(outfile, 'w') as f:
+                f.write(abifstr)
         elif srcfmt == 'nameq_archive':
             tarball_fn = os.path.join(dlsubdir, extfile['localcopy'])
             convert_nameq_tarball_to_abif_files(tarball_fn=tarball_fn,
