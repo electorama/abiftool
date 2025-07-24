@@ -1,0 +1,16 @@
+{
+  "download_subdir": "downloads/newyork",
+  "abifloc_subdir": "localabif/newyork",
+  "srcfmt": "sfjson",
+  "web_urls": [
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - RCV Results",
+      "abifloc": "nyc2025-primary-rcv.abif"
+    }
+  ]
+}
