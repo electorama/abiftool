@@ -213,6 +213,10 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             convert_nameq_tarball_to_abif_files(tarball_fn=tarball_fn,
                                                 archive_subfiles=archive_subfiles,
                                                 abifsubdir=abifsubdir)
+        elif srcfmt == 'unknown':
+            # For unknown formats, just download but don't process
+            sys.stderr.write(f"Downloaded {infiles[0]} as unknown format - no processing performed\n")
+            # No conversion needed, file is already downloaded to dlsubdir
         else:
             raise Exception(f"Unknown srcfmt: {srcfmt}")
     return True
