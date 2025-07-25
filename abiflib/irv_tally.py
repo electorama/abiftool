@@ -266,6 +266,46 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     if thisroundloserlist != [None]:
         roundmeta[-1]['all_eliminated'].update(thisroundloserlist)
 
+    # NEW: Calculate transfers of votes from eliminated candidates
+    transfers = {}
+    if bottomcands:
+        # Isolate the votelines that will be transferred
+        transferring_votelines = []
+        for vln in prunedvlns:
+            (top_cand, _) = _get_valid_topcand_qty(vln)
+            if top_cand in bottomcands:
+                transferring_votelines.append(vln)
+
+        # For each eliminated candidate, see where their votes go
+        for elim_cand in bottomcands:
+            transfers[elim_cand] = {}
+            # Get just the votelines for this one eliminated candidate
+            elim_cand_votelines = []
+            for vln in transferring_votelines:
+                (top_cand, _) = _get_valid_topcand_qty(vln)
+                if top_cand == elim_cand:
+                    elim_cand_votelines.append(vln)
+
+            if not elim_cand_votelines:
+                continue
+
+            # Eliminate the candidate from their own votelines
+            # and find the next preference
+            next_pref_votelines = _eliminate_cands_from_votelines(
+                [elim_cand], elim_cand_votelines)
+
+            # Tally the new top preferences
+            for vln in next_pref_votelines:
+                (next_cand, qty) = _get_valid_topcand_qty(vln)
+                if next_cand:
+                    transfers[elim_cand][next_cand] = \
+                        transfers[elim_cand].get(next_cand, 0) + qty
+                else:
+                    # Exhausted
+                    transfers[elim_cand]['exhausted'] = \
+                        transfers[elim_cand].get('exhausted', 0) + qty
+    roundmeta[-1]['transfers'] = transfers
+
     # This is where we determine if we need to add another layer of recursion
     if min_votes == max_votes:
         # This should be reached only if there's a tie between candidates
