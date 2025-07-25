@@ -162,7 +162,7 @@ def _process_zip_file(zip_path, contestid=None):
                 continue
     
     # Set up candidates in abifmodel
-    for cand_name, token in candidate_tokens.items():
+    for token, cand_name in candidate_tokens.items():
         abifmodel['candidates'][token] = cand_name
     
     # Convert ballot patterns to votelines
@@ -208,7 +208,7 @@ def _process_excel_file(excel_path, contestid=None):
     patterns, candidates, valid, empty = _process_dataframe(df, candidate_tokens, {})  # No candidate name mapping for single file
     
     # Set up candidates in abifmodel
-    for cand_name, token in candidate_tokens.items():
+    for token, cand_name in candidate_tokens.items():
         abifmodel['candidates'][token] = cand_name
     
     # Convert ballot patterns to votelines
