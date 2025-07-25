@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
+from abiflib.pairwise_tally import pairwise_count_dict
 import re
 import datetime
 import argparse
@@ -111,7 +112,7 @@ def _get_valid_topcand_qty(voteline):
     return (None, qty)
 
 @profile
-def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundnum=None):
+def _irv_count_internal(candlist, votelines, canddict, rounds=None, roundmeta=None, roundnum=None):
     """
     IRV count of given votelines
 
@@ -306,6 +307,28 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
                         transfers[elim_cand].get('exhausted', 0) + qty
     roundmeta[-1]['transfers'] = transfers
 
+    # Calculate pairwise preferences on eliminated ballots
+    elim_votelines = []
+    if bottomcands:
+        for vln in prunedvlns:
+            (top_cand, _) = _get_valid_topcand_qty(vln)
+            if top_cand in bottomcands:
+                elim_votelines.append(vln)
+
+    if elim_votelines:
+        # We need the full candidate dictionary, not just the list of names
+        # It's passed down through the recursion now.
+        next_cand_dict = {c: canddict[c] for c in nextcands if c in canddict}
+        
+        temp_abifmodel = {
+            'votelines': elim_votelines,
+            'candidates': next_cand_dict
+        }
+        elim_pairwise_matrix = pairwise_count_dict(temp_abifmodel)
+        roundmeta[-1]['elim_pairwise_matrix'] = elim_pairwise_matrix
+    else:
+        roundmeta[-1]['elim_pairwise_matrix'] = {}
+
     # This is where we determine if we need to add another layer of recursion
     if min_votes == max_votes:
         # This should be reached only if there's a tie between candidates
@@ -329,6 +352,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
         (winner, nextrounds, nextmeta) = \
             _irv_count_internal(nextcands,
                                 nextvotelines,
+                                canddict,
                                 rounds=rounds,
                                 roundmeta=roundmeta)
         t_rec1 = time.perf_counter()
@@ -353,7 +377,7 @@ def IRV_dict_from_jabmod(jabmod):
     votelines = jabmod['votelines']
 
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
-        _irv_count_internal(candlist, votelines, roundnum=1)
+        _irv_count_internal(candlist, votelines, canddict, roundnum=1)
 
     # Sort candidate keys in each round by descending order of topranks
     if retval['rounds']:
