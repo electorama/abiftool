@@ -69,8 +69,8 @@ MODIFIERS = [
     {'Copeland': 'Show pairwise table and Copeland winner (default)'},
     {'consolidate': 'Consolidate votelines if possible'},
     {'FPTP': 'Show FPTP results'},
-    {'IRV': 'Show IRV/RCV results (default)'},
-    {'IRVextra': 'Extra data for deep analysis of IRV elections (default)'},
+    {'IRV': 'Show IRV/RCV results'},
+    {'IRVextra': 'Extra data for deep analysis of IRV elections'},
     {'jcomments': 'Put comments in jabmod output if available'},
     {'pairwise': 'Show pairwise table (possibly without winlosstie info)'},
     {'score': 'Provide score results'},
@@ -206,7 +206,7 @@ def main():
     if args.modifier:
         modifiers = set(args.modifier)
     else:
-        modifiers = set(['candlist', 'Copeland', 'winlosstie', 'IRV', 'IRVextra'])
+        modifiers = set(['candlist', 'Copeland', 'winlosstie'])
     add_ratings = args.add_scores
 
     storecomments = 'jcomments' in modifiers
