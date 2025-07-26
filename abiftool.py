@@ -289,9 +289,9 @@ def main():
         # "-t 'json'" and "-m" with desired output modifier
 
         if output_format == 'irvjson' or 'IRV' in modifiers:
-            include_elim_pairwise = 'IRVextra' in modifiers
+            include_irv_extra = 'IRVextra' in modifiers
             IRV_dict = IRV_dict_from_jabmod(
-                abifmodel, include_elim_pairwise=include_elim_pairwise)
+                abifmodel, include_irv_extra=include_irv_extra)
             outstr += json.dumps(clean_dict(IRV_dict), indent=4)
         elif output_format == 'paircountjson' or 'pairwise' in modifiers:
             pairdict = pairwise_count_dict(abifmodel)
@@ -326,9 +326,9 @@ def main():
             #fptpdict = FPTP_dict_from_jabmod(abifmodel)
             outstr += get_FPTP_report(abifmodel)
         if 'IRV' in modifiers:
-            include_elim_pairwise = 'IRVextra' in modifiers
+            include_irv_extra = 'IRVextra' in modifiers
             irvdict = IRV_dict_from_jabmod(
-                abifmodel, include_elim_pairwise=include_elim_pairwise)
+                abifmodel, include_irv_extra=include_irv_extra)
             outstr += get_IRV_report(irvdict)
         if 'score' in modifiers:
             outstr += score_report(abifmodel)

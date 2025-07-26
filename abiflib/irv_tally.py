@@ -325,10 +325,10 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
                 'votelines': elim_votelines,
                 'candidates': next_cand_dict
             }
-            elim_pairwise_matrix = pairwise_count_dict(temp_abifmodel)
-            roundmeta[-1]['elim_pairwise_matrix'] = elim_pairwise_matrix
+            elimcand_supporter_pairwise_results = pairwise_count_dict(temp_abifmodel)
+            roundmeta[-1]['elimcand_supporter_pairwise_results'] = elimcand_supporter_pairwise_results
         else:
-            roundmeta[-1]['elim_pairwise_matrix'] = {}
+            roundmeta[-1]['elimcand_supporter_pairwise_results'] = {}
 
     # This is where we determine if we need to add another layer of recursion
     if min_votes == max_votes:
@@ -368,7 +368,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     return retval
 
 
-def IRV_dict_from_jabmod(jabmod, include_elim_pairwise=False):
+def IRV_dict_from_jabmod(jabmod, include_irv_extra=False):
     t0 = time.perf_counter()
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem01: Entering IRV_dict_from_jabmod")
@@ -377,7 +377,7 @@ def IRV_dict_from_jabmod(jabmod, include_elim_pairwise=False):
     candlist = list(jabmod['candidates'].keys())
     votelines = jabmod['votelines']
 
-    canddict_arg = canddict if include_elim_pairwise else None
+    canddict_arg = canddict if include_irv_extra else None
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
         _irv_count_internal(candlist, votelines, roundnum=1, canddict=canddict_arg)
 
