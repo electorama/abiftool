@@ -70,6 +70,7 @@ MODIFIERS = [
     {'consolidate': 'Consolidate votelines if possible'},
     {'FPTP': 'Show FPTP results'},
     {'IRV': 'Show IRV/RCV results'},
+    {'IRVextra': 'Extra data for deep analysis of IRV elections'},
     {'jcomments': 'Put comments in jabmod output if available'},
     {'pairwise': 'Show pairwise table (possibly without winlosstie info)'},
     {'score': 'Provide score results'},
@@ -288,7 +289,9 @@ def main():
         # "-t 'json'" and "-m" with desired output modifier
 
         if output_format == 'irvjson' or 'IRV' in modifiers:
-            IRV_dict = IRV_dict_from_jabmod(abifmodel)
+            include_elim_pairwise = 'IRVextra' in modifiers
+            IRV_dict = IRV_dict_from_jabmod(
+                abifmodel, include_elim_pairwise=include_elim_pairwise)
             outstr += json.dumps(clean_dict(IRV_dict), indent=4)
         elif output_format == 'paircountjson' or 'pairwise' in modifiers:
             pairdict = pairwise_count_dict(abifmodel)
@@ -323,7 +326,9 @@ def main():
             #fptpdict = FPTP_dict_from_jabmod(abifmodel)
             outstr += get_FPTP_report(abifmodel)
         if 'IRV' in modifiers:
-            irvdict = IRV_dict_from_jabmod(abifmodel)
+            include_elim_pairwise = 'IRVextra' in modifiers
+            irvdict = IRV_dict_from_jabmod(
+                abifmodel, include_elim_pairwise=include_elim_pairwise)
             outstr += get_IRV_report(irvdict)
         if 'score' in modifiers:
             outstr += score_report(abifmodel)

@@ -112,7 +112,7 @@ def _get_valid_topcand_qty(voteline):
     return (None, qty)
 
 @profile
-def _irv_count_internal(candlist, votelines, canddict, rounds=None, roundmeta=None, roundnum=None):
+def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundnum=None, canddict=None):
     """
     IRV count of given votelines
 
@@ -307,27 +307,28 @@ def _irv_count_internal(candlist, votelines, canddict, rounds=None, roundmeta=No
                         transfers[elim_cand].get('exhausted', 0) + qty
     roundmeta[-1]['transfers'] = transfers
 
-    # Calculate pairwise preferences on eliminated ballots
-    elim_votelines = []
-    if bottomcands:
-        for vln in prunedvlns:
-            (top_cand, _) = _get_valid_topcand_qty(vln)
-            if top_cand in bottomcands:
-                elim_votelines.append(vln)
+    if canddict:
+        # Calculate pairwise preferences on eliminated ballots
+        elim_votelines = []
+        if bottomcands:
+            for vln in prunedvlns:
+                (top_cand, _) = _get_valid_topcand_qty(vln)
+                if top_cand in bottomcands:
+                    elim_votelines.append(vln)
 
-    if elim_votelines:
-        # We need the full candidate dictionary, not just the list of names
-        # It's passed down through the recursion now.
-        next_cand_dict = {c: canddict[c] for c in nextcands if c in canddict}
-        
-        temp_abifmodel = {
-            'votelines': elim_votelines,
-            'candidates': next_cand_dict
-        }
-        elim_pairwise_matrix = pairwise_count_dict(temp_abifmodel)
-        roundmeta[-1]['elim_pairwise_matrix'] = elim_pairwise_matrix
-    else:
-        roundmeta[-1]['elim_pairwise_matrix'] = {}
+        if elim_votelines:
+            # We need the full candidate dictionary, not just the list of names
+            # It's passed down through the recursion now.
+            next_cand_dict = {c: canddict[c] for c in nextcands if c in canddict}
+            
+            temp_abifmodel = {
+                'votelines': elim_votelines,
+                'candidates': next_cand_dict
+            }
+            elim_pairwise_matrix = pairwise_count_dict(temp_abifmodel)
+            roundmeta[-1]['elim_pairwise_matrix'] = elim_pairwise_matrix
+        else:
+            roundmeta[-1]['elim_pairwise_matrix'] = {}
 
     # This is where we determine if we need to add another layer of recursion
     if min_votes == max_votes:
@@ -352,9 +353,9 @@ def _irv_count_internal(candlist, votelines, canddict, rounds=None, roundmeta=No
         (winner, nextrounds, nextmeta) = \
             _irv_count_internal(nextcands,
                                 nextvotelines,
-                                canddict,
                                 rounds=rounds,
-                                roundmeta=roundmeta)
+                                roundmeta=roundmeta,
+                                canddict=canddict)
         t_rec1 = time.perf_counter()
         if os.environ.get("ABIFTOOL_DEBUG"):
             print(f"[irv_tally]   recursion: {t_rec1-t_rec0:.4f}s at depth={depth}")
@@ -367,7 +368,7 @@ def _irv_count_internal(candlist, votelines, canddict, rounds=None, roundmeta=No
     return retval
 
 
-def IRV_dict_from_jabmod(jabmod):
+def IRV_dict_from_jabmod(jabmod, include_elim_pairwise=False):
     t0 = time.perf_counter()
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem01: Entering IRV_dict_from_jabmod")
@@ -376,8 +377,9 @@ def IRV_dict_from_jabmod(jabmod):
     candlist = list(jabmod['candidates'].keys())
     votelines = jabmod['votelines']
 
+    canddict_arg = canddict if include_elim_pairwise else None
     (retval['winner'], retval['rounds'], retval['roundmeta']) = \
-        _irv_count_internal(candlist, votelines, canddict, roundnum=1)
+        _irv_count_internal(candlist, votelines, roundnum=1, canddict=canddict_arg)
 
     # Sort candidate keys in each round by descending order of topranks
     if retval['rounds']:
