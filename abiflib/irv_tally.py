@@ -330,6 +330,41 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
         else:
             roundmeta[-1]['elimcand_supporter_pairwise_results'] = {}
 
+        # NEW: Calculate hypothetical transfers for all remaining candidates
+        # This shows where each candidate's votes would go if they were eliminated INSTEAD of the actual eliminated candidate
+        hypothetical_transfers = {}
+        for remaining_cand in candlist:
+            if remaining_cand not in bottomcands:  # Don't calculate for already eliminated candidates
+                # Get votelines for this hypothetical elimination candidate
+                hyp_cand_votelines = []
+                for vln in prunedvlns:
+                    (top_cand, _) = _get_valid_topcand_qty(vln)
+                    if top_cand == remaining_cand:
+                        hyp_cand_votelines.append(vln)
+
+                if hyp_cand_votelines:
+                    hypothetical_transfers[remaining_cand] = {}
+                    
+                    # Eliminate the hypothetical candidate from their own votelines
+                    hyp_next_pref_votelines = _eliminate_cands_from_votelines(
+                        [remaining_cand], hyp_cand_votelines)
+
+                    # Tally where their votes would go - use the ORIGINAL candidate list
+                    # (not excluding the actually eliminated candidates, since we're asking 
+                    # "what if this candidate was eliminated INSTEAD?")
+                    for vln in hyp_next_pref_votelines:
+                        (next_cand, qty) = _get_valid_topcand_qty(vln)
+                        if next_cand and next_cand in candlist and next_cand != remaining_cand:
+                            # Count transfers to any candidate from the original round (including actually eliminated ones)
+                            hypothetical_transfers[remaining_cand][next_cand] = \
+                                hypothetical_transfers[remaining_cand].get(next_cand, 0) + qty
+                        else:
+                            # Exhausted 
+                            hypothetical_transfers[remaining_cand]['exhausted'] = \
+                                hypothetical_transfers[remaining_cand].get('exhausted', 0) + qty
+
+        roundmeta[-1]['hypothetical_transfers'] = hypothetical_transfers
+
     # This is where we determine if we need to add another layer of recursion
     if min_votes == max_votes:
         # This should be reached only if there's a tie between candidates
