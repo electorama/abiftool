@@ -174,7 +174,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     if os.environ.get("ABIFTOOL_DEBUG"):
         print(f"{datetime.datetime.now(timezone.utc).strftime('%H:%M:%S.%f')[:-3]} [irv_tally] tgem04: After _get_valid_topcand_qty loop")
     total_votes = sum(roundcount.values())
-    mymeta['countedqty'] = total_votes - mymeta['exhaustedqty']
+    mymeta['countedqty'] = total_votes
 
     # 4. Other mymeta stuff
     winner = None
@@ -271,7 +271,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
     if thisroundloserlist != [None]:
         roundmeta[-1]['all_eliminated'].update(thisroundloserlist)
 
-    # NEW: Calculate transfers of votes from eliminated candidates
+    # Calculate transfers of votes from eliminated candidates
     transfers = {}
     if bottomcands:
         # Isolate the votelines that will be transferred
@@ -334,12 +334,13 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
         else:
             roundmeta[-1]['elimcand_supporter_pairwise_results'] = {}
 
-        # NEW: Calculate hypothetical transfers for all remaining candidates
-        # This shows where each candidate's votes would go if they were eliminated INSTEAD of the actual eliminated candidate
-        hypothetical_transfers = {}
+        # Calculate next choices for all remaining candidate.  This
+        # was called "hypothetical transfers" when it was fist
+        # written, because I hadn't thought about simply calling it
+        # "next choices".
+        next_choices = {}
         for remaining_cand in candlist:
             if remaining_cand not in bottomcands:  # Don't calculate for already eliminated candidates
-                # Get votelines for this hypothetical elimination candidate
                 hyp_cand_votelines = []
                 for vln in prunedvlns:
                     (top_cand, _) = _get_valid_topcand_qty(vln)
@@ -347,7 +348,7 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
                         hyp_cand_votelines.append(vln)
 
                 if hyp_cand_votelines:
-                    hypothetical_transfers[remaining_cand] = {}
+                    next_choices[remaining_cand] = {}
 
                     # Eliminate the hypothetical candidate from their own votelines
                     hyp_next_pref_votelines = _eliminate_cands_from_votelines(
@@ -359,15 +360,17 @@ def _irv_count_internal(candlist, votelines, rounds=None, roundmeta=None, roundn
                     for vln in hyp_next_pref_votelines:
                         (next_cand, qty) = _get_valid_topcand_qty(vln)
                         if next_cand and next_cand in candlist and next_cand != remaining_cand:
-                            # Count transfers to any candidate from the original round (including actually eliminated ones)
-                            hypothetical_transfers[remaining_cand][next_cand] = \
-                                hypothetical_transfers[remaining_cand].get(next_cand, 0) + qty
+                            # Count transfers to any candidate from
+                            # the original round (including actually
+                            # eliminated ones)
+                            next_choices[remaining_cand][next_cand] = \
+                                next_choices[remaining_cand].get(next_cand, 0) + qty
                         else:
                             # Exhausted
-                            hypothetical_transfers[remaining_cand]['exhausted'] = \
-                                hypothetical_transfers[remaining_cand].get('exhausted', 0) + qty
+                            next_choices[remaining_cand]['exhausted'] = \
+                                next_choices[remaining_cand].get('exhausted', 0) + qty
 
-        roundmeta[-1]['hypothetical_transfers'] = hypothetical_transfers
+        roundmeta[-1]['next_choices'] = next_choices
 
     # This is where we determine if we need to add another layer of recursion
     if min_votes == max_votes:

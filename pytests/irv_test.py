@@ -106,6 +106,13 @@ from abiftestfuncs import *
             'testdata/burl2009/burl2009.abif',
             r'Bob Kiss \(Progressive\)',
             id='irv_textout_015'
+        ),
+        #irv test016 - Test that countedqty equals sum of candidate votes in final round
+        pytest.param(
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/burl2009/burl2009.abif',
+            r'Total counted votes: 8374',
+            id='irv_textout_016'
         )
     ]
 )
