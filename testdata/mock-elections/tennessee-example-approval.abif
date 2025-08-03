@@ -1,0 +1,20 @@
+{"version":"0.1"}
+{"title":"Capitol of Tennessee Mock Approval Election"}
+{"description": "Hypothetical example of selecting capitol of Tennessee, frequently used on Wikipedia and electowiki.  The proportion of voters is loosely based on the people who live in the metropolitan areas of the four largest cities in Tennessee, and the numeric ratings are based on crow-flying mileage to the city from the other metro areas."}
+{"max_rating": 1}
+{"min_rating": 0}
+# See https://electowiki.org/wiki/Tennessee_example for illustrations
+=Memph:[Memphis, TN]
+=Nash:[Nashville, TN]
+=Chat:[Chattanooga, TN]
+=Knox:[Knoxville, TN]
+# -------------------------
+21:Memph/1
+21:Memph/1=Nash/1
+13:Nash/1
+13:Nash/1=Chat/1
+8:Chat/1
+4:Chat/1=Knox/1
+3:Chat/1=Nash/1
+9:Knox/1
+8:Knox/1=Chat/1

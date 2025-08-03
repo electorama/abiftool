@@ -65,6 +65,7 @@ OUTPUT_FORMATS = [
 ]
 
 MODIFIERS = [
+    {'approval': 'Show approval voting results (strategic simulation)'},
     {'candlist': 'List all candidates at the beginning of output'},
     {'Copeland': 'Show pairwise table and Copeland winner (default)'},
     {'consolidate': 'Consolidate votelines if possible'},
@@ -302,6 +303,9 @@ def main():
         elif 'FPTP' in modifiers:
             FPTP_dict = FPTP_result_from_abifmodel(abifmodel)
             outstr += json.dumps(FPTP_dict, indent=4)
+        elif 'approval' in modifiers:
+            approval_dict = approval_result_from_abifmodel(abifmodel)
+            outstr += json.dumps(approval_dict, indent=4)
         else:
             outstr += "Please specify modifier or choose 'jabmod' output format"
     elif (output_format == 'jabmod'):
@@ -325,6 +329,8 @@ def main():
         if 'FPTP' in modifiers:
             #fptpdict = FPTP_dict_from_jabmod(abifmodel)
             outstr += get_FPTP_report(abifmodel)
+        if 'approval' in modifiers:
+            outstr += get_approval_report(abifmodel)
         if 'IRV' in modifiers:
             include_irv_extra = 'IRVextra' in modifiers
             irvdict = IRV_dict_from_jabmod(

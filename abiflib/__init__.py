@@ -30,6 +30,7 @@ from abiflib.sfjson_fmt import *
 from abiflib.nycdem_fmt import *
 
 # Modules for tallying with various election methods
+from abiflib.approval_tally import *
 from abiflib.fptp_tally import *
 from abiflib.irv_tally import *
 from abiflib.pairwise_tally import *
