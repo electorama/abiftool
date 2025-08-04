@@ -47,12 +47,14 @@ Using explicit 0/1 scores:
 
 ## Strategic Simulation Algorithm
 
-When converting ranked ballots to approval votes, use the sophisticated algorithm:
+When converting ranked ballots to approval votes, use this algorithm:
 
 1. **Calculate FPTP results** using `FPTP_result_from_abifmodel()`
 2. **Determine viable candidates** using iterative Droop quota analysis
-3. **Calculate per-ballot VCM** (viable-candidate-maximum): `floor((viable_count + 1) / 2)`
-4. **Apply approval strategy**: For each ballot, approve candidates ranked above the lowest-ranked viable candidate among the voter's top VCM choices
+3. **Calculate per-ballot viable-candidate-maximum**: `floor((viable_count + 1) / 2)`
+   This is the number of viable candidates that show up on a ballot before we assume all candidates listed are not viable.
+4. **Apply approval strategy**: For each ballot, approve candidates ranked
+   above the lowest-ranked viable candidate among the voter's top viable-candidate-maximum choices.
 
 ### Detailed Algorithm Steps
 
@@ -94,10 +96,10 @@ for i in range(min(number_of_viable_candidates, len(sorted_candidates))):
         viable_candidates.append(candidate)
 ```
 
-#### Step 3: Calculate Viable-Candidate-Maximum (VCM)
+#### Step 3: Calculate Viable-Candidate-Maximum
 ```python
 # Strategic approval limit per ballot
-vcm = (len(viable_candidates) + 1) // 2
+viable_candidate_maximum = (len(viable_candidates) + 1) // 2
 ```
 
 #### Step 4: Per-Ballot Approval Strategy
@@ -108,21 +110,21 @@ for each ballot:
     # Get voter's ranked preferences
     ranked_prefs = sort_candidates_by_rank(ballot['prefs'])
 
-    # 1. Identify the top VCM viable candidates on THIS ballot
-    vcm_viable_candidates_on_ballot = []
+    # 1. Identify the top viable-candidate-maximum viable candidates on THIS ballot
+    viable_candidate_maximum_on_ballot = []
     for candidate, rank in ranked_prefs:
         if candidate in viable_candidates:
-            vcm_viable_candidates_on_ballot.append(candidate)
-            if len(vcm_viable_candidates_on_ballot) == vcm:
+            viable_candidate_maximum_on_ballot.append(candidate)
+            if len(viable_candidate_maximum_on_ballot) == viable_candidate_maximum:
                 break
 
     # 2. Find the lowest-ranked candidate in that specific group
-    if not vcm_viable_candidates_on_ballot:
+    if not viable_candidate_maximum_on_ballot:
         # No viable candidates were ranked, so no approvals
         approvals = []
     else:
         # The cutoff candidate is the last one in our list
-        cutoff_candidate = vcm_viable_candidates_on_ballot[-1]
+        cutoff_candidate = viable_candidate_maximum_on_ballot[-1]
 
         # 3. Approve all candidates ranked at or above the cutoff
         approvals = []
@@ -135,9 +137,7 @@ for each ballot:
 
         if not cutoff_found:
             # This should not happen if logic is correct, but as safeguard
-            approvals = vcm_viable_candidates_on_ballot
-
-    # Apply approvals to vote counts
+            approvals = viable_candidate_maximum_on_ballot    # Apply approvals to vote counts
     for candidate in approvals:
         approval_counts[candidate] += ballot['qty']
 ```
@@ -146,16 +146,16 @@ for each ballot:
 
 **Viability Assessment**: Uses iterative Droop quota analysis to determine how many candidates are truly competitive. A weak frontrunner (low %) indicates many viable competitors; a strong frontrunner (high %) indicates fewer viable competitors.
 
-**VCM Calculation**: `floor((viable_count + 1) / 2)` ensures voters approve roughly half of viable candidates, balancing expression of preferences with strategic effectiveness.
+**Viable-Candidate-Maximum Calculation**: `floor((viable_count + 1) / 2)` ensures voters approve roughly half of viable candidates, balancing expression of preferences with strategic effectiveness.
 
-**Strategic Threshold**: Voters identify their top VCM viable candidates, then approve all candidates ranked at or above the lowest-ranked of those VCM viable candidates. This includes both viable and non-viable candidates in the approval range, simulating rational approval behavior that maximizes utility while remaining strategically competitive.
+**Strategic Threshold**: Voters identify their top viable-candidate-maximum viable candidates, then approve all candidates ranked at or above the lowest-ranked of those viable candidates. This includes both viable and non-viable candidates in the approval range, simulating rational approval behavior that maximizes utility while remaining strategically competitive.
 
 **Example**: If frontrunner has 26% of votes:
 - S=1: quota = floor(100/2) + 1 = 51. Since 26 < 51, try more candidates.
 - S=2: quota = floor(100/3) + 1 = 34. Since 26 < 34, try more candidates.
 - S=3: quota = floor(100/4) + 1 = 26. Since 26 ≥ 26, stop.
 - Result: **4 viable candidates** (top 4 by FPTP votes)
-- VCM = floor((4+1)/2) = 2 approvals per voter
+- Viable-candidate-maximum = floor((4+1)/2) = 2 approvals per voter
 
 ## Method Parameter
 The `method` parameter controls behavior:
@@ -183,12 +183,8 @@ def detect_approval_method(abifmodel):
 ## Tennessee Example - Native Approval Election
 
 ### Background
-Based on the classic Tennessee capitol selection example, with approval patterns derived from geographic proximity. This demonstrates native approval ballot parsing where voters strategically approve candidates within reasonable distance.
-
-### Voter Distribution
-Uses the same geographic population distribution as other Tennessee examples:
-- 42 voters total (21+21+13+13+8+4+3+9+8 from different regions)
-- Approval decisions based on distance/accessibility to each city
+Based on the classic Tennessee capitol selection example, with approval patterns derived from geographic proximity. This demonstrates native approval ballot parsing where voters perform a mix of bullet voting and
+approving two candidates.
 
 ### ABIF Format (from tennessee-example-approval.abif)
 ```

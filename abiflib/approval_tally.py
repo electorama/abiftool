@@ -46,7 +46,7 @@ def has_approval_data(abifmodel):
             rank = prefs.get('rank')
             if rank is not None:
                 same_rank_count = sum(1 for c, p in vline['prefs'].items()
-                                    if p.get('rank') == rank)
+                                      if p.get('rank') == rank)
                 if same_rank_count > 1:
                     has_equal_ranks = True
 
@@ -168,7 +168,7 @@ def _simulated_approval_result(abifmodel):
 
     # Step 2: Determine number of viable candidates using iterative Droop quota
     sorted_candidates = sorted(fptp_results['toppicks'].items(),
-                              key=lambda x: x[1], reverse=True)
+                               key=lambda x: x[1], reverse=True)
 
     # Filter out None (invalid ballots) from candidates
     sorted_candidates = [(cand, votes) for cand, votes in sorted_candidates if cand is not None]
@@ -185,7 +185,7 @@ def _simulated_approval_result(abifmodel):
             'invalid_ballots': total_valid_votes,
             'method': 'simulate',
             'viable_candidates': [],
-            'vcm': 0,
+            'viable_candidate_maximum': 0,
             'fptp_results': fptp_results
         }
 
@@ -213,8 +213,9 @@ def _simulated_approval_result(abifmodel):
         candidate, votes = sorted_candidates[i]
         viable_candidates.append(candidate)
 
-    # Step 3: Calculate viable-candidate-maximum (vcm)
-    vcm = (len(viable_candidates) + 1) // 2
+    # Step 3: Calculate viable-candidate-maximum
+    # (strategic approval limit per ballot)
+    viable_candidate_maximum = (len(viable_candidates) + 1) // 2
 
     # Initialize approval counts
     approval_counts = {}
@@ -253,11 +254,12 @@ def _simulated_approval_result(abifmodel):
         # Apply strategic approval rules using corrected algorithm
 
         # 1. Identify the top VCM viable candidates on THIS ballot
+        # (VCM = viable-candidate-maximum)
         vcm_viable_candidates_on_ballot = []
         for candidate, rank in ranked_prefs:
             if candidate in viable_candidates:
                 vcm_viable_candidates_on_ballot.append(candidate)
-                if len(vcm_viable_candidates_on_ballot) == vcm:
+                if len(vcm_viable_candidates_on_ballot) == viable_candidate_maximum:
                     break
 
         # 2. Find the lowest-ranked candidate in that specific group
@@ -312,7 +314,7 @@ def _simulated_approval_result(abifmodel):
         'total_votes': total_ballots_processed,
         'invalid_ballots': invalid_ballots,
         'viable_candidates': viable_candidates,
-        'vcm': vcm,
+        'viable_candidate_maximum': viable_candidate_maximum,
         'droop_quota': (total_valid_votes // (number_of_viable_candidates + 1)) + 1,
         'fptp_results': fptp_results,
         'method': 'simulate'
@@ -333,8 +335,8 @@ def get_approval_report(abifmodel, method='auto'):
         if 'viable_candidates' in results:
             viable_list = ', '.join(results['viable_candidates']) if results['viable_candidates'] else 'None'
             report += f"  Viable candidates: {viable_list}\n"
-        if 'vcm' in results:
-            report += f"  Viable-candidate-maximum (vcm): {results['vcm']}\n"
+        if 'viable_candidate_maximum' in results:
+            report += f"  Viable-candidate-maximum: {results['viable_candidate_maximum']}\n"
         report += "\n"
 
     report += f"  Approval counts:\n"
@@ -364,7 +366,7 @@ def get_approval_report(abifmodel, method='auto'):
     elif len(results['winners']) > 1:
         report += f"\n  Tied winners each with {pctreport}:\n"
         for w in results['winners']:
-           report += f"   * {w}\n"
+            report += f"   * {w}\n"
     else:
         report += f"\n  No winner determined\n"
 
