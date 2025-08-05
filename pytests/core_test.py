@@ -11,6 +11,7 @@ import pytest
 testlist = [
     # TEST 001:
     # Test the '-t winlosstiejson' parameter with the simplified TN example
+    # TODO: Possibly move to new pairwise_test.py file
     pytest.param(
         ['-f', 'abif', '-t', 'winlosstiejson'],
         'testdata/tenn-example/tennessee-example-simple.abif',
@@ -53,6 +54,7 @@ testlist = [
     # TEST 005:
     # Test IRV with the SF 2018 special election, checking if the winner
     # is correct
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
@@ -64,6 +66,7 @@ testlist = [
     # TEST 006:
     # Test IRV with the SF 2018 special election, checking for eliminated
     # candidates
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
@@ -75,6 +78,7 @@ testlist = [
     # TEST 007:
     # Test IRV with the SF 2018 special election, checking for starting
     # quantity of votes
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
@@ -89,9 +93,9 @@ testlist = [
     #
     # FIXME - the report from the city says Breed won with 115977 in the final round, but my
     # count shows 116020
-    # 
     # SF Report:
     #  https://www.sfelections.org/results/20180605/data/20180627/mayor/20180627_mayor.pdf
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
@@ -103,6 +107,7 @@ testlist = [
     # TEST 009:
     # Test IRV with the SF 2018 special election, checking if a WRITE_IN
     # candidate is present. 
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/california/sf2018special-results.abif',
@@ -114,6 +119,7 @@ testlist = [
     # TEST 010:
     # Test IRV with a mock election, checking if it uses 14 rounds as
     # expected.
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(
         ['-f', 'abif', '-t', 'irvjson'],
         'testdata/mock-elections/mock-twotie.abif',
@@ -134,6 +140,7 @@ testlist = [
     ),
     # TEST 012:
     # Test the '-t paircountjson' parameter
+    # TODO: Possibly move this test to a new pairwise_test.py
     pytest.param(
         ['-f', 'abif', '-t', 'paircountjson'],
         'testdata/commasep/commasquare.abif',
@@ -155,6 +162,7 @@ testlist = [
     # TEST 014:
     # Test the deprecated '-t paircountjson' parameter, which will be
     # replaced by the "-t json -m pairwise" combo
+    # TODO: Possibly move this test to a new pairwise_test.py
     pytest.param(['-f', 'abif', '-t', 'paircountjson'],
                  'testdata/mock-elections/tennessee-example-simple.abif',
                  'is_equal',
@@ -163,6 +171,7 @@ testlist = [
                  id='json_014'),
     # TEST 015:
     # Test the "-t json -m pairwise" combo
+    # TODO: Possibly move this test to a new pairwise_test.py
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'pairwise'],
                  'testdata/mock-elections/tennessee-example-simple.abif',
                  'is_equal',
@@ -172,6 +181,7 @@ testlist = [
     # TEST 016:
     # Test the deprecated '-t irvjson' parameter, which will be
     # replaced by "-t json -m IRV" combo
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(['-f', 'abif', '-t', 'irvjson'],
                  'testdata/mock-elections/tennessee-example-simple.abif',
                  'is_equal',
@@ -180,6 +190,7 @@ testlist = [
                  id='json_016'),
     # TEST 017:
     # Test the "-t json -m IRV" combo
+    # TODO: Possibly move this test to irv_test.py
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'IRV'],
                  'testdata/mock-elections/tennessee-example-simple.abif',
                  'is_equal',
@@ -188,6 +199,7 @@ testlist = [
                  id='json_017'),
     # TEST 018:
     # Test the "-t json -m FPTP" combo wth simplified TN example
+    # TODO: Possibly move this test to fptp_test.py
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
                  'testdata/mock-elections/tennessee-example-simple.abif',
                  'is_equal',
@@ -196,6 +208,7 @@ testlist = [
                  id='json_018'),
     # TEST 019:
     # Test the "-t json -m FPTP" combo with a tie election
+    # TODO: Possibly move this test to fptp_test.py
     pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
                  'testdata/mock-elections/mock-tie.abif',
                  'is_equal',
@@ -360,24 +373,4 @@ testlist = [
 )
 def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
     """Test equality of subkey to a value"""
-    if inputfile:
-        try:
-            fh = open(inputfile, 'rb')
-            fh.close()
-        except:
-            msg = f'Missing file: {inputfile}'
-            msg += "Please run './fetchmgr.py *.fetchspec.json' "
-            msg += "if you haven't already"
-            pytest.skip(msg)
-        cmd_args.append(inputfile)
-    abiftool_output = get_abiftool_output_as_array(cmd_args)
-    outputdict = json.loads("\n".join(abiftool_output))
-
-    if testtype == 'is_equal':
-        assert get_value_from_obj(outputdict, keylist) == value
-    elif testtype == 'contains':
-        assert value in get_value_from_obj(outputdict, keylist)
-    elif testtype == 'length':
-        assert len(get_value_from_obj(outputdict, keylist)) == value
-    else:
-        assert testtype in ['is_equal', 'contains', 'length']
+    run_json_output_test_from_abif(cmd_args, inputfile, testtype, keylist, value)
