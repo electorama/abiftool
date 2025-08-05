@@ -142,3 +142,29 @@ def get_value_from_obj(obj, keylist):
     return obj
 
 
+def run_json_output_test_from_abif(cmd_args, inputfile, testtype, keylist, value):
+    """Test equality of subkey to a value - generic version for reuse across test files"""
+    import json
+    import pytest
+    
+    if inputfile:
+        try:
+            fh = open(inputfile, 'rb')
+            fh.close()
+        except:
+            msg = f'Missing file: {inputfile}'
+            msg += "Please run './fetchmgr.py *.fetchspec.json' "
+            msg += "if you haven't already"
+            pytest.skip(msg)
+        cmd_args.append(inputfile)
+    abiftool_output = get_abiftool_output_as_array(cmd_args)
+    outputdict = json.loads("\n".join(abiftool_output))
+
+    if testtype == 'is_equal':
+        assert get_value_from_obj(outputdict, keylist) == value
+    elif testtype == 'contains':
+        assert value in get_value_from_obj(outputdict, keylist)
+    elif testtype == 'length':
+        assert len(get_value_from_obj(outputdict, keylist)) == value
+    else:
+        assert testtype in ['is_equal', 'contains', 'length']

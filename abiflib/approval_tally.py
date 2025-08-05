@@ -28,57 +28,151 @@ import argparse
 import pathlib
 
 
-def has_approval_data(abifmodel):
-    """Detect if jabmod contains native approval data."""
-    # Check for binary 0/1 scores, equal rankings with approval indicators
-    # Look for patterns like: candA=candB/1>candC/0
+def detect_ballot_type(abifmodel):
+    """
+    Detect the type of ballots in a jabmod structure.
+    
+    Returns one of: 'approval', 'rated', 'ranked', 'choose_one', 'unknown'
+    
+    This function is designed to eventually be moved to core.py as a 
+    general utility for all voting methods.
+    """
+    has_ratings = False
+    has_ranks = False
+    has_binary_ratings = False
+    has_non_binary_ratings = False
+    has_equal_ranks = False
+    has_multiple_choices = False
+    has_comma_delimited = False
+    has_rank_delimited = False
+    non_blank_ballots = 0
+    total_ballots = 0
 
     for vline in abifmodel['votelines']:
-        has_binary_scores = False
-        has_equal_ranks = False
+        total_ballots += vline.get('qty', 1)
+        ballot_rankings = []
+        ballot_ratings = []
+        candidates_with_ratings = 0
+        total_candidates_on_ballot = len(vline['prefs'])
+
+        # Skip blank ballots (no preferences)
+        if total_candidates_on_ballot == 0:
+            continue
+
+        non_blank_ballots += vline.get('qty', 1)
 
         for cand, prefs in vline['prefs'].items():
-            # Check for binary ratings (0 or 1)
-            if 'rating' in prefs and prefs['rating'] in [0, 1]:
-                has_binary_scores = True
+            # Check for ratings
+            if 'rating' in prefs:
+                has_ratings = True
+                candidates_with_ratings += 1
+                rating = prefs['rating']
+                ballot_ratings.append(rating)
 
-            # Check for equal rankings (multiple candidates with same rank)
-            rank = prefs.get('rank')
-            if rank is not None:
-                same_rank_count = sum(1 for c, p in vline['prefs'].items()
-                                      if p.get('rank') == rank)
-                if same_rank_count > 1:
-                    has_equal_ranks = True
+                # Check for binary ratings (0 or 1)
+                if rating in [0, 1]:
+                    has_binary_ratings = True
+                else:
+                    has_non_binary_ratings = True
 
-        if has_binary_scores or has_equal_ranks:
-            return True
+            # Check for rankings
+            if 'rank' in prefs:
+                has_ranks = True
+                rank = prefs['rank']
+                ballot_rankings.append(rank)
 
-    return False
+        # Check for equal rankings (ties)
+        if ballot_rankings:
+            unique_ranks = set(ballot_rankings)
+            if len(unique_ranks) < len(ballot_rankings):
+                has_equal_ranks = True
+
+        # Check if ballot has multiple choices
+        if total_candidates_on_ballot > 1:
+            has_multiple_choices = True
+
+        # Detect delimiter patterns from original prefstr if available
+        if 'prefstr' in vline:
+            prefstr = vline['prefstr']
+            if ',' in prefstr and '>' not in prefstr and '=' not in prefstr:
+                has_comma_delimited = True
+            if '>' in prefstr or '=' in prefstr:
+                has_rank_delimited = True
+
+    # If we have no non-blank ballots, we can't determine the type
+    if non_blank_ballots == 0:
+        return 'unknown'
+
+    # Decision logic for ballot type
+
+    # If we have comma-delimited format, it's not ranked
+    if has_comma_delimited and not has_rank_delimited:
+        if has_binary_ratings and not has_non_binary_ratings:
+            return 'approval'
+        elif has_non_binary_ratings:
+            return 'rated'
+        elif not has_ratings and has_multiple_choices:
+            return 'unknown'  # Comma-delimited without ratings is ambiguous
+        else:
+            return 'choose_one'
+
+    # Binary ratings or equal ranks with ratings = approval
+    if has_binary_ratings and not has_non_binary_ratings:
+        if has_equal_ranks or not has_ranks:
+            return 'approval'
+
+    # Non-binary ratings = rated (if all candidates have ratings)
+    if has_non_binary_ratings:
+        return 'rated'
+
+    # Pure rankings without ratings
+    if has_ranks and not has_ratings:
+        if has_multiple_choices:
+            return 'ranked'
+        else:
+            return 'choose_one'
+
+    # Mixed ratings and rankings
+    if has_ratings and has_ranks:
+        if has_binary_ratings and not has_non_binary_ratings:
+            return 'approval'
+        elif has_non_binary_ratings:
+            return 'rated'
+        else:
+            return 'unknown'
+
+    # No clear pattern detected
+    if has_multiple_choices:
+        return 'unknown'
+    else:
+        return 'choose_one'
+
+
+def has_approval_data(abifmodel):
+    """Detect if jabmod contains native approval data."""
+    return detect_ballot_type(abifmodel) == 'approval'
 
 
 def has_only_rankings(abifmodel):
     """Detect if jabmod contains only ranked preferences."""
-    # Check for rank-only data without scores or binary patterns
-
-    for vline in abifmodel['votelines']:
-        for cand, prefs in vline['prefs'].items():
-            # If any candidate has a rating, it's not rank-only
-            if 'rating' in prefs:
-                return False
-
-    return True
-
-
+    ballot_type = detect_ballot_type(abifmodel)
+    return ballot_type in ['ranked', 'choose_one']
 def detect_approval_method(abifmodel):
     """Auto-detect appropriate approval calculation method."""
     # Returns 'native' or 'simulate' based on ballot content
 
-    if has_approval_data(abifmodel):
+    ballot_type = detect_ballot_type(abifmodel)
+
+    if ballot_type == 'approval':
         return 'native'
-    elif has_only_rankings(abifmodel):
+    elif ballot_type in ['ranked', 'choose_one', 'rated']:
+        return 'simulate'
+    elif ballot_type == 'unknown':
+        # For unknown types, try to simulate if we have any ranking/rating data
+        # Otherwise default to native
         return 'simulate'
     else:
-        # Mixed data - default to native if ratings exist
+        # Default to native for any other types
         return 'native'
 
 
@@ -106,6 +200,7 @@ def _native_approval_result(abifmodel):
 
     invalid_ballots = 0
     total_ballots_processed = abifmodel['metadata']['ballotcount']
+    ballot_type = detect_ballot_type(abifmodel)
 
     for vline in abifmodel['votelines']:
         ballot_qty = vline['qty']
@@ -155,7 +250,7 @@ def _native_approval_result(abifmodel):
         'total_approvals': total_valid_approvals,
         'total_votes': total_ballots_processed,
         'invalid_ballots': invalid_ballots,
-        'method': 'native'
+        'ballot_type': ballot_type
     }
 
 
@@ -165,6 +260,7 @@ def _simulated_approval_result(abifmodel):
     # Step 1: Get FPTP results to determine viable candidates
     fptp_results = FPTP_result_from_abifmodel(abifmodel)
     total_valid_votes = fptp_results['total_votes_recounted']
+    ballot_type = detect_ballot_type(abifmodel)
 
     # Step 2: Determine number of viable candidates using iterative Droop quota
     sorted_candidates = sorted(fptp_results['toppicks'].items(),
@@ -183,10 +279,7 @@ def _simulated_approval_result(abifmodel):
             'total_approvals': 0,
             'total_votes': total_valid_votes,
             'invalid_ballots': total_valid_votes,
-            'method': 'simulate',
-            'viable_candidates': [],
-            'viable_candidate_maximum': 0,
-            'fptp_results': fptp_results
+            'ballot_type': ballot_type
         }
 
     frontrunner_votes = sorted_candidates[0][1]  # Top candidate's vote total
@@ -313,11 +406,7 @@ def _simulated_approval_result(abifmodel):
         'total_approvals': total_valid_approvals,
         'total_votes': total_ballots_processed,
         'invalid_ballots': invalid_ballots,
-        'viable_candidates': viable_candidates,
-        'viable_candidate_maximum': viable_candidate_maximum,
-        'droop_quota': (total_valid_votes // (number_of_viable_candidates + 1)) + 1,
-        'fptp_results': fptp_results,
-        'method': 'simulate'
+        'ballot_type': ballot_type
     }
 
 
@@ -325,19 +414,29 @@ def get_approval_report(abifmodel, method='auto'):
     """Generate human-readable approval voting report."""
     results = approval_result_from_abifmodel(abifmodel, method)
 
-    if results['method'] == 'native':
-        report = "Approval Voting Results (Native Ballots):\n"
-    else:
-        report = "Approval Voting Results (Strategic Simulation):\n"
+    ballot_type = results['ballot_type']
+
+    if ballot_type == 'approval':
+        report = "Approval Voting Results (Native Approval Ballots):\n"
+    elif ballot_type == 'ranked':
+        report = "Approval Voting Results (Strategic Simulation from Ranked Ballots):\n"
         report += f"  Based on FPTP analysis with Droop quota viability threshold\n"
-        if 'droop_quota' in results:
-            report += f"  Droop quota: {results['droop_quota']} votes\n"
-        if 'viable_candidates' in results:
-            viable_list = ', '.join(results['viable_candidates']) if results['viable_candidates'] else 'None'
-            report += f"  Viable candidates: {viable_list}\n"
-        if 'viable_candidate_maximum' in results:
-            report += f"  Viable-candidate-maximum: {results['viable_candidate_maximum']}\n"
         report += "\n"
+    elif ballot_type == 'rated':
+        report = "Approval Voting Results (Strategic Simulation from Rated Ballots):\n"
+        report += f"  Based on FPTP analysis with Droop quota viability threshold\n"
+        report += "\n"
+    elif ballot_type == 'choose_one':
+        report = "Approval Voting Results (Strategic Simulation from Choose-One Ballots):\n"
+        report += f"  Based on FPTP analysis with Droop quota viability threshold\n"
+        report += "\n"
+    elif ballot_type == 'unknown':
+        report = "Approval Voting Results (Unknown Ballot Type - Strategic Simulation):\n"
+        report += f"  Based on FPTP analysis with Droop quota viability threshold\n"
+        report += f"  Warning: Ballot type could not be definitively determined\n"
+        report += "\n"
+    else:
+        report = "Approval Voting Results:\n"
 
     report += f"  Approval counts:\n"
 
@@ -349,10 +448,7 @@ def get_approval_report(abifmodel, method='auto'):
     )
 
     for cand, count in sorted_candidates:
-        viable_marker = ""
-        if results['method'] == 'simulate' and 'viable_candidates' in results:
-            viable_marker = " (viable)" if cand in results['viable_candidates'] else ""
-        report += f"   * {cand}: {count}{viable_marker}\n"
+        report += f"   * {cand}: {count}\n"
 
     if results['approval_counts'].get(None, 0) > 0:
         report += f"   * Invalid ballots: {results['approval_counts'][None]}\n"
