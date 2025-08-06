@@ -253,3 +253,208 @@ docs/
 - Standard abiflib utilities for output formatting
 
 This design maintains architectural consistency while properly handling both native approval ballots and strategic simulation scenarios.
+
+## Notes Feature Design
+
+### Overview
+To support better transparency and user understanding, abiflib will implement a standardized "notes" feature that can be applied across all voting methods. This feature provides structured explanations of data transformations, algorithm assumptions, and important caveats.
+
+### Notes Structure
+Each voting method result will include a `notes` array containing note objects with this structure:
+
+```json
+{
+  "notes": [
+    {
+      "notice_type": "disclaimer",
+      "short": "Approval counts estimated from ranked ballots",
+      "long": "This uses a `reverse Droop` calculation to provide a crude estimate for the number of viable candidates:\na) Count the top preferences for the all candidates\nb) Determine the minimum number of figurative seats that would need to be filled in order for the leading candidate to exceed the Droop quota.\nFor this election, this is {viable} seats, so {viable} candidates are considered viable.\nTo then determine the number of viable candidates voters are likely to approve of, divide the number of viable candidates by two, and round up.\nIn this election, each voter approves up to {half_viable} viable candidates.\nOn these ballots, all candidates ranked at or above the lowest-ranked of each voter's viable candidates are approved."
+    }
+  ]
+}
+```
+
+### Field Specifications
+
+#### `notice_type`
+Categorizes the type of notice for appropriate display styling:
+- `"disclaimer"`: Important caveats about data transformation or algorithm assumptions
+- `"warning"`: Potential issues with data quality or interpretation
+- `"info"`: General informational notes about methodology
+- `"debug"`: Technical details for developers (may be filtered in production)
+
+#### `short`
+- **Length limit**: ~120 characters
+- **Purpose**: Brief, actionable summary suitable for UI tooltips, summary lists, or mobile displays
+- **Style**: Sentence fragment or single sentence, no period unless multiple sentences
+
+#### `long`
+- **Length limit**: Unlimited, but typically 200-800 characters
+- **Purpose**: Detailed technical explanation sufficient for another developer to independently implement the same algorithm
+- **Style**: Complete sentences with technical precision
+- **Content**: Should include specific parameter values, decision points, and algorithmic steps
+
+### Implementation in approval_tally.py
+
+#### Modified Function Signatures
+```python
+def approval_result_from_abifmodel(abifmodel, method='auto'):
+    """Calculate approval voting results from jabmod."""
+    # Returns dictionary including 'notes' array
+    return {
+        'approval_counts': {...},
+        'winners': [...],
+        'total_approvals': int,
+        'ballot_type': str,
+        'notes': [...]  # New notes array
+    }
+
+def get_approval_report(abifmodel, method='auto'):
+    """Generate human-readable approval voting report."""
+    # Text report will include notes section at bottom
+```
+
+#### Notes Generation Logic
+[21~```python
+def _generate_approval_notes(method, ballot_type, viable_candidates=None, viable_candidate_maximum=None):
+    """Generate appropriate notes based on approval calculation method."""
+    notes = []
+
+    if method == 'simulate':
+        # Add strategic simulation disclaimer
+        short_text = "Approval counts estimated from ranked ballots using strategic threshold method"
+
+        long_text = (
+            f"Strategic approval simulation algorithm: For each ballot, calculate the Droop quota "
+            f"(total_votes / (seats + 1) + 1, where seats=1 for single-winner elections). "
+            f"Sort candidates by their first-preference vote totals in descending order. "
+            f"Determine {len(viable_candidates) if viable_candidates else 'N'} viable candidates based on cumulative FPTP analysis. "
+            f"Set viable-candidate-maximum to {viable_candidate_maximum if viable_candidate_maximum else 'floor((viable_count + 1) / 2)'}. "
+            f"For each ballot, identify the top viable-candidate-maximum viable candidates ranked by the voter, "
+            f"then approve all candidates ranked at or above the lowest-ranked of those viable candidates. "
+            f"This simulates strategic voters who approve all candidates they prefer over the likely winner, "
+            f"based on first-preference polling data. The algorithm assumes voters have perfect information "
+            f"about first-preference vote shares and vote strategically to maximize their utility while "
+            f"avoiding the spoiler effect."
+        )
+
+        notes.append({
+            "notice_type": "disclaimer",
+            "short": short_text,
+            "long": long_text
+        })
+
+    elif method == 'native' and ballot_type != 'approval':
+        # Warn about potential ballot type mismatch
+        notes.append({
+            "notice_type": "warning",
+            "short": f"Native approval calculation applied to {ballot_type} ballot format",
+            "long": f"The ballot format was detected as '{ballot_type}' but native approval calculation was explicitly requested. Results may not reflect voter intent if ballots contain ranking or rating data that was ignored during approval extraction."
+        })
+
+    return notes
+```
+
+### Text Report Integration
+The `get_approval_report()` function will append notes to the text output:
+
+```python
+def get_approval_report(abifmodel, method='auto'):
+    """Generate human-readable approval voting report."""
+    results = approval_result_from_abifmodel(abifmodel, method)
+
+    # ... build main report sections ...
+
+    # Add notes section if present
+    if results.get('notes'):
+        report += "\n" + "="*50 + "\n"
+        report += "NOTES\n"
+        report += "="*50 + "\n"
+
+        for note in results['notes']:
+            notice_type = note.get('notice_type', 'info').upper()
+            report += f"\n[{notice_type}] {note['short']}\n"
+
+            if note.get('long'):
+                # Word wrap the long note at 78 characters
+                import textwrap
+                wrapped = textwrap.fill(note['long'], width=76,
+                                      initial_indent='  ',
+                                      subsequent_indent='  ')
+                report += f"\n{wrapped}\n"
+
+    return report
+```
+
+### JSON Output Integration
+When abiftool generates JSON output (`-t json`), the notes array will be included at the top level:
+
+```json
+{
+  "approval_counts": {"Nash": 50, "Memph": 42, "Chat": 36, "Knox": 21},
+  "winners": ["Nash"],
+  "total_approvals": 148,
+  "ballot_type": "ranked",
+  "notes": [
+    {
+      "notice_type": "disclaimer",
+      "short": "Approval counts estimated from ranked ballots using strategic threshold method",
+      "long": "Strategic approval simulation algorithm: For each ballot, calculate the Droop quota..."
+    }
+  ]
+}
+```
+
+### AWT Integration Pattern
+The notes feature provides a standard pattern for awt.py to display method-specific disclaimers:
+
+```python
+# In conduits.py
+def update_approval_result(self, jabmod) -> "ResultConduit":
+    """Add approval voting result to resblob"""
+    approval_result = approval_result_from_abifmodel(jabmod)
+    self.resblob['approval_result'] = approval_result
+    self.resblob['approval_text'] = get_approval_report(jabmod)
+    self.resblob['approval_notes'] = approval_result.get('notes', [])
+    return self
+```
+
+```html
+<!-- In results template -->
+{% if approval_result.notes %}
+<div class="method-notes">
+  {% for note in approval_result.notes %}
+    <div class="note note-{{ note.notice_type }}">
+      <strong>{{ note.notice_type|title }}:</strong> {{ note.short }}
+      {% if note.long %}
+        <details>
+          <summary>Technical details</summary>
+          <p>{{ note.long }}</p>
+        </details>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+```
+
+### Future Extension to Other Methods
+This notes structure is designed to be adopted by other voting methods:
+
+```python
+# STAR method could add:
+{
+  "notice_type": "disclaimer",
+  "short": "Star ratings estimated from ranked ballots using Borda-like formula",
+  "long": "Since ratings or stars are not present in the provided ballots, allocated stars are estimated using a Borda-like formula where the top-ranked candidate receives the maximum stars, second-ranked receives maximum-1 stars, etc."
+}
+
+# IRV method could add:
+{
+  "notice_type": "warning",
+  "short": "Ballot contains equal rankings that may affect elimination order",
+  "long": "This election contains ballots with tied rankings (e.g., A=B>C). The IRV algorithm handles ties by [specific tie-breaking method], which may not reflect all voters' true preferences in ambiguous cases."
+}
+```
+
+This standardized approach ensures consistent user experience across all voting methods while maintaining the flexibility for method-specific explanations.

@@ -18,23 +18,24 @@
 from abiflib.core import convert_abif_to_jabmod
 from abiflib.util import clean_dict, candlist_text_from_abif
 from abiflib.fptp_tally import FPTP_result_from_abifmodel
+import argparse
 import copy
 import json
 from pprint import pprint
 import re
 import sys
 import urllib.parse
-import argparse
 import pathlib
+import textwrap
 
 
 def detect_ballot_type(abifmodel):
     """
     Detect the type of ballots in a jabmod structure.
-    
+
     Returns one of: 'approval', 'rated', 'ranked', 'choose_one', 'unknown'
-    
-    This function is designed to eventually be moved to core.py as a 
+
+    This function is designed to eventually be moved to core.py as a
     general utility for all voting methods.
     """
     has_ratings = False
@@ -157,6 +158,8 @@ def has_only_rankings(abifmodel):
     """Detect if jabmod contains only ranked preferences."""
     ballot_type = detect_ballot_type(abifmodel)
     return ballot_type in ['ranked', 'choose_one']
+
+
 def detect_approval_method(abifmodel):
     """Auto-detect appropriate approval calculation method."""
     # Returns 'native' or 'simulate' based on ballot content
@@ -174,6 +177,40 @@ def detect_approval_method(abifmodel):
     else:
         # Default to native for any other types
         return 'native'
+
+
+def _generate_approval_notices(method, ballot_type, viable_candidates=None, viable_candidate_maximum=None):
+    """Generate appropriate notices based on approval calculation method."""
+    notices = []
+
+    if method == 'simulate':
+        # Add strategic simulation disclaimer
+        short_text = "Approval counts estimated from ranked ballots"
+
+        viable_count = len(viable_candidates) if viable_candidates else 'N'
+        vcm = viable_candidate_maximum if viable_candidate_maximum else 'floor((viable_count + 1) / 2)'
+
+        long_text = (
+            f"This uses a `reverse Droop` calculation to provide a crude estimate for "
+            f"the number of viable candidates:\n"
+            f"a) Count the top preferences for the all candidates\n"
+            f"b) Determine the minimum number of figurative seats that would "
+            f"need to be filled in order for the leading candidate to exceed "
+            f"the Droop quota.\n"
+            f"For this election, this is {viable_count} seats, so {viable_count} candidates are considered viable.\n"
+            f"To then determine the number of viable candidates voters are likely to approve of, "
+            f"divide the number of viable candidates by two, and round up.\n"
+            f"In this election, each voter approves up to {vcm} viable candidates.\n"
+            f"On these ballots, all candidates ranked at or above the lowest-ranked of each voter's "
+            f"viable candidates are approved.")
+
+        notices.append({
+            "notice_type": "disclaimer",
+            "short": short_text,
+            "long": long_text
+        })
+
+    return notices
 
 
 def approval_result_from_abifmodel(abifmodel, method='auto'):
@@ -250,7 +287,8 @@ def _native_approval_result(abifmodel):
         'total_approvals': total_valid_approvals,
         'total_votes': total_ballots_processed,
         'invalid_ballots': invalid_ballots,
-        'ballot_type': ballot_type
+        'ballot_type': ballot_type,
+        'notices': []  # No notices for native approval
     }
 
 
@@ -398,6 +436,9 @@ def _simulated_approval_result(abifmodel):
 
     win_pct = (max_approvals / total_valid_votes) * 100 if total_valid_votes > 0 else 0
 
+    # Generate notices for strategic simulation
+    notices = _generate_approval_notices('simulate', ballot_type, viable_candidates, viable_candidate_maximum)
+
     return {
         'approval_counts': approval_counts,
         'winners': winners,
@@ -406,7 +447,8 @@ def _simulated_approval_result(abifmodel):
         'total_approvals': total_valid_approvals,
         'total_votes': total_ballots_processed,
         'invalid_ballots': invalid_ballots,
-        'ballot_type': ballot_type
+        'ballot_type': ballot_type,
+        'notices': notices
     }
 
 
@@ -465,6 +507,18 @@ def get_approval_report(abifmodel, method='auto'):
             report += f"   * {w}\n"
     else:
         report += f"\n  No winner determined\n"
+
+    # Add notices section if present
+    if results.get('notices'):
+        for notice in results['notices']:
+            notice_type = notice.get('notice_type', 'info').upper()
+            report += f"\n[{notice_type}] {notice['short']}\n"
+
+            if notice.get('long'):
+                # Word wrap the long notice at 78 characters
+                wrapped = textwrap.fill(notice['long'], width=76, initial_indent='  ',
+                                        subsequent_indent='  ')
+                report += f"\n{wrapped}\n"
 
     return report
 
