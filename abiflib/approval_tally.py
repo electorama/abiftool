@@ -161,7 +161,7 @@ def convert_to_approval_favorite_viable_half(abifmodel):
     total_valid_votes = fptp_results['total_votes_recounted']
     ballot_type = detect_ballot_type(abifmodel)
 
-    # Step 2: Determine number of viable candidates using iterative Droop quota
+    # Step 2: Determine number of viable candidates using iterative Hare quota
     sorted_candidates = sorted(fptp_results['toppicks'].items(),
                                key=lambda x: x[1], reverse=True)
 
@@ -176,29 +176,25 @@ def convert_to_approval_favorite_viable_half(abifmodel):
 
     frontrunner_votes = sorted_candidates[0][1]  # Top candidate's vote total
 
-    # Determine number of viable candidates based on frontrunner's percentage
-    frontrunner_pct = (frontrunner_votes / total_valid_votes) * 100
+    # Find minimum number of figurative seats where frontrunner exceeds Hare quota
+    # This is the algorithm as described: iterate through seat counts and find the
+    # first (minimum) number where frontrunner_votes > quota
+    number_of_viable_candidates = 2  # Default fallback
 
-    # Use reverse logic: if frontrunner got X%, estimate how many candidates are viable
-    if frontrunner_pct > 50.0:
-        number_of_viable_candidates = 2
-    elif frontrunner_pct > 33.33:
-        number_of_viable_candidates = 3
-    elif frontrunner_pct > 25.0:
-        number_of_viable_candidates = 4
-    elif frontrunner_pct > 20.0:
-        number_of_viable_candidates = 5
-    elif frontrunner_pct > 16.67:
-        number_of_viable_candidates = 6
-    elif frontrunner_pct > 14.29:
-        number_of_viable_candidates = 7
-    elif frontrunner_pct > 12.5:
-        number_of_viable_candidates = 8
-    else:
-        # For very low percentages, use a reasonable upper bound
-        number_of_viable_candidates = min(10, len(sorted_candidates))
+    # Check each possible number of seats, starting from 2
+    for seats in range(2, len(sorted_candidates) + 2):  # +2 because we want seats, not candidates
+        # Calculate Hare quota for this number of seats: total_votes / seats
+        quota = total_valid_votes // seats
 
-    # Create list of top N candidates based on first-place votes
+        if frontrunner_votes > quota:
+            # Found the minimum number of seats where frontrunner exceeds quota
+            number_of_viable_candidates = seats
+            break
+
+    # If frontrunner never exceeds quota even with maximum seats, use fallback
+    if number_of_viable_candidates == 2 and frontrunner_votes <= (total_valid_votes // 2):
+        # Frontrunner is very weak, estimate conservatively
+        number_of_viable_candidates = min(len(sorted_candidates), 10)    # Create list of top N candidates based on first-place votes
     viable_candidates = []
     for i in range(min(number_of_viable_candidates, len(sorted_candidates))):
         candidate, votes = sorted_candidates[i]
@@ -394,9 +390,12 @@ def _generate_conversion_notices(conversion_meta):
         viable_count = len(viable_candidates)
 
         long_text = (
-            f"Favorite-viable-half conversion algorithm: Uses reverse Droop quota calculation to estimate "
-            f"viable candidates. For this election, {viable_count} candidates are considered viable "
-            f"based on first-preference vote analysis. Each voter approves up to {viable_candidate_maximum} "
+            f"Favorite_viable_half conversion algorithm: find the candidate with the most "
+            f"first preferences, and then determine the minimum number of figurative seats that would "
+            f"need to be open in order for the candidate to exceed the Hare quota with the given first-prefs. "
+            f"We use this to estimate how many candidates are likely to be viable candidates. "
+            f"For this election by this calculation, {viable_count} candidates are considered viable. "
+            f"The approximation then assumes each voter approves up to {viable_candidate_maximum} "
             f"of their top-ranked viable candidates (half of {viable_count}, rounded up). "
             f"All candidates ranked at or above the lowest-ranked of each voter's top {viable_candidate_maximum} "
             f"viable candidates receive approval."
