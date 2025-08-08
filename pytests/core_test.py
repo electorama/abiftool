@@ -365,7 +365,60 @@ testlist = [
         ["votelines", 1, "qty"],
         26,
         id='json_033'
-    )
+    ),
+    # TEST 034:
+    # Test that trailing spaces in candidate definitions don't truncate names
+    # FIXME: ABIF parser currently fails to handle trailing spaces correctly 
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/questionable/trailingspace-tenn.abif',
+                 'is_equal',
+                 ["candidates", "Memph"],
+                 "Memphis, TN",
+                 id='json_034',
+                 marks=pytest.mark.xfail(reason="TDD: ABIF parser should handle trailing spaces in candidate definitions")),
+    # TEST 035:
+    # Test that trailing spaces don't affect Nashville either
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/questionable/trailingspace-tenn.abif',
+                 'is_equal',
+                 ["candidates", "Nash"],
+                 "Nashville, TN",
+                 id='json_035',
+                 marks=pytest.mark.xfail(reason="TDD: ABIF parser should handle trailing spaces in candidate definitions")),
+    # TEST 036:
+    # Test that STAR voting shows correct candidate names despite trailing spaces
+    pytest.param(['-t', 'json', '-m', 'STAR'],
+                 'testdata/questionable/trailingspace-tenn.abif',
+                 'is_equal',
+                 ['winner_names', 0],
+                 'Nashville, TN',
+                 id='json_036',
+                 marks=pytest.mark.xfail(reason="TDD: STAR output should show full names even with trailing space bug")),
+    # TEST 037:
+    # Test that score voting text output shows correct names (will fail due to trailing space bug)
+    pytest.param(['-t', 'text', '-m', 'score'],
+                 'testdata/questionable/trailingspace-tenn.abif',
+                 'contains',
+                 ['text_output'],
+                 'Memphis, TN',
+                 id='json_037',
+                 marks=pytest.mark.xfail(reason="TDD: Score voting should show full candidate names")),
+    # TEST 038:
+    # Test ballot count is still correct despite trailing spaces
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/questionable/trailingspace-tenn.abif',
+                 'is_equal',
+                 ["metadata", "ballotcount"],
+                 100,
+                 id='json_038'),
+    # TEST 039:
+    # Test that vote quantities are parsed correctly despite trailing spaces
+    pytest.param(['-f', 'abif', '-t', 'jabmod'],
+                 'testdata/questionable/trailingspace-tenn.abif',
+                 'is_equal',
+                 ["votelines", 0, "qty"],
+                 42,
+                 id='json_039'),
 ]
 
 @pytest.mark.parametrize(

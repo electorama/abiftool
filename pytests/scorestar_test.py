@@ -99,36 +99,19 @@ LOGOBJ = abiflib.LogfileSingleton()
                      id='scorestar_017'),
         # TEST 018:
         # Test score voting text output for tied candidates
-        # FIXME: This test is currently skipped due to a bug in ABIF candidate name parsing.
-        # The issue is that Bob's name appears as "Bob" instead of "Bob Brown" in the output.
-        #
-        # Root cause: The ABIF parser is incorrectly parsing the line "=Bob:[Bob Brown]"
-        # and storing Bob's name as just "Bob" instead of "Bob Brown" in the candidates dict.
-        # This affects both score voting and STAR voting text output.
-        #
-        # To fix: Check the candidate line parsing in abiflib/core.py, specifically the
-        # _process_abif_candline() function around line 279. The regex or parsing logic
-        # for extracting the candidate description from "[Bob Brown]" is likely incorrect.
-        #
-        # Additional issue: Score voting declares Alice as the sole winner despite Alice
-        # and Bob being tied at 45 points each. Score voting should either:
-        # 1. Declare a tie like STAR does, or
-        # 2. Use a consistent tiebreaker (alphabetical, random, etc.)
         pytest.param(['-t', 'text', '-m', 'score'],
                      'testdata/mock-elections/mock-scorestar-tie.abif',
-                     r"45 points \(from 10 voters\) -- Bob Brown",  # Fixed expected name
-                     id='scorestar_018',
-                     marks=pytest.mark.skip(reason="Bug: ABIF parser incorrectly handles Bob's name")),
+                     r"45 points \(from 10 voters\) -- Bob Brown",
+                     id='scorestar_018'),
         # TEST 019:
         # Test score voting winner declaration in tie scenario
-        # FIXME: This test is skipped due to the same ABIF parsing bug as 018.
-        # Additionally, score voting's tie-handling behavior needs clarification:
-        # Should it declare "Score Winner: tie Alice Anderson and Bob Brown" like STAR does?
+        # FIXME: Score voting should declare ties like STAR does, but currently
+        # uses implicit alphabetical tiebreaking. This should be "Score Winner: tie Alice Anderson and Bob Brown"
         pytest.param(['-t', 'text', '-m', 'score'],
                      'testdata/mock-elections/mock-scorestar-tie.abif',
-                     r"Score Winner: Alice Anderson",  # Current behavior - may need updating
+                     r"Score Winner: tie Alice Anderson and Bob Brown",
                      id='scorestar_019',
-                     marks=pytest.mark.skip(reason="Bug: ABIF parser + unclear tie handling")),
+                     marks=pytest.mark.xfail(reason="Score voting doesn't properly declare ties - uses alphabetical tiebreaker")),
     ]
 )
 
@@ -186,7 +169,7 @@ scorestar_json_testlist = [
                  'testdata/mock-elections/mock-scorestar-tie.abif',
                  'is_equal',
                  ['winner_names'],
-                 ['Alice Anderson', 'Bob'],
+                 ['Alice Anderson', 'Bob Brown'],
                  id='scorestar_023'),
 
     # TEST 024: STAR backwards compatibility - old winner field still works

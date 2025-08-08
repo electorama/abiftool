@@ -1,0 +1,13 @@
+{"title": "Tennessee capitol example"} 
+{"description": "Tennessee example, with gratuitous trailing whitespace. It may be possible to find parser errors with this example (and there was a parser error that was found by some accidental trailing space, which prompted the creation of this example)."} 
+# See https://electowiki.org/wiki/Tennessee_example for illustrations 
+=Memph:[Memphis, TN] 
+=Nash:[Nashville, TN] 
+=Chat:[Chattanooga, TN] 
+=Knox:[Knoxville, TN] 
+# ------------------------- 
+# Ratings are 400 miles minus crow-flying mileage to city  
+42:Memph/400>Nash/200>Chat/133>Knox/45 
+26:Nash/400>Chat/290>Knox/240>Memph/200 
+15:Chat/400>Knox/296>Nash/290>Memph/133 
+17:Knox/400>Chat/296>Nash/240>Memph/45 
