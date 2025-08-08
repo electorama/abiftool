@@ -113,6 +113,8 @@ def STAR_result_from_abifmodel(abifmodel):
         retval['fin2votes'] = 0
         retval['final_abstentions'] = bc
         retval['winner'] = fin1n
+        retval['winner_names'] = [fin1n] if fin1n else []
+        retval['winner_tokens'] = [fin1] if fin1 else []
     elif len(retval['ranklist']) == 1:
         fin1 = retval['fin1'] = retval['ranklist'][0]
         fin2 = retval['fin2'] = None
@@ -132,6 +134,8 @@ def STAR_result_from_abifmodel(abifmodel):
         retval['fin2votes'] = 0
         retval['final_abstentions'] = bc - fin1votes
         retval['winner'] = fin1n
+        retval['winner_names'] = [fin1n]
+        retval['winner_tokens'] = [fin1]
     else:
         fin1 = retval['fin1'] = retval['ranklist'][0]
         fin2 = retval['fin2'] = retval['ranklist'][1]
@@ -142,10 +146,16 @@ def STAR_result_from_abifmodel(abifmodel):
         retval['final_abstentions'] = bc - f1v - f2v
         if f1v > f2v:
             retval['winner'] = fin1n
+            retval['winner_names'] = [fin1n]
+            retval['winner_tokens'] = [fin1]
         elif f2v > f1v:
             retval['winner'] = fin2n
+            retval['winner_names'] = [fin2n]
+            retval['winner_tokens'] = [fin2]
         else:
             retval['winner'] = f"tie {fin1n} and {fin2n}"
+            retval['winner_names'] = [fin1n, fin2n]
+            retval['winner_tokens'] = [fin1, fin2]
     return retval
 
 

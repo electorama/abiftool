@@ -1,0 +1,24 @@
+# Mock STAR Tie Election
+#
+# Simple test case for STAR voting with a tie in the final round
+# Three candidates: Alice, Bob, Charlie
+# Alice and Bob tie for top two in scoring round
+# Alice and Bob tie in the final pairwise round
+
+=Alice:[Alice Anderson]
+=Bob:[Bob Brown] 
+=Charlie:[Charlie Clark]
+
+# Scoring round results:
+# Alice: 30 points (10*3 voters)
+# Bob: 30 points (10*3 voters)  
+# Charlie: 20 points (10*2 voters)
+# Alice and Bob advance to final round
+
+# Final pairwise: Alice vs Bob
+# 5 voters prefer Alice over Bob (5 points Alice, 4 points Bob)
+# 5 voters prefer Bob over Alice (4 points Alice, 5 points Bob)
+# Result: Perfect tie in final round
+
+5:Alice/5>Bob/4>Charlie/2
+5:Bob/5>Alice/4>Charlie/2
