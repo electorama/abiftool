@@ -62,3 +62,43 @@ def test_fptp_undervote_handling():
     assert result['total_votes'] == 2
     # Expect 'None' (undervotes/overvotes) to be 1
     assert result['toppicks'][None] == 1
+
+
+# Additional FPTP tests moved from core_test.py  
+# These tests use JSON output format to verify FPTP calculation logic
+
+from abiftestfuncs import *
+
+fptp_json_testlist = [
+    # TEST FPTP_018:
+    # Test the "-t json -m FPTP" combo with simplified TN example
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
+                 'testdata/mock-elections/tennessee-example-simple.abif',
+                 'is_equal',
+                 ["winners", 0],
+                 "Memph",
+                 id='fptp_json_018'),
+    # TEST FPTP_019:
+    # Test the "-t json -m FPTP" combo with a tie election
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
+                 'testdata/mock-elections/mock-tie.abif',
+                 'is_equal',
+                 ["winners", 1],
+                 "S",
+                 id='fptp_json_019'),
+    # TEST FPTP_024:
+    # Test FPTP with all-blank ballots (should have no winners)
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
+                 'testdata/mock-elections/mock-all-blank.abif',
+                 'is_equal',
+                 ["winners"],
+                 [],
+                 id='fptp_json_024'),
+]
+
+@pytest.mark.parametrize(
+    'cmd_args, inputfile, testtype, keylist, value', fptp_json_testlist
+)
+def test_fptp_json_output(cmd_args, inputfile, testtype, keylist, value):
+    """Test FPTP JSON output format"""
+    run_json_output_test_from_abif(cmd_args, inputfile, testtype, keylist, value)

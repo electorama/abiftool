@@ -1,3 +1,20 @@
+# Core ABIF Parser and Format Tests
+#
+# This test file focuses on core parsing functionality and data format handling.
+# Method-specific tests have been moved to specialized files:
+#   - IRV tests: irv_test.py
+#   - FPTP tests: fptp_test.py  
+#   - Pairwise tests: pairwise_test.py
+#   - STAR tests: scorestar_test.py
+#
+# Tests in this file cover:
+#   - ABIF format parsing edge cases
+#   - JABMOD format roundtripping
+#   - SF CVR format support
+#   - Candidate name parsing (including whitespace handling)
+#   - Ballot counting accuracy
+#   - Error conditions and malformed input
+
 from abiftestfuncs import *
 import subprocess
 import json
@@ -7,20 +24,8 @@ import glob
 import sys
 import pytest
 
-
 testlist = [
     # TEST 001:
-    # Test the '-t winlosstiejson' parameter with the simplified TN example
-    # TODO: Possibly move to new pairwise_test.py file
-    pytest.param(
-        ['-f', 'abif', '-t', 'winlosstiejson'],
-        'testdata/tenn-example/tennessee-example-simple.abif',
-        'is_equal',
-        ["Chat", "wins"],
-        2,
-        id='json_001'
-    ),
-    # TEST 002:
     # Test the '-t jabmod' parameter with the simplified TN example
     pytest.param(
         ['-f', 'abif', '-t', 'jabmod'],
@@ -28,9 +33,9 @@ testlist = [
         'is_equal',
         ["votelines", 0, "qty"],
         42,
-        id='json_002'
+        id='core_001'
     ),
-    # TEST 003:
+    # TEST 002:
     # Test roundtripping jabmod with a mock election example
     pytest.param(
         ['-f', 'jabmod', '-t', 'jabmod'],
@@ -38,9 +43,9 @@ testlist = [
         'is_equal',
         ["votelines", 0, "qty"],
         1,
-        id='json_003'
+        id='core_002'
     ),
-    # TEST 004:
+    # TEST 003:
     # Test roundtripping jabmod with a mock election example,
     # consolidating the results
     pytest.param(
@@ -49,86 +54,9 @@ testlist = [
         'is_equal',
         ["votelines", 0, "qty"],
         5,
-        id='json_004'
+        id='core_003'
     ),
-    # TEST 005:
-    # Test IRV with the SF 2018 special election, checking if the winner
-    # is correct
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(
-        ['-f', 'abif', '-t', 'irvjson'],
-        'testdata/california/sf2018special-results.abif',
-        'is_equal',
-        ["roundmeta", -1, "winner"],
-        ["LONDON_BREED"],
-        id='json_005'
-    ),
-    # TEST 006:
-    # Test IRV with the SF 2018 special election, checking for eliminated
-    # candidates
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(
-        ['-f', 'abif', '-t', 'irvjson'],
-        'testdata/california/sf2018special-results.abif',
-        'is_equal',
-        ["roundmeta", -1, "eliminated"],
-        ["MARK_LENO"],
-        id='json_006'
-    ),
-    # TEST 007:
-    # Test IRV with the SF 2018 special election, checking for starting
-    # quantity of votes
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(
-        ['-f', 'abif', '-t', 'irvjson'],
-        'testdata/california/sf2018special-results.abif',
-        'is_equal',
-        ["roundmeta", -1, "startingqty"],
-        254016,
-        id='json_007'
-    ),
-    # TEST 008:
-    # Test IRV with the SF 2018 special election, checking the final count
-    # of votes for the winner
-    #
-    # FIXME - the report from the city says Breed won with 115977 in the final round, but my
-    # count shows 116020
-    # SF Report:
-    #  https://www.sfelections.org/results/20180605/data/20180627/mayor/20180627_mayor.pdf
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(
-        ['-f', 'abif', '-t', 'irvjson'],
-        'testdata/california/sf2018special-results.abif',
-        'is_equal',
-        ["rounds", -1, "LONDON_BREED"],
-        116020,
-        id='json_008'
-    ),
-    # TEST 009:
-    # Test IRV with the SF 2018 special election, checking if a WRITE_IN
-    # candidate is present. 
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(
-        ['-f', 'abif', '-t', 'irvjson'],
-        'testdata/california/sf2018special-results.abif',
-        'is_equal',
-        ["roundmeta", 0, "eliminated", 3],
-        r'WRITE_IN',
-        id='json_009'
-    ),
-    # TEST 010:
-    # Test IRV with a mock election, checking if it uses 14 rounds as
-    # expected.
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(
-        ['-f', 'abif', '-t', 'irvjson'],
-        'testdata/mock-elections/mock-twotie.abif',
-        'contains',
-        ["roundmeta", 13, "all_eliminated"],
-        r'F',
-        id='json_010'
-    ),
-    # TEST 011:
+    # TEST 004:
     # Testing whether an Alaska election has 4 candidates
     pytest.param(
         ['-f', 'abif', '-t', 'jabmod'],
@@ -136,20 +64,9 @@ testlist = [
         'length',
         ["candidates"],
         4,
-        id='json_011'
+        id='core_004'
     ),
-    # TEST 012:
-    # Test the '-t paircountjson' parameter
-    # TODO: Possibly move this test to a new pairwise_test.py
-    pytest.param(
-        ['-f', 'abif', '-t', 'paircountjson'],
-        'testdata/commasep/commasquare.abif',
-        'is_equal',
-        ["A,X", "B,Y"],
-        12,
-        id='json_012'
-    ),
-    # TEST 013:
+    # TEST 005:
     # FIXME: figure out what this test is supposed to be checking
     pytest.param(
         ['-f', 'abif', '-t', 'jabmod'],
@@ -157,129 +74,65 @@ testlist = [
         'is_equal',
         ["votelines", 0, "prefs", "C,Z", "rank"],
         3,
-        id='json_013'
+        id='core_005'
     ),
-    # TEST 014:
-    # Test the deprecated '-t paircountjson' parameter, which will be
-    # replaced by the "-t json -m pairwise" combo
-    # TODO: Possibly move this test to a new pairwise_test.py
-    pytest.param(['-f', 'abif', '-t', 'paircountjson'],
-                 'testdata/mock-elections/tennessee-example-simple.abif',
-                 'is_equal',
-                 ["Chat", "Knox"],
-                 83,
-                 id='json_014'),
-    # TEST 015:
-    # Test the "-t json -m pairwise" combo
-    # TODO: Possibly move this test to a new pairwise_test.py
-    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'pairwise'],
-                 'testdata/mock-elections/tennessee-example-simple.abif',
-                 'is_equal',
-                 ["Chat", "Knox"],
-                 83,
-                 id='json_015'),
-    # TEST 016:
-    # Test the deprecated '-t irvjson' parameter, which will be
-    # replaced by "-t json -m IRV" combo
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(['-f', 'abif', '-t', 'irvjson'],
-                 'testdata/mock-elections/tennessee-example-simple.abif',
-                 'is_equal',
-                 ["winner", 0],
-                 "Knox",
-                 id='json_016'),
-    # TEST 017:
-    # Test the "-t json -m IRV" combo
-    # TODO: Possibly move this test to irv_test.py
-    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'IRV'],
-                 'testdata/mock-elections/tennessee-example-simple.abif',
-                 'is_equal',
-                 ["winner", 0],
-                 "Knox",
-                 id='json_017'),
-    # TEST 018:
-    # Test the "-t json -m FPTP" combo wth simplified TN example
-    # TODO: Possibly move this test to fptp_test.py
-    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
-                 'testdata/mock-elections/tennessee-example-simple.abif',
-                 'is_equal',
-                 ["winners", 0],
-                 "Memph",
-                 id='json_018'),
-    # TEST 019:
-    # Test the "-t json -m FPTP" combo with a tie election
-    # TODO: Possibly move this test to fptp_test.py
-    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
-                 'testdata/mock-elections/mock-tie.abif',
-                 'is_equal',
-                 ["winners", 1],
-                 "S",
-                 id='json_019'),
-    # TEST 020:
+    # TEST 006:
     # Test that whitespace in quoted tokens is handled properly
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'localabif/bolson-nameq/votedata-2024-01-27/2022-08-16_Alaska-U.S._Representative_(Special_General).abif',
                  'is_equal',
                  ["candidates", "Begich, Nick"],
                  "Begich, Nick",
-                 id='json_020'),
-    # TEST 021:
+                 id='core_006'),
+    # TEST 007:
     # Test that blank abif prefstrs are parsed and reported
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/mock-elections/tennessee-example-blank-prefstr.abif',
                  'is_equal',
                  ["votelines", 0, "prefstr"],
                  "",
-                 id='json_021'),
-    # TEST 022:
+                 id='core_007'),
+    # TEST 008:
     # Test that embedded quotes are allowed within square brackets
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/mock-elections/tennessee-example-nested-quote.abif',
                  'is_equal',
                  ["votelines", 0, "prefs", "\"Memph\" Memphis", "rating"],
                  5,
-                 id='json_022'),
-    # TEST 023:
+                 id='core_008'),
+    # TEST 009:
     # Test the way that ABIF files with nothing but blanks still counts the ballots
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/mock-elections/mock-all-blank.abif',
                  'is_equal',
                  ["metadata", "ballotcount"],
                  100,
-                 id='json_023'),
-    # TEST 024:
-    # Test the way that ABIF files with nothing but blanks still counts the ballots
-    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'FPTP'],
-                 'testdata/mock-elections/mock-all-blank.abif',
-                 'is_equal',
-                 ["winners"],
-                 [],
-                 id='json_024'),
-    # TEST 025:
+                 id='core_009'),
+    # TEST 010:
     # Test empty ABIF input string
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/questionable/empty.abif',
                  'is_equal',
                  ['metadata', 'ballotcount'],
                  0,
-                 id='json_025'),
-    # TEST 026:
+                 id='core_010'),
+    # TEST 011:
     # Test ABIF with one voteline and one cand no newline
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/questionable/one-A.abif',
                  'is_equal',
                  ['metadata', 'ballotcount'],
                  1,
-                 id='json_026'),
-    # TEST 027:
+                 id='core_011'),
+    # TEST 012:
     # Test ABIF with one voteline and one cand with newline
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/questionable/one-A-LF.abif',
                  'is_equal',
                  ['metadata', 'ballotcount'],
                  1,
-                 id='json_027'),
-    # TEST 028:
+                 id='core_012'),
+    # TEST 013:
     # Test parsing of the Tennessee example in SF CVR format
     pytest.param(
         ['-f', 'sfjson',
@@ -291,10 +144,9 @@ testlist = [
         'is_equal',
         ["metadata", "ballotcount"],
         100,
-        id='json_028'
+        id='core_013'
     ),
-
-    # TEST 029:
+    # TEST 014:
     # Test parsing of the Tennessee example in SF CVR format - specific voteline rank
     pytest.param(
         ['-f', 'sfjson',
@@ -306,9 +158,9 @@ testlist = [
         'is_equal',
         ["votelines", 0, "prefs", "Memph", "rank"],
         1,
-        id='json_029'
+        id='core_014'
     ),
-    # TEST 030:
+    # TEST 015:
     # Make sure that we have 100 ballots on race #2 of the sample zipfile
     pytest.param(
         ['-f', 'sfjson',
@@ -320,9 +172,9 @@ testlist = [
         'is_equal',
         ["metadata", "ballotcount"],
         100,
-        id='json_030'
+        id='core_015'
     ),
-    # TEST 031:
+    # TEST 016:
     # Make sure that Jackson shows up in race #2 in the sample zipfile
     pytest.param(
         ['-f', 'sfjson',
@@ -334,9 +186,9 @@ testlist = [
         'is_equal',
         ["votelines", 0, "prefs", "Jackson", "rank"],
         1,
-        id='json_031'
+        id='core_016'
     ),
-    # TEST 032:
+    # TEST 017:
     # Make sure Memph has 42 first-place votes in race #1 in the sample zipfile
     pytest.param(
         ['-f', 'sfjson',
@@ -349,9 +201,9 @@ testlist = [
         'is_equal',
         ["votelines", 0, "qty"],
         42,
-        id='json_032'
+        id='core_017'
     ),
-    # TEST 033:
+    # TEST 018:
     # Ensure Murfreesboro has 26 first-place votes in race #1 in the sample zipfile
     pytest.param(
         ['-f', 'sfjson',
@@ -364,9 +216,9 @@ testlist = [
         'is_equal',
         ["votelines", 1, "qty"],
         26,
-        id='json_033'
+        id='core_018'
     ),
-    # TEST 034:
+    # TEST 019:
     # Test that trailing spaces in candidate definitions don't truncate names
     # FIXME: ABIF parser currently fails to handle trailing spaces correctly 
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
@@ -374,51 +226,51 @@ testlist = [
                  'is_equal',
                  ["candidates", "Memph"],
                  "Memphis, TN",
-                 id='json_034',
+                 id='core_019',
                  marks=pytest.mark.xfail(reason="TDD: ABIF parser should handle trailing spaces in candidate definitions")),
-    # TEST 035:
+    # TEST 020:
     # Test that trailing spaces don't affect Nashville either
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/questionable/trailingspace-tenn.abif',
                  'is_equal',
                  ["candidates", "Nash"],
                  "Nashville, TN",
-                 id='json_035',
+                 id='core_020',
                  marks=pytest.mark.xfail(reason="TDD: ABIF parser should handle trailing spaces in candidate definitions")),
-    # TEST 036:
+    # TEST 021:
     # Test that STAR voting shows correct candidate names despite trailing spaces
     pytest.param(['-t', 'json', '-m', 'STAR'],
                  'testdata/questionable/trailingspace-tenn.abif',
                  'is_equal',
                  ['winner_names', 0],
                  'Nashville, TN',
-                 id='json_036',
+                 id='core_021',
                  marks=pytest.mark.xfail(reason="TDD: STAR output should show full names even with trailing space bug")),
-    # TEST 037:
+    # TEST 022:
     # Test that score voting text output shows correct names (will fail due to trailing space bug)
     pytest.param(['-t', 'text', '-m', 'score'],
                  'testdata/questionable/trailingspace-tenn.abif',
                  'contains',
                  ['text_output'],
                  'Memphis, TN',
-                 id='json_037',
+                 id='core_022',
                  marks=pytest.mark.xfail(reason="TDD: Score voting should show full candidate names")),
-    # TEST 038:
+    # TEST 023:
     # Test ballot count is still correct despite trailing spaces
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/questionable/trailingspace-tenn.abif',
                  'is_equal',
                  ["metadata", "ballotcount"],
                  100,
-                 id='json_038'),
-    # TEST 039:
+                 id='core_023'),
+    # TEST 024:
     # Test that vote quantities are parsed correctly despite trailing spaces
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/questionable/trailingspace-tenn.abif',
                  'is_equal',
                  ["votelines", 0, "qty"],
                  42,
-                 id='json_039'),
+                 id='core_024'),
 ]
 
 @pytest.mark.parametrize(

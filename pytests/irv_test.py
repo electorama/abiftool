@@ -138,3 +138,97 @@ def test_IRV_multiple_calls(abif_filename):
     abiflib_test_log(outstr)
 
     assert len(call001['rounds']) == len(call002['rounds'])
+
+
+# Additional IRV tests moved from core_test.py
+# These tests use JSON output format to verify IRV calculation logic
+
+irv_json_testlist = [
+    # TEST IRV_005:
+    # Test IRV with the SF 2018 special election, checking if the winner is correct
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/california/sf2018special-results.abif',
+        'is_equal',
+        ["roundmeta", -1, "winner"],
+        ["LONDON_BREED"],
+        id='irv_json_005'
+    ),
+    # TEST IRV_006:
+    # Test IRV with the SF 2018 special election, checking for eliminated candidates
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/california/sf2018special-results.abif',
+        'is_equal',
+        ["roundmeta", -1, "eliminated"],
+        ["MARK_LENO"],
+        id='irv_json_006'
+    ),
+    # TEST IRV_007:
+    # Test IRV with the SF 2018 special election, checking for starting quantity of votes
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/california/sf2018special-results.abif',
+        'is_equal',
+        ["roundmeta", -1, "startingqty"],
+        254016,
+        id='irv_json_007'
+    ),
+    # TEST IRV_008:
+    # Test IRV with the SF 2018 special election, checking the final count of votes for the winner
+    # FIXME - the report from the city says Breed won with 115977 in the final round, but my
+    # count shows 116020
+    # SF Report:
+    #  https://www.sfelections.org/results/20180605/data/20180627/mayor/20180627_mayor.pdf
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/california/sf2018special-results.abif',
+        'is_equal',
+        ["rounds", -1, "LONDON_BREED"],
+        116020,
+        id='irv_json_008'
+    ),
+    # TEST IRV_009:
+    # Test IRV with the SF 2018 special election, checking if a WRITE_IN candidate is present
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/california/sf2018special-results.abif',
+        'is_equal',
+        ["roundmeta", 0, "eliminated", 3],
+        r'WRITE_IN',
+        id='irv_json_009'
+    ),
+    # TEST IRV_010:
+    # Test IRV with a mock election, checking if it uses 14 rounds as expected
+    pytest.param(
+        ['-f', 'abif', '-t', 'irvjson'],
+        'testdata/mock-elections/mock-twotie.abif',
+        'contains',
+        ["roundmeta", 13, "all_eliminated"],
+        r'F',
+        id='irv_json_010'
+    ),
+    # TEST IRV_016:
+    # Test the deprecated '-t irvjson' parameter, which will be replaced by "-t json -m IRV" combo
+    pytest.param(['-f', 'abif', '-t', 'irvjson'],
+                 'testdata/mock-elections/tennessee-example-simple.abif',
+                 'is_equal',
+                 ["winner", 0],
+                 "Knox",
+                 id='irv_json_016'),
+    # TEST IRV_017:
+    # Test the modern "-t json -m IRV" combo
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'IRV'],
+                 'testdata/mock-elections/tennessee-example-simple.abif',
+                 'is_equal',
+                 ["winner", 0],
+                 "Knox",
+                 id='irv_json_017'),
+]
+
+@pytest.mark.parametrize(
+    'cmd_args, inputfile, testtype, keylist, value', irv_json_testlist
+)
+def test_irv_json_output(cmd_args, inputfile, testtype, keylist, value):
+    """Test IRV JSON output format"""
+    run_json_output_test_from_abif(cmd_args, inputfile, testtype, keylist, value)
