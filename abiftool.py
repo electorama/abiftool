@@ -306,6 +306,9 @@ def main():
         elif 'approval' in modifiers:
             approval_dict = approval_result_from_abifmodel(abifmodel)
             outstr += json.dumps(approval_dict, indent=4)
+        elif 'score' in modifiers:
+            score_dict = enhanced_score_result_from_abifmodel(abifmodel)
+            outstr += json.dumps(score_dict, indent=4)
         else:
             outstr += "Please specify modifier or choose 'jabmod' output format"
     elif (output_format == 'jabmod'):
