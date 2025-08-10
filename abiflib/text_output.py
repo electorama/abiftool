@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
+from abiflib.pairwise_tally import pairwise_count_dict, winlosstie_dict_from_pairdict
 import argparse
 import json
 import re
@@ -25,6 +26,7 @@ try:
     from texttable import Texttable
 except:
     pass
+import textwrap
 import urllib.parse
 
 
@@ -140,6 +142,32 @@ def headerfy_text_file(filetext, filename="???"):
     retval += "-------------------------\n"
     retval += filetext
     return retval
+
+
+def format_notices_for_text_output(notices):
+    """Format notices array into text output with consistent formatting.
+
+    Args:
+        notices: List of notice dictionaries with 'notice_type', 'short', and 'long' keys
+
+    Returns:
+        String with formatted notices, or empty string if no notices
+    """
+    if not notices:
+        return ""
+
+    result = ""
+    for notice in notices:
+        notice_type = notice.get('notice_type', 'info').upper()
+        result += f"\n[{notice_type}] {notice['short']}\n"
+
+        if notice.get('long'):
+            # Word wrap the long notice at 78 characters
+            wrapped = textwrap.fill(notice['long'], width=76, initial_indent='  ',
+                                    subsequent_indent='  ')
+            result += f"\n{wrapped}\n"
+
+    return result
 
 
 if __name__ == "__main__":

@@ -82,7 +82,7 @@ LOGOBJ = abiflib.LogfileSingleton()
         # TEST 015:
         pytest.param(['-t', 'text', '-m', 'STAR', '--add-scores'],
                      'testdata/burl2009/burl2009.abif',
-                     r"26167 stars \(from 6706 voters\) -- Andy Montroll",
+                     r"26,167 stars \(from 6,706 voters\) -- Andy Montroll",
                      #r"0 stars \(from 0 voters\) -- Andy Montroll",
                      id='scorestar_015'),
         # TEST 016:

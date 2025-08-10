@@ -18,6 +18,7 @@
 from abiflib.core import convert_abif_to_jabmod
 from abiflib.util import clean_dict, candlist_text_from_abif
 from abiflib.fptp_tally import FPTP_result_from_abifmodel
+from abiflib.text_output import format_notices_for_text_output
 import argparse
 import copy
 import json
@@ -402,7 +403,7 @@ def _generate_conversion_notices(conversion_meta):
         )
 
         notices.append({
-            "notice_type": "disclaimer",
+            "notice_type": "note",
             "short": short_text,
             "long": long_text
         })
@@ -483,15 +484,7 @@ def get_approval_report(abifmodel):
 
     # Add notices section if present
     if results.get('notices'):
-        for notice in results['notices']:
-            notice_type = notice.get('notice_type', 'info').upper()
-            report += f"\n[{notice_type}] {notice['short']}\n"
-
-            if notice.get('long'):
-                # Word wrap the long notice at 78 characters
-                wrapped = textwrap.fill(notice['long'], width=76, initial_indent='  ',
-                                        subsequent_indent='  ')
-                report += f"\n{wrapped}\n"
+        report += format_notices_for_text_output(results['notices'])
 
     return report
 

@@ -22,6 +22,7 @@ import math
 import pathlib
 import re
 import sys
+import time
 
 
 def basic_score_result_from_abifmodel(abifmodel):
@@ -70,10 +71,25 @@ def enhanced_score_result_from_abifmodel(abifmodel):
 
 
 def STAR_result_from_abifmodel(abifmodel):
-    import time
     retval = enhanced_score_result_from_abifmodel(abifmodel)
     bc = retval['totalvoters']
     retval['round1winners'] = retval['ranklist'][0:2]
+
+    candcount = len(abifmodel['candidates'])
+    if abifmodel.get('metadata', {}).get('is_ranking_to_rating'):
+        notice = {
+            "notice_type": "note",
+            "short": ("STAR ratings estimated from ranked ballots "
+                      "using Borda scoring method"),
+            "long": ( "The ranked ballots have been converted to STAR ratings "
+                      "using Borda scoring: each candidate receives points "
+                      "equal to (number_of_candidates - their_rank). In this "
+                      f"election, we have {candcount} candidates, so the 1st "
+                      f"choice gets {candcount - 1} points, the 2nd choice "
+                      f"gets {candcount - 2} points, etc. These Borda scores "
+                      "are then used as STAR ratings for tabulation by STAR." )
+        }
+        retval['notices'] = [notice]
     # Optimization: Only compute the pairwise result for the top two if possible
     finalists = retval['ranklist'][0:2]
     copecount = None
@@ -81,7 +97,6 @@ def STAR_result_from_abifmodel(abifmodel):
         fin1, fin2 = finalists
         # Only compute the head-to-head for the two finalists
         # Use the same logic as pairwise_count_dict but just for these two
-        from abiflib.pairwise_tally import pairwise_count_dict
         pairdict = {fin1: {fin2: 0}, fin2: {fin1: 0}}
         for vl in abifmodel['votelines']:
             qty = vl['qty']
@@ -179,19 +194,24 @@ def STAR_report(jabmod):
     retval = ""
     sr = STAR_result_from_abifmodel(jabmod)
     tvot = sr['totalvoters']
-    retval += f"Total voters: {tvot}\n"
+    retval += f"Total voters: {tvot:,}\n"
     retval += f"Scores:\n"
     for candtok in sr['ranklist']:
         candinfo = sr['scores'][candtok]
-        retval += f"- {candinfo['score']} stars"
-        retval += f" (from {candinfo['votercount']} voters)"
+        retval += f"- {candinfo['score']:,} stars"
+        retval += f" (from {candinfo['votercount']:,} voters)"
         retval += f" -- {candinfo['candname']}\n"
     retval += f"Finalists: \n"
-    retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']} of {tvot} voters\n"
+    retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']:,} of {tvot:,} voters\n"
     if sr['fin2n']:
-        retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']} of {tvot} voters\n"
-    retval += f"- {sr['final_abstentions']} abstentions\n"
+        retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']:,} of {tvot:,} voters\n"
+    retval += f"- {sr['final_abstentions']:,} abstentions\n"
     retval += f"STAR Winner: {sr['winner']}\n"
+
+    # Add notices section if present
+    if sr.get('notices'):
+        retval += format_notices_for_text_output(sr['notices'])
+
     return retval
 
 
