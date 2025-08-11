@@ -390,14 +390,18 @@ def _generate_conversion_notices(conversion_meta):
 
         viable_count = len(viable_candidates)
 
+        if (viable_count % 2) == 0:
+            viable_paren_note = f"(half of {viable_count}). "
+        else:
+            viable_paren_note = f"(half of {viable_count}, rounded up). "
         long_text = (
-            f"Favorite_viable_half conversion algorithm: find the candidate with the most "
+            f"The 'favorite_viable_half' conversion algorithm: find the candidate with the most "
             f"first preferences, and then determine the minimum number of figurative seats that would "
             f"need to be open in order for the candidate to exceed the Hare quota with the given first-prefs. "
             f"We use this to estimate how many candidates are likely to be viable candidates. "
             f"For this election by this calculation, {viable_count} candidates are considered viable. "
             f"The approximation then assumes each voter approves up to {viable_candidate_maximum} "
-            f"of their top-ranked viable candidates (half of {viable_count}, rounded up). "
+            f"of their top-ranked viable candidates {viable_paren_note}"
             f"All candidates ranked at or above the lowest-ranked of each voter's top {viable_candidate_maximum} "
             f"viable candidates receive approval."
         )
