@@ -33,13 +33,13 @@ testlist = [
         id='approval_002'
     ),
     # TEST 003:
-    # Test native approval voting - verify ballot type detection
+    # Verify ballot type detection for "choose_many" ballots
     pytest.param(
         ['-f', 'abif', '-t', 'json', '-m', 'approval'],
         'testdata/mock-elections/tennessee-example-approval.abif',
         'is_equal',
         ["ballot_type"],
-        "approval",
+        "choose_many",
         id='approval_003'
     ),
     # TEST 004:

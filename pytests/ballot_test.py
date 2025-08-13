@@ -13,10 +13,10 @@ ballot_type_testlist = [
         'testdata/mock-elections/tennessee-example-approval.abif',
         'is_equal',
         ["ballot_type"],
-        "approval",
+        "choose_many",
         id='tennessee-example-approval'
     ),
-    
+
     # Files with ranked ballots (>) -> ranked
     pytest.param(
         ['-f', 'abif', '-t', 'json', '-m', 'approval'],
@@ -74,7 +74,7 @@ ballot_type_testlist = [
         "rated",
         id='tennessee-vice-capital'
     ),
-    
+
     # Files with multi-level ratings (0-400, 0-5) -> rated
     pytest.param(
         ['-f', 'abif', '-t', 'json', '-m', 'approval'],
@@ -100,7 +100,7 @@ ballot_type_testlist = [
         "rated",
         id='tennessee-example-STAR-score-difference'
     ),
-    
+
     # Basic mock files -> ranked or choose_one
     pytest.param(
         ['-f', 'abif', '-t', 'json', '-m', 'approval'],
@@ -142,7 +142,7 @@ ballot_type_testlist = [
         "unknown",
         id='mock-all-blank'
     ),
-    
+
     # Special cases
     pytest.param(
         ['-f', 'abif', '-t', 'json', '-m', 'approval'],

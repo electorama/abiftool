@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib.core import convert_abif_to_jabmod
-from abiflib.util import clean_dict, candlist_text_from_abif, detect_ballot_type
+from abiflib.util import clean_dict, candlist_text_from_abif, find_ballot_type
 from abiflib.fptp_tally import FPTP_result_from_abifmodel
 from abiflib.text_output import format_notices_for_text_output
 import argparse
@@ -30,17 +30,12 @@ import pathlib
 import textwrap
 
 
-def has_approval_data(abifmodel):
-    """Detect if jabmod contains native approval data."""
-    return detect_ballot_type(abifmodel) == 'approval'
-
-
 def convert_to_approval_favorite_viable_half(abifmodel):
     """Convert ranked/rated ballots to approval using favorite_viable_half algorithm."""
     # Step 1: Get FPTP results to determine viable candidates
     fptp_results = FPTP_result_from_abifmodel(abifmodel)
     total_valid_votes = fptp_results['total_votes_recounted']
-    ballot_type = detect_ballot_type(abifmodel)
+    ballot_type = find_ballot_type(abifmodel)
 
     # Step 2: Determine number of viable candidates using iterative Hare quota
     sorted_candidates = sorted(fptp_results['toppicks'].items(),
@@ -171,9 +166,9 @@ def convert_to_approval_favorite_viable_half(abifmodel):
 
 def approval_result_from_abifmodel(abifmodel):
     """Calculate approval voting results from jabmod (main entry point)."""
-    ballot_type = detect_ballot_type(abifmodel)
+    ballot_type = find_ballot_type(abifmodel)
 
-    if ballot_type == 'approval':
+    if ballot_type == 'choose_many':
         # Handle native approval ballots directly
         return _calculate_approval_from_jabmod(abifmodel)
     else:
@@ -191,7 +186,7 @@ def _calculate_approval_from_jabmod(abifmodel):
 
     invalid_ballots = 0
     total_ballots_processed = abifmodel['metadata']['ballotcount']
-    original_ballot_type = detect_ballot_type(abifmodel)
+    original_ballot_type = find_ballot_type(abifmodel)
 
     # Check if this was converted from another ballot type
     conversion_meta = abifmodel.get('_conversion_meta', {})
