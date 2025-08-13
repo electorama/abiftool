@@ -16,7 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib.core import convert_abif_to_jabmod
-from abiflib.util import clean_dict, candlist_text_from_abif
+from abiflib.util import clean_dict, candlist_text_from_abif, detect_ballot_type
 from abiflib.fptp_tally import FPTP_result_from_abifmodel
 from abiflib.text_output import format_notices_for_text_output
 import argparse
@@ -28,126 +28,6 @@ import sys
 import urllib.parse
 import pathlib
 import textwrap
-
-
-def detect_ballot_type(abifmodel):
-    """
-    Detect the type of ballots in a jabmod structure.
-
-    Returns one of: 'approval', 'rated', 'ranked', 'choose_one', 'unknown'
-
-    This function is designed to eventually be moved to core.py as a
-    general utility for all voting methods.
-    """
-    has_ratings = False
-    has_ranks = False
-    has_binary_ratings = False
-    has_non_binary_ratings = False
-    has_equal_ranks = False
-    has_multiple_choices = False
-    has_comma_delimited = False
-    has_rank_delimited = False
-    non_blank_ballots = 0
-    total_ballots = 0
-
-    for vline in abifmodel['votelines']:
-        total_ballots += vline.get('qty', 1)
-        ballot_rankings = []
-        ballot_ratings = []
-        candidates_with_ratings = 0
-        total_candidates_on_ballot = len(vline['prefs'])
-
-        # Skip blank ballots (no preferences)
-        if total_candidates_on_ballot == 0:
-            continue
-
-        non_blank_ballots += vline.get('qty', 1)
-
-        for cand, prefs in vline['prefs'].items():
-            # Check for ratings
-            if 'rating' in prefs:
-                has_ratings = True
-                candidates_with_ratings += 1
-                rating = prefs['rating']
-                ballot_ratings.append(rating)
-
-                # Check for binary ratings (0 or 1)
-                if rating in [0, 1]:
-                    has_binary_ratings = True
-                else:
-                    has_non_binary_ratings = True
-
-            # Check for rankings
-            if 'rank' in prefs:
-                has_ranks = True
-                rank = prefs['rank']
-                ballot_rankings.append(rank)
-
-        # Check for equal rankings (ties)
-        if ballot_rankings:
-            unique_ranks = set(ballot_rankings)
-            if len(unique_ranks) < len(ballot_rankings):
-                has_equal_ranks = True
-
-        # Check if ballot has multiple choices
-        if total_candidates_on_ballot > 1:
-            has_multiple_choices = True
-
-        # Detect delimiter patterns from original prefstr if available
-        if 'prefstr' in vline:
-            prefstr = vline['prefstr']
-            if ',' in prefstr and '>' not in prefstr and '=' not in prefstr:
-                has_comma_delimited = True
-            if '>' in prefstr or '=' in prefstr:
-                has_rank_delimited = True
-
-    # If we have no non-blank ballots, we can't determine the type
-    if non_blank_ballots == 0:
-        return 'unknown'
-
-    # Decision logic for ballot type
-
-    # If we have comma-delimited format, it's not ranked
-    if has_comma_delimited and not has_rank_delimited:
-        if has_binary_ratings and not has_non_binary_ratings:
-            return 'approval'
-        elif has_non_binary_ratings:
-            return 'rated'
-        elif not has_ratings and has_multiple_choices:
-            return 'unknown'  # Comma-delimited without ratings is ambiguous
-        else:
-            return 'choose_one'
-
-    # Binary ratings or equal ranks with ratings = approval
-    if has_binary_ratings and not has_non_binary_ratings:
-        if has_equal_ranks or not has_ranks:
-            return 'approval'
-
-    # Non-binary ratings = rated (if all candidates have ratings)
-    if has_non_binary_ratings:
-        return 'rated'
-
-    # Pure rankings without ratings
-    if has_ranks and not has_ratings:
-        if has_multiple_choices:
-            return 'ranked'
-        else:
-            return 'choose_one'
-
-    # Mixed ratings and rankings
-    if has_ratings and has_ranks:
-        if has_binary_ratings and not has_non_binary_ratings:
-            return 'approval'
-        elif has_non_binary_ratings:
-            return 'rated'
-        else:
-            return 'unknown'
-
-    # No clear pattern detected
-    if has_multiple_choices:
-        return 'unknown'
-    else:
-        return 'choose_one'
 
 
 def has_approval_data(abifmodel):
