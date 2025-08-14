@@ -1,6 +1,8 @@
 {version: "0.1"}
 {title: "2009 Burlington mayoral election"}
 {description: "The mayoral election of 2009 when Bob Kiss (from the Vermont Progressive Party), defeated Andy Montroll (from the Democratic Party), and Kurt Wright (from the Republican Party) by the counting rules in place at the time (instant-runoff voting / ranked-choice voting)."}
+{ballot_type: "ranked"}
+{tally_method: "IRV"}
 #-----------------------
 =Kiss:[Bob Kiss (Progressive)]
 =Montroll:[Andy Montroll (Democrat)]
