@@ -84,6 +84,153 @@ def winlosstie_dict_from_pairdict(candidates, pairdict):
     return sorted_dict
 
 
+def calculate_pairwise_victory_sizes(pairdict, method="winning-votes"):
+    """
+    Calculate victory sizes for all pairwise matchups.
+
+    Args:
+        pairdict: Dictionary of pairwise vote counts
+        method: "winning-votes" (default) or "margins"
+
+    Returns:
+        List of dictionaries with victory information, sorted by victory size
+    """
+    candtoks = list(pairdict.keys())
+    victories = []
+
+    for winner in candtoks:
+        for loser in candtoks:
+            if winner == loser:
+                continue
+
+            winner_votes = pairdict[winner][loser]
+            loser_votes = pairdict[loser][winner]
+
+            if winner_votes is None or loser_votes is None:
+                continue
+
+            if winner_votes > loser_votes:
+                # Calculate victory size based on method
+                if method == "margins":
+                    victory_size = winner_votes - loser_votes
+                else:  # winning-votes (default)
+                    victory_size = winner_votes
+
+                victories.append({
+                    'winner': winner,
+                    'loser': loser,
+                    'winner_votes': winner_votes,
+                    'loser_votes': loser_votes,
+                    'victory_size': victory_size,
+                    'total_votes': winner_votes + loser_votes
+                })
+            elif winner_votes == loser_votes:
+                # Handle ties
+                victories.append({
+                    'winner': None,
+                    'loser': None,
+                    'tied_candidates': [winner, loser],
+                    'winner_votes': winner_votes,
+                    'loser_votes': loser_votes,
+                    'victory_size': 0,
+                    'total_votes': winner_votes + loser_votes,
+                    'is_tie': True
+                })
+
+    # Remove duplicate ties (since we iterate over all pairs)
+    unique_victories = []
+    tie_pairs_seen = set()
+
+    for victory in victories:
+        if victory.get('is_tie'):
+            # Create a sorted tuple to identify unique ties
+            tie_pair = tuple(sorted(victory['tied_candidates']))
+            if tie_pair not in tie_pairs_seen:
+                tie_pairs_seen.add(tie_pair)
+                unique_victories.append(victory)
+        else:
+            unique_victories.append(victory)
+
+    # Sort by victory size (descending for largest first, ascending for smallest first)
+    sorted_victories = sorted(unique_victories, key=lambda x: x['victory_size'], reverse=True)
+
+    return sorted_victories
+
+
+def generate_pairwise_summary_text(abifmodel, wltdict, victory_data, victory_method):
+    """
+    Generate text summary bullets for pairwise elections.
+    Format matches the examples in docs/summary-per-method.md
+    """
+    candidates = abifmodel['candidates']
+    candidate_list = list(wltdict.items())
+
+    if not candidate_list:
+        return "No pairwise data available.\n"
+
+    lines = []
+    lines.append("Pairwise Election Summary:")
+    lines.append("=" * 50)
+
+    # Winner
+    winner_token = candidate_list[0][0]
+    winner_record = candidate_list[0][1]
+    winner_name = candidates.get(winner_token, winner_token)
+    lines.append(f"* Winner: {winner_name} ({winner_record['wins']}-{winner_record['losses']}-{winner_record['ties']})")
+
+    # Runner-up
+    if len(candidate_list) > 1:
+        runner_up_token = candidate_list[1][0]
+        runner_up_record = candidate_list[1][1]
+        runner_up_name = candidates.get(runner_up_token, runner_up_token)
+        lines.append(f"* Runner-up: {runner_up_name} ({runner_up_record['wins']}-{runner_up_record['losses']}-{runner_up_record['ties']})")
+
+        # Find head-to-head between winner and runner-up
+        decisive_victories = [v for v in victory_data if not v.get('is_tie', False)]
+        for victory in decisive_victories:
+            if ((victory['winner'] == winner_token and victory['loser'] == runner_up_token) or
+                    (victory['winner'] == runner_up_token and victory['loser'] == winner_token)):
+                margin = victory['winner_votes'] - victory['loser_votes']
+                winner_name_h2h = candidates.get(victory['winner'], victory['winner'])
+                loser_name_h2h = candidates.get(victory['loser'], victory['loser'])
+                lines.append(f"* Head-to-head: {winner_name_h2h} beats {loser_name_h2h} ({victory['winner_votes']}-{victory['loser_votes']}; margin: {margin})")
+                break
+
+    # Victory margins analysis
+    decisive_victories = [v for v in victory_data if not v.get('is_tie', False)]
+    if decisive_victories:
+        smallest_victory = min(decisive_victories, key=lambda x: x['victory_size'])
+        largest_victory = max(decisive_victories, key=lambda x: x['victory_size'])
+
+        method_label = "margin" if victory_method == "margins" else "winning votes"
+
+        smallest_winner = candidates.get(smallest_victory['winner'], smallest_victory['winner'])
+        smallest_loser = candidates.get(smallest_victory['loser'], smallest_victory['loser'])
+        lines.append(f"* Smallest {method_label}: {smallest_winner} over {smallest_loser} "
+                     f"({smallest_victory['winner_votes']}-{smallest_victory['loser_votes']}; "
+                     f"{method_label}: {smallest_victory['victory_size']})")
+
+        largest_winner = candidates.get(largest_victory['winner'], largest_victory['winner'])
+        largest_loser = candidates.get(largest_victory['loser'], largest_victory['loser'])
+        lines.append(f"* Largest {method_label}: {largest_winner} over {largest_loser} "
+                     f"({largest_victory['winner_votes']}-{largest_victory['loser_votes']}; "
+                     f"{method_label}: {largest_victory['victory_size']})")
+
+    # Ties
+    ties = [v for v in victory_data if v.get('is_tie', False)]
+    if ties:
+        lines.append(f"* Pairwise ties: {len(ties)}")
+    else:
+        lines.append("* Pairwise ties: none")
+
+    # Total ballots
+    total_ballots = abifmodel.get('metadata', {}).get('ballotcount', 0)
+    if total_ballots > 0:
+        lines.append(f"* Total ballots counted: {total_ballots:,}")
+
+    return "\n".join(lines) + "\n"
+
+
 def full_copecount_from_abifmodel(abifmodel, pairdict=None):
     '''Consolidate pairwise tally and win-loss-tie structs'''
     copecount = {}

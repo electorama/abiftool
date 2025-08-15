@@ -5,8 +5,8 @@ from subprocess import run, PIPE
     'input_file, command_line_args, expected_output_length',
     [
         ('testdata/widjexample/widjexample.jabmod', ['-t', 'abif'], 22),
-        ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 8266),
-        ('testdata/burl2009/burl2009.abif', ['-t', 'text'], 26)
+        ('testdata/burl2009/burl2009.abif', ['-t', 'jabmod'], 8268),
+        ('testdata/burl2009/burl2009.abif', ['-t', 'text'], 36)
     ],
     ids=['linecount_001', 'linecount_002', 'linecount_003']
 )

@@ -73,15 +73,19 @@ MODIFIERS = [
     {'IRV': 'Show IRV/RCV results'},
     {'IRVextra': 'Extra data for deep analysis of IRV elections'},
     {'jcomments': 'Put comments in jabmod output if available'},
+    {'margins': 'Use margin-based victory measurements in pairwise summaries'},
+    {'pairlist': 'List all pairwise matchups with victory data'},
     {'pairwise': 'Show pairwise table (possibly without winlosstie info)'},
     {'score': 'Provide score results'},
     {'STAR': 'Provide STAR results'},
     {'svg': 'Add SVG to the output if avaiable'},
+    {'winning-votes': 'Use winning-votes victory measurements in pairwise summaries'},
     {'winlosstie': 'Provide win-loss-tie table (default)'}
 ]
 
 ABIF_VERSION = "0.1"
 ABIFMODEL_LIMIT = 2500
+
 
 def gen_epilog():
     ''' Generate format list for --help '''
@@ -103,9 +107,11 @@ def gen_epilog():
                         bullet="--modifier", dictlist=MODIFIERS)
     return retval
 
+
 def get_keys_from_dict_list(dictlist):
     retval = [key for d in dictlist for key in d]
     return retval
+
 
 def main():
     """Convert between .abif-adjacent formats."""
@@ -133,7 +139,7 @@ def main():
     parser.add_argument("-m", "--modifier", action='append',
                         choices=validmod, help='Catch-all for modified output specifiers.')
     parser.add_argument("-w", "--width", type=int, default=160,
-                        help="width when rendering output with texttable lib" )
+                        help="width when rendering output with texttable lib")
     parser.add_argument('--cleanws', action="store_true",
                         help='Clean whitespace in ABIF file')
     parser.add_argument('--add-scores', action="store_true",
@@ -190,7 +196,7 @@ def main():
     inputblobs = []
     if args.input_file == '-' or args.input_file == ['-']:
         inputstr = sys.stdin.read()
-    elif type(args.input_file) == list:
+    elif type(args.input_file) is list:
         for i, infile in enumerate(args.input_file):
             if not os.path.exists(infile):
                 print(f"The file '{infile}' doesn't exist.")
@@ -255,7 +261,7 @@ def main():
 
     # global modifiers
     if 'consolidate' in modifiers:
-        abifmodel =  consolidate_jabmod_voteline_objects(abifmodel)
+        abifmodel = consolidate_jabmod_voteline_objects(abifmodel)
 
     # the "-t/--to" option
     output_format = args.to
@@ -280,11 +286,11 @@ def main():
         else:
             svg_text = None
         outstr = htmltable_pairwise_and_winlosstie(abifmodel,
-                                                   snippet = True,
-                                                   validate = True,
-                                                   modlimit = ABIFMODEL_LIMIT,
-                                                   svg_text = svg_text,
-                                                   modifiers = modifiers)
+                                                   snippet=True,
+                                                   validate=True,
+                                                   modlimit=ABIFMODEL_LIMIT,
+                                                   svg_text=svg_text,
+                                                   modifiers=modifiers)
     elif (output_format in ['irvjson', 'json', 'paircountjson']):
         # 'irvjson' and 'paircountjson' are deprecated in favor of
         # "-t 'json'" and "-m" with desired output modifier
@@ -309,6 +315,21 @@ def main():
         elif 'score' in modifiers:
             score_dict = enhanced_score_result_from_abifmodel(abifmodel)
             outstr += json.dumps(score_dict, indent=4)
+        elif 'pairlist' in modifiers:
+            # Determine victory method from modifiers
+            victory_method = 'winning-votes'  # default
+            if 'margins' in modifiers:
+                victory_method = 'margins'
+
+            pairdict = pairwise_count_dict(abifmodel)
+            victory_data = calculate_pairwise_victory_sizes(pairdict, victory_method)
+
+            # Convert to JSON-friendly format
+            pairlist_dict = {
+                'victory_method': victory_method,
+                'pairwise_matchups': victory_data
+            }
+            outstr += json.dumps(pairlist_dict, indent=4)
         else:
             outstr += "Please specify modifier or choose 'jabmod' output format"
     elif (output_format == 'jabmod'):
@@ -319,6 +340,21 @@ def main():
         copecount = full_copecount_from_abifmodel(abifmodel)
         outstr += copecount_diagram(copecount, outformat='svg')
     elif (output_format == 'text'):
+        # Add pairwise summary at the top if pairwise methods are requested
+        if 'winlosstie' in modifiers or 'pairwise' in modifiers or 'Copeland' in modifiers:
+            # Determine victory method from modifiers
+            victory_method = 'winning-votes'  # default
+            if 'margins' in modifiers:
+                victory_method = 'margins'
+
+            # Generate and display pairwise summary
+            pairdict = pairwise_count_dict(abifmodel)
+            wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
+            victory_data = calculate_pairwise_victory_sizes(pairdict, victory_method)
+
+            outstr += generate_pairwise_summary_text(abifmodel, wltdict, victory_data, victory_method)
+            outstr += "\n"
+
         if 'candlist' in modifiers:
             outstr += candlist_text_from_abif(abifmodel)
         if 'winlosstie' in modifiers:
@@ -327,10 +363,9 @@ def main():
             pairdict = pairwise_count_dict(abifmodel)
             outstr += textgrid_for_2D_dict(twodimdict=pairdict,
                                            tablelabel='   Loser ->\nv Winner',
-                                           width=args.width
-            )
+                                           width=args.width)
         if 'FPTP' in modifiers:
-            #fptpdict = FPTP_dict_from_jabmod(abifmodel)
+            # fptpdict = FPTP_dict_from_jabmod(abifmodel)
             outstr += get_FPTP_report(abifmodel)
         if 'approval' in modifiers:
             outstr += get_approval_report(abifmodel)
@@ -353,8 +388,7 @@ def main():
             outstr += Copeland_report(abifmodel['candidates'], copecount)
     elif (output_format == 'winlosstiejson'):
         pairdict = pairwise_count_dict(abifmodel)
-        wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'],
-                                                pairdict)
+        wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
         outstr += json.dumps(wltdict, indent=4)
     else:
         outstr += f"Cannot convert to {output_format} yet."

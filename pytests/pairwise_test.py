@@ -34,7 +34,7 @@ testlist = [
         id='pairwise_002'
     ),
     # TEST 003:
-    # Test the deprecated '-t paircountjson' parameter 
+    # Test the deprecated '-t paircountjson' parameter
     # TODO: Eventually remove when deprecated format is no longer supported
     pytest.param(['-f', 'abif', '-t', 'paircountjson'],
                  'testdata/mock-elections/tennessee-example-simple.abif',
@@ -50,6 +50,22 @@ testlist = [
                  ["Chat", "Knox"],
                  83,
                  id='pairwise_004'),
+    # TEST 005:
+    # Test "-t json -m pairlist" with default winning-votes method
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'pairlist'],
+                 'testdata/mock-elections/mock-wv-margins.abif',
+                 'is_equal',
+                 ["pairwise_matchups", 0, "victory_size"],
+                 56,
+                 id='pairwise_005'),
+    # TEST 006:
+    # Test "-t json -m pairlist -m margins" modifier combination
+    pytest.param(['-f', 'abif', '-t', 'json', '-m', 'pairlist', '-m', 'margins'],
+                 'testdata/mock-elections/mock-wv-margins.abif',
+                 'is_equal',
+                 ["pairwise_matchups", 0, "victory_size"],
+                 39,
+                 id='pairwise_006'),
 ]
 
 @pytest.mark.parametrize(
