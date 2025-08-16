@@ -32,7 +32,7 @@ LOGOBJ = abiflib.LogfileSingleton()
         # TEST 005:
         pytest.param(['-t', 'text', '-m', 'STAR'],
                      'testdata/tenn-example/tennessee-example-STAR.abif',
-                     r"261 stars \(from 100 voters\) -- Nashville, TN",
+                     r"261 stars \(29\.0%\) from 100 voters \(100\.0%\) -- Nashville, TN",
                      id='scorestar_005'),
         # TEST 006:
         pytest.param(['-t', 'text', '-m', 'STAR'],
@@ -82,7 +82,7 @@ LOGOBJ = abiflib.LogfileSingleton()
         # TEST 015:
         pytest.param(['-t', 'text', '-m', 'STAR', '--add-scores'],
                      'testdata/burl2009/burl2009.abif',
-                     r"26,167 stars \(from 6,706 voters\) -- Andy Montroll",
+                     r"26,167 stars \(25\.6%\) from 6,706 voters \(74\.7%\) -- Andy Montroll",
                      #r"0 stars \(from 0 voters\) -- Andy Montroll",
                      id='scorestar_015'),
         # TEST 016:

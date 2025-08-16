@@ -194,18 +194,33 @@ def STAR_report(jabmod):
     retval = ""
     sr = STAR_result_from_abifmodel(jabmod)
     tvot = sr['totalvoters']
+    total_stars = sr['total_all_scores']
+
+    # Add percentage strings to the data for both text output and template use
+    for candtok in sr['ranklist']:
+        candinfo = sr['scores'][candtok]
+        candinfo['score_pct_str'] = f"{candinfo['score']/total_stars:.1%}" if total_stars else "0.0%"
+        candinfo['voter_pct_str'] = f"{candinfo['votercount']/tvot:.1%}" if tvot else "0.0%"
+
+    # Add percentage strings for finalists
+    sr['fin1votes_pct_str'] = f"{sr['fin1votes']/tvot:.1%}" if tvot else "0.0%"
+    if sr['fin2votes']:
+        sr['fin2votes_pct_str'] = f"{sr['fin2votes']/tvot:.1%}" if tvot else "0.0%"
+    sr['final_abstentions_pct_str'] = f"{sr['final_abstentions']/tvot:.1%}" if tvot else "0.0%"
+
     retval += f"Total voters: {tvot:,}\n"
     retval += f"Scores:\n"
     for candtok in sr['ranklist']:
         candinfo = sr['scores'][candtok]
-        retval += f"- {candinfo['score']:,} stars"
-        retval += f" (from {candinfo['votercount']:,} voters)"
+        retval += f"- {candinfo['score']:,} stars ({candinfo['score_pct_str']})"
+        retval += f" from {candinfo['votercount']:,} voters ({candinfo['voter_pct_str']})"
         retval += f" -- {candinfo['candname']}\n"
+
     retval += f"Finalists: \n"
-    retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']:,} of {tvot:,} voters\n"
+    retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']:,} of {tvot:,} voters ({sr['fin1votes_pct_str']})\n"
     if sr['fin2n']:
-        retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']:,} of {tvot:,} voters\n"
-    retval += f"- {sr['final_abstentions']:,} abstentions\n"
+        retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']:,} of {tvot:,} voters ({sr['fin2votes_pct_str']})\n"
+    retval += f"- {sr['final_abstentions']:,} abstentions ({sr['final_abstentions_pct_str']})\n"
     retval += f"STAR Winner: {sr['winner']}\n"
 
     # Add notices section if present
