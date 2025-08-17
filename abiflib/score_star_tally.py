@@ -171,6 +171,23 @@ def STAR_result_from_abifmodel(abifmodel):
             retval['winner'] = f"tie {fin1n} and {fin2n}"
             retval['winner_names'] = [fin1n, fin2n]
             retval['winner_tokens'] = [fin1, fin2]
+
+    # Add percentage strings for both text output and template use
+    tvot = retval['totalvoters']
+    total_stars = retval['total_all_scores']
+
+    # Add percentage strings to candidate score data
+    for candtok in retval['ranklist']:
+        candinfo = retval['scores'][candtok]
+        candinfo['score_pct_str'] = f"{candinfo['score']/total_stars:.1%}" if total_stars else "0.0%"
+        candinfo['voter_pct_str'] = f"{candinfo['votercount']/tvot:.1%}" if tvot else "0.0%"
+
+    # Add percentage strings for finalists
+    retval['fin1votes_pct_str'] = f"{retval['fin1votes']/tvot:.1%}" if tvot else "0.0%"
+    if retval['fin2votes']:
+        retval['fin2votes_pct_str'] = f"{retval['fin2votes']/tvot:.1%}" if tvot else "0.0%"
+    retval['final_abstentions_pct_str'] = f"{retval['final_abstentions']/tvot:.1%}" if tvot else "0.0%"
+
     return retval
 
 
@@ -194,19 +211,6 @@ def STAR_report(jabmod):
     retval = ""
     sr = STAR_result_from_abifmodel(jabmod)
     tvot = sr['totalvoters']
-    total_stars = sr['total_all_scores']
-
-    # Add percentage strings to the data for both text output and template use
-    for candtok in sr['ranklist']:
-        candinfo = sr['scores'][candtok]
-        candinfo['score_pct_str'] = f"{candinfo['score']/total_stars:.1%}" if total_stars else "0.0%"
-        candinfo['voter_pct_str'] = f"{candinfo['votercount']/tvot:.1%}" if tvot else "0.0%"
-
-    # Add percentage strings for finalists
-    sr['fin1votes_pct_str'] = f"{sr['fin1votes']/tvot:.1%}" if tvot else "0.0%"
-    if sr['fin2votes']:
-        sr['fin2votes_pct_str'] = f"{sr['fin2votes']/tvot:.1%}" if tvot else "0.0%"
-    sr['final_abstentions_pct_str'] = f"{sr['final_abstentions']/tvot:.1%}" if tvot else "0.0%"
 
     retval += f"Total voters: {tvot:,}\n"
     retval += f"Scores:\n"
