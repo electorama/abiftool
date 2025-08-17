@@ -31,8 +31,8 @@ def pairwise_count_dict(abifmodel):
     votelines = abifmodel['votelines']
     candtoks = list(candidates.keys())
 
-    # Initialize the return value matrix
-    retval = {atok: {btok: (None if atok == btok else 0) for btok in candtoks} for atok in candtoks}
+    # Initialize the pairwise matrix
+    pairwise_matrix = {atok: {btok: (None if atok == btok else 0) for btok in candtoks} for atok in candtoks}
 
     maxrank = sys.maxsize
     for line in votelines:
@@ -47,7 +47,82 @@ def pairwise_count_dict(abifmodel):
                     continue
                 brank = ranks[btok]
                 if arank < brank:
-                    retval[atok][btok] += thisqty
+                    pairwise_matrix[atok][btok] += thisqty
+
+    return pairwise_matrix
+
+
+def pairwise_result_from_abifmodel(abifmodel):
+    '''Calculate pairwise results with notices (main entry point for web interface)'''
+    candidates = abifmodel['candidates']
+    candtoks = list(candidates.keys())
+
+    # Get the basic pairwise matrix
+    pairwise_matrix = pairwise_count_dict(abifmodel)
+
+    # Check for ties or cycles to determine if notice is needed
+    has_ties_or_cycles = False
+
+    # Check for pairwise ties
+    for cand1 in candtoks:
+        for cand2 in candtoks:
+            if cand1 != cand2:
+                cand1_votes = pairwise_matrix.get(cand1, {}).get(cand2, 0)
+                cand2_votes = pairwise_matrix.get(cand2, {}).get(cand1, 0)
+                if cand1_votes == cand2_votes:
+                    has_ties_or_cycles = True
+                    break
+        if has_ties_or_cycles:
+            break
+
+    # Check for cycles using win-loss-tie data
+    if not has_ties_or_cycles:
+        wltdict = winlosstie_dict_from_pairdict(candidates, pairwise_matrix)
+        sorted_candidates = sorted(candtoks, key=lambda x: wltdict[x]['wins'], reverse=True)
+        for i, cand1 in enumerate(sorted_candidates):
+            for j, cand2 in enumerate(sorted_candidates):
+                if i > j:  # cand1 should be ranked lower than cand2
+                    cand1_beats_cand2 = (pairwise_matrix.get(cand1, {}).get(cand2, 0) >
+                                         pairwise_matrix.get(cand2, {}).get(cand1, 0))
+                    if cand1_beats_cand2:
+                        has_ties_or_cycles = True
+                        break
+            if has_ties_or_cycles:
+                break
+
+    # Create result structure with notices
+    result = {
+        'pairwise_matrix': pairwise_matrix,
+        'has_ties_or_cycles': has_ties_or_cycles
+    }
+
+    # Add notices if there are ties or cycles
+    notices = []
+    if has_ties_or_cycles:
+        notices.append({
+            "notice_type": "note",
+            "short": "Condorcet cycle or Copeland tie",
+            "long": '"Victories" and "losses" sometimes aren\'t displayed in the expected location when there are ties and/or cycles in the results, but the numbers provided should be accurate.'
+        })
+
+    result['notices'] = notices
+    return result
+
+
+def get_pairwise_report(abifmodel):
+    """Generate human-readable pairwise voting report with notices."""
+    from abiflib.text_output import format_notices_for_text_output, textgrid_for_2D_dict
+    result = pairwise_result_from_abifmodel(abifmodel)
+
+    retval = ""
+    # Add the main pairwise matrix display
+    retval += textgrid_for_2D_dict(twodimdict=result['pairwise_matrix'],
+                                   tablelabel='   Loser ->\nv Winner')
+
+    # Add notices section if present
+    if result.get('notices'):
+        retval += format_notices_for_text_output(result['notices'])
+
     return retval
 
 

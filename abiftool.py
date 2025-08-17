@@ -74,6 +74,7 @@ MODIFIERS = [
     {'IRVextra': 'Extra data for deep analysis of IRV elections'},
     {'jcomments': 'Put comments in jabmod output if available'},
     {'margins': 'Use margin-based victory measurements in pairwise summaries'},
+    {'notices': 'Include notices in output (when combined with voting methods)'},
     {'pairlist': 'List all pairwise matchups with victory data'},
     {'pairwise': 'Show pairwise table (possibly without winlosstie info)'},
     {'score': 'Provide score results'},
@@ -301,8 +302,15 @@ def main():
                 abifmodel, include_irv_extra=include_irv_extra)
             outstr += json.dumps(clean_dict(IRV_dict), indent=4)
         elif output_format == 'paircountjson' or 'pairwise' in modifiers:
-            pairdict = pairwise_count_dict(abifmodel)
-            outstr += json.dumps(pairdict, indent=4)
+            if 'notices' in modifiers:
+                # Use new function that includes notices
+                from abiflib.pairwise_tally import pairwise_result_from_abifmodel
+                pairwise_result = pairwise_result_from_abifmodel(abifmodel)
+                outstr += json.dumps(pairwise_result, indent=4)
+            else:
+                # Use original function for backward compatibility
+                pairdict = pairwise_count_dict(abifmodel)
+                outstr += json.dumps(pairdict, indent=4)
         elif 'STAR' in modifiers:
             STAR_dict = STAR_result_from_abifmodel(abifmodel)
             outstr += json.dumps(STAR_dict, indent=4)
@@ -360,10 +368,16 @@ def main():
         if 'winlosstie' in modifiers:
             outstr += texttable_pairwise_and_winlosstie(abifmodel)
         if 'pairwise' in modifiers:
-            pairdict = pairwise_count_dict(abifmodel)
-            outstr += textgrid_for_2D_dict(twodimdict=pairdict,
-                                           tablelabel='   Loser ->\nv Winner',
-                                           width=args.width)
+            if 'notices' in modifiers:
+                # Use new function that includes notices
+                from abiflib.pairwise_tally import get_pairwise_report
+                outstr += get_pairwise_report(abifmodel)
+            else:
+                # Use original function for backward compatibility
+                pairdict = pairwise_count_dict(abifmodel)
+                outstr += textgrid_for_2D_dict(twodimdict=pairdict,
+                                               tablelabel='   Loser ->\nv Winner',
+                                               width=args.width)
         if 'FPTP' in modifiers:
             # fptpdict = FPTP_dict_from_jabmod(abifmodel)
             outstr += get_FPTP_report(abifmodel)
