@@ -449,6 +449,61 @@ def IRV_dict_from_jabmod(jabmod, include_irv_extra=False):
     return retval
 
 
+def IRV_result_from_abifmodel(abifmodel):
+    """Create IRV result with summary data for consistent display in CLI and web"""
+    from . import convert_abif_to_jabmod
+    if isinstance(abifmodel, str):
+        jabmod = convert_abif_to_jabmod(abifmodel)
+    else:
+        jabmod = abifmodel
+
+    # Get the basic IRV computation
+    irv_dict = IRV_dict_from_jabmod(jabmod)
+
+    # Add summary information
+    result = {}
+    result['irv_dict'] = irv_dict
+    result['winner'] = irv_dict['winner']
+    result['winner_name'] = irv_dict['winnerstr']
+
+    # Get final round information
+    if irv_dict['rounds'] and irv_dict['roundmeta']:
+        final_round = irv_dict['rounds'][-1]
+        final_meta = irv_dict['roundmeta'][-1]
+
+        # Sort final round candidates by vote count
+        final_candidates = sorted(final_round.items(), key=lambda x: x[1], reverse=True)
+
+        result['final_round_candidates'] = final_candidates
+        result['winner_votes'] = final_candidates[0][1] if final_candidates else 0
+        result['runner_up'] = final_candidates[1][0] if len(final_candidates) > 1 else None
+        result['runner_up_votes'] = final_candidates[1][1] if len(final_candidates) > 1 else 0
+
+        # Summary statistics
+        total_ballots = irv_dict['roundmeta'][0]['startingqty']
+        result['total_ballots'] = total_ballots
+        result['final_round_counted'] = final_meta['countedqty']
+        result['final_round_exhausted'] = total_ballots - final_meta['countedqty']
+        result['majority_threshold'] = total_ballots // 2 + 1
+        result['num_rounds'] = len(irv_dict['rounds'])
+
+        # Calculate percentages
+        if total_ballots > 0:
+            result['winner_percentage'] = (result['winner_votes'] / total_ballots) * 100
+            result['runner_up_percentage'] = (result['runner_up_votes'] / total_ballots) * 100 if result['runner_up_votes'] else 0
+            result['final_round_counted_percentage'] = (result['final_round_counted'] / total_ballots) * 100
+            result['final_round_exhausted_percentage'] = (result['final_round_exhausted'] / total_ballots) * 100
+            result['majority_threshold_percentage'] = (result['majority_threshold'] / total_ballots) * 100
+        else:
+            result['winner_percentage'] = 0
+            result['runner_up_percentage'] = 0
+            result['final_round_counted_percentage'] = 0
+            result['final_round_exhausted_percentage'] = 0
+            result['majority_threshold_percentage'] = 0
+
+    return result
+
+
 def get_IRV_report(IRV_dict):
     winner = IRV_dict['winner']
     rounds = IRV_dict['rounds']
