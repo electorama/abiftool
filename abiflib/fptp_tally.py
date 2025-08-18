@@ -64,7 +64,7 @@ def FPTP_result_from_abifmodel(abifmodel):
 
     top_pct = (maxtop / total_valid_votes) * 100 if total_valid_votes > 0 else 0
 
-    return {
+    result = {
         'toppicks': toppicks,
         'winners': winners,
         'top_qty': maxtop,
@@ -73,6 +73,19 @@ def FPTP_result_from_abifmodel(abifmodel):
         'total_votes': total_ballots_processed,
         'invalid_ballots': invalid_ballots
     }
+
+    # Add notice if this election uses ranked ballots
+    notices = []
+    if abifmodel.get('metadata', {}).get('ballot_type') == 'ranked':
+        notices.append({
+            'notice_type': 'note',
+            'short': 'Only using first-choices on ranked ballots'
+        })
+
+    if notices:
+        result['notices'] = notices
+
+    return result
 
 
 def get_FPTP_report(abifmodel):

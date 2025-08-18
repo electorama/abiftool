@@ -13,4 +13,5 @@ This is a very incomplete list of incomplete tasks for abiftool
   - [ ] Create bifhub and merge fetchmgr.py into it (see awt/docs/bifhub.md)
   - [ ] Set ballot_type/tally_method when converting real elections to ABIF
         e.g. sftxt_fmt.py, preflib_fmt.py, nycdem_fmt.py, debvote_fmt.py, etc.
+  - [ ] Update fetchmgr.py to automatically set ballot_type metadata during import
   - Moar [[Code hygiene]] (see above)
