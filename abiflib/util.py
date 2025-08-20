@@ -198,9 +198,16 @@ def get_abiftool_dir():
     if abiftool_py_real.is_file():
         return str(real_parent)
 
-    # 3. Give up
+    # 3. If installed as a wheel with data files, testdata may live under
+    #    sys.prefix/testdata. In that case, return sys.prefix so callers that
+    #    append '/testdata' will resolve correctly.
+    prefix_testdata = Path(sys.prefix) / 'testdata'
+    if prefix_testdata.is_dir():
+        return str(Path(sys.prefix))
+
+    # 4. Give up
     raise FileNotFoundError(
-        "abiftool.py not found in {parent_dir} or {real_parent}.")
+        "abiftool.py not found; and no testdata under sys.prefix/testdata.")
 
 
 def utf8_string_to_abif_token(longstring, max_length=20, add_sha1=False):
@@ -217,4 +224,3 @@ def utf8_string_to_abif_token(longstring, max_length=20, add_sha1=False):
         cleanstr = re.sub('WRITE_IN_', "wi_", cleanstr)
         retval = cleanstr[:max_length]
     return retval
-
