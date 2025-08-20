@@ -1,6 +1,6 @@
 [project]
 name = "abiftool"
-version = "0.33.0rc2"
+version = "0.33.0rc3"
 description = "abiftool parses, converts and analyzes ABIF (Aggregated Ballot Information Format) files."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -39,10 +39,31 @@ include-package-data = true
 
 [tool.setuptools.data-files]
 "fetchspecs" = ["fetchspecs/*.fetchspec.json"]
-"testdata" = [
-    # Include files from one and two levels deep, but avoid directories
-    "testdata/*/*.*",
-    "testdata/*/*/*.*"
+
+# Preserve testdata directory structure by targeting each subfolder explicitly
+"testdata/bolson-nameq" = [
+    "testdata/bolson-nameq/*"
+]
+"testdata/burl2009" = [
+    "testdata/burl2009/*"
+]
+"testdata/california" = [
+    "testdata/california/*"
+]
+"testdata/commasep" = [
+    "testdata/commasep/*"
+]
+"testdata/mock-elections" = [
+    "testdata/mock-elections/*"
+]
+"testdata/questionable" = [
+    "testdata/questionable/*"
+]
+"testdata/tenn-example" = [
+    "testdata/tenn-example/*"
+]
+"testdata/widjexample" = [
+    "testdata/widjexample/*"
 ]
 
 # Ignoring "E501" for now, since it seems to cause autopep8 to break
