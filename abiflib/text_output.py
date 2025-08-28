@@ -162,10 +162,18 @@ def format_notices_for_text_output(notices):
         result += f"\n[{notice_type}] {notice['short']}\n"
 
         if notice.get('long'):
-            # Word wrap the long notice at 78 characters
-            wrapped = textwrap.fill(notice['long'], width=76, initial_indent='  ',
-                                    subsequent_indent='  ')
-            result += f"\n{wrapped}\n"
+            # Handle paragraph breaks by processing each paragraph separately
+            paragraphs = notice['long'].split('\n\n')
+            wrapped_paragraphs = []
+            for paragraph in paragraphs:
+                if paragraph.strip():  # Skip empty paragraphs
+                    wrapped = textwrap.fill(paragraph.strip(), width=76,
+                                            initial_indent='  ',
+                                            subsequent_indent='  ')
+                    wrapped_paragraphs.append(wrapped)
+
+            if wrapped_paragraphs:
+                result += f"\n" + "\n\n".join(wrapped_paragraphs) + "\n"
 
     return result
 

@@ -153,12 +153,17 @@ def convert_to_approval_favorite_viable_half(abifmodel):
 
             approval_jabmod['votelines'].append(new_vline)
 
+    # Calculate total ballots processed
+    total_ballots = sum(vline['qty'] for vline in abifmodel['votelines'])
+
     # Store conversion metadata for notices
     approval_jabmod['_conversion_meta'] = {
         'method': 'favorite_viable_half',
         'original_ballot_type': ballot_type,
         'viable_candidates': viable_candidates,
-        'viable_candidate_maximum': viable_candidate_maximum
+        'viable_candidate_maximum': viable_candidate_maximum,
+        'total_ballots': total_ballots,
+        'candidate_names': abifmodel.get('candidates', {})
     }
 
     return approval_jabmod
@@ -260,25 +265,44 @@ def _generate_conversion_notices(conversion_meta):
         viable_candidates = conversion_meta.get('viable_candidates', [])
         viable_candidate_maximum = conversion_meta.get('viable_candidate_maximum', 0)
         original_ballot_type = conversion_meta.get('original_ballot_type', 'unknown')
+        total_ballots = conversion_meta.get('total_ballots', 0)
 
-        short_text = f"Approval counts estimated from {original_ballot_type} ballots using favorite_viable_half method"
+        # Get candidate display names from conversion metadata
+        candidate_names = conversion_meta.get('candidate_names', {})
+
+        # Convert viable candidates to display names
+        viable_names = []
+        for cand_token in viable_candidates:
+            display_name = candidate_names.get(cand_token, cand_token)
+            viable_names.append(display_name)
+
+        short_text = f"Approval counts estimated from {total_ballots:,} {original_ballot_type} ballots using favorite_viable_half method"
 
         viable_count = len(viable_candidates)
+        # Format viable names list with proper "and" for last item
+        if len(viable_names) > 2:
+            viable_names_str = ", ".join(viable_names[:-1]) + f", and {viable_names[-1]}"
+        elif len(viable_names) == 2:
+            viable_names_str = f"{viable_names[0]} and {viable_names[1]}"
+        else:
+            viable_names_str = viable_names[0] if viable_names else ""
 
         if (viable_count % 2) == 0:
             viable_paren_note = f"(half of {viable_count}). "
         else:
             viable_paren_note = f"(half of {viable_count}, rounded up). "
+
         long_text = (
             f"The 'favorite_viable_half' conversion algorithm: find the candidate with the most "
             f"first preferences, and then determine the minimum number of figurative seats that would "
             f"need to be open in order for the candidate to exceed the Hare quota with the given first-prefs. "
-            f"We use this to estimate how many candidates are likely to be viable candidates. "
-            f"For this election by this calculation, {viable_count} candidates are considered viable. "
+            f"We use this to estimate how many candidates are likely to be viable candidates.\n\n"
+            f"Using first-choice vote totals as a rough guide, approximately {viable_count} candidates appear viable: "
+            f"{viable_names_str}. "
             f"The approximation then assumes each voter approves up to {viable_candidate_maximum} "
             f"of their top-ranked viable candidates {viable_paren_note}"
-            f"All candidates ranked at or above the lowest-ranked of each voter's top {viable_candidate_maximum} "
-            f"viable candidates receive approval."
+            f"All candidates ranked at or above the lowest-ranked of each ballot's top viable candidates receive approval "
+            f"(considering up to {viable_candidate_maximum} viable candidates per ballot)."
         )
 
         notices.append({
