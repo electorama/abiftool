@@ -6,10 +6,10 @@ This is a very incomplete list of incomplete tasks for abiftool
    - [ ] Make more "pythonic" (whatever that means)
 ** Refactoring (refactor)
    - [ ] Clean up Python imports
-* For 0.33.0
+* For 0.34.0
   - [ ] Review [[https://github.com/electorama/abiftool/issues][bug list]]
   - [ ] See [[../CHANGELOG.org]]
-* Post 0.33.0
+* Post 0.34.0
   - [ ] Create bifhub and merge fetchmgr.py into it (see awt/docs/bifhub.md)
   - [ ] Set ballot_type/tally_method when converting real elections to ABIF
         e.g. sftxt_fmt.py, preflib_fmt.py, nycdem_fmt.py, debvote_fmt.py, etc.
