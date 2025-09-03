@@ -218,6 +218,32 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             abifstr = abiflib.convert_jabmod_to_abif(jabmod)
             with open(outfile, 'w') as f:
                 f.write(abifstr)
+        elif srcfmt == 'stlcvr':
+            # Minimal support: create a stub ABIF file per contest to mark intent.
+            # Full parsing/conversion will be added in abiflib.stlcvr_fmt later.
+            outfile = os.path.join(abifsubdir, extfile['abifloc'])
+            infilestr = " ".join(infiles)
+            sys.stderr.write(f"Creating stub ABIF for {infilestr} -> {outfile} ({srcfmt})\n")
+            # Build a minimal jabmod structure with metadata only
+            jabmod = {
+                'candidates': {},
+                'votelines': [],
+                'metadata': {
+                    'ballotcount': 0,
+                    'source_zip': os.path.relpath(infiles[0], start=abifsubdir) if infiles else None,
+                    'format': 'stl-cvr-hart-verity',
+                }
+            }
+            # Carry through description from fetchspec when available
+            if fetchdesc:
+                jabmod['metadata']['description'] = fetchdesc
+            # Pass through any helpful fields from the fetchspec entry
+            for k in ('contestid', 'contestslug', 'contest_name'):
+                if k in extfile:
+                    jabmod['metadata'][k] = extfile[k]
+            abifstr = abiflib.convert_jabmod_to_abif(jabmod)
+            with open(outfile, 'w') as f:
+                f.write(abifstr)
         elif srcfmt == 'nameq_archive':
             tarball_fn = os.path.join(dlsubdir, extfile['localcopy'])
             convert_nameq_tarball_to_abif_files(tarball_fn=tarball_fn,
