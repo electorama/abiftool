@@ -219,29 +219,68 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             with open(outfile, 'w') as f:
                 f.write(abifstr)
         elif srcfmt == 'stlcvr':
-            # Minimal support: create a stub ABIF file per contest to mark intent.
-            # Full parsing/conversion will be added in abiflib.stlcvr_fmt later.
+            # St. Louis Hart Verity XML CVR: perform conversion via abiflib if available
             outfile = os.path.join(abifsubdir, extfile['abifloc'])
             infilestr = " ".join(infiles)
-            sys.stderr.write(f"Creating stub ABIF for {infilestr} -> {outfile} ({srcfmt})\n")
-            # Build a minimal jabmod structure with metadata only
-            jabmod = {
-                'candidates': {},
-                'votelines': [],
-                'metadata': {
-                    'ballotcount': 0,
-                    'source_zip': os.path.relpath(infiles[0], start=abifsubdir) if infiles else None,
-                    'format': 'stl-cvr-hart-verity',
+            contestid = int(extfile.get('contestid')) if extfile.get('contestid') else None
+            sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile}\n")
+            # Prepare optional external reference URLs from fetchspec
+            extra_meta = {}
+            for urlkey in (
+                    'wikipedia_url', 'wikidata_url', 'ballotpedia_url',
+                    'official_results_url', 'electowiki_url'):
+                if urlkey in extfile:
+                    extra_meta[urlkey] = extfile[urlkey]
+            # Direct source URL of the downloaded container
+            if 'source_url' in extfile:
+                extra_meta['source_url'] = extfile['source_url']
+            elif 'url' in extfile:
+                extra_meta['source_url'] = extfile['url']
+            elif 'urls' in extfile and isinstance(extfile['urls'], list) and extfile['urls']:
+                extra_meta['source_url'] = extfile['urls'][0]
+            # Accept individual external URLs: ext_url_01..ext_url_09
+            for i in range(1, 10):
+                key = f'ext_url_{i:02d}'
+                if key in extfile:
+                    extra_meta[key] = extfile[key]
+            # Back-compat: 'ext_urls' list -> ext_url_01..09
+            if 'ext_urls' in extfile and isinstance(extfile['ext_urls'], list):
+                for i, url in enumerate(extfile['ext_urls'][:9], start=1):
+                    key = f'ext_url_{i:02d}'
+                    if key not in extra_meta:
+                        extra_meta[key] = url
+            # Fallback: map metaurls to ext_url_01.. as provided
+            if 'metaurls' in extfile and isinstance(extfile['metaurls'], list):
+                base = len([k for k in extra_meta if k.startswith('ext_url_')])
+                for j, url in enumerate(extfile['metaurls'][:max(0, 9 - base)], start=1):
+                    key = f'ext_url_{base + j:02d}'
+                    if key not in extra_meta:
+                        extra_meta[key] = url
+            try:
+                # Import here to avoid requiring abiflib to preload submodules
+                from abiflib.stlcvr_fmt import convert_stlcvr_to_jabmod
+                jabmod = convert_stlcvr_to_jabmod(infiles[0], contestid=contestid, extra_metadata=extra_meta)
+                jabmod = abiflib.consolidate_jabmod_voteline_objects(jabmod)
+                abifstr = abiflib.convert_jabmod_to_abif(jabmod)
+            except Exception as e:
+                sys.stderr.write(f"Warning: stlcvr conversion failed ({e}); writing stub metadata instead.\n")
+                jabmod = {
+                    'candidates': {},
+                    'votelines': [],
+                    'metadata': {
+                        'ballotcount': 0,
+                        'format': 'stl-cvr-hart-verity',
+                    }
                 }
-            }
-            # Carry through description from fetchspec when available
-            if fetchdesc:
-                jabmod['metadata']['description'] = fetchdesc
-            # Pass through any helpful fields from the fetchspec entry
-            for k in ('contestid', 'contestslug', 'contest_name'):
-                if k in extfile:
-                    jabmod['metadata'][k] = extfile[k]
-            abifstr = abiflib.convert_jabmod_to_abif(jabmod)
+                if fetchdesc:
+                    jabmod['metadata']['description'] = fetchdesc
+                for k in ('contestid', 'contestslug', 'contest_name'):
+                    if k in extfile:
+                        jabmod['metadata'][k] = extfile[k]
+                # Attach external URL metadata on stub as well
+                for k, v in extra_meta.items():
+                    jabmod['metadata'][k] = v
+                abifstr = abiflib.convert_jabmod_to_abif(jabmod)
             with open(outfile, 'w') as f:
                 f.write(abifstr)
         elif srcfmt == 'nameq_archive':

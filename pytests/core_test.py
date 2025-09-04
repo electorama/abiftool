@@ -35,6 +35,26 @@ testlist = [
         42,
         id='core_001'
     ),
+    # TEST 025:
+    # Ensure URL metadata is present in Burlington 2009 ABIF (Wikipedia)
+    pytest.param(
+        ['-f', 'abif', '-t', 'jabmod'],
+        'testdata/burl2009/burl2009.abif',
+        'contains',
+        ["metadata", "wikipedia_url"],
+        'wikipedia.org/wiki/2009_Burlington,_Vermont_mayoral_election',
+        id='core_025'
+    ),
+    # TEST 026:
+    # Ensure URL metadata is present in Burlington 2009 ABIF (Electowiki)
+    pytest.param(
+        ['-f', 'abif', '-t', 'jabmod'],
+        'testdata/burl2009/burl2009.abif',
+        'contains',
+        ["metadata", "electowiki_url"],
+        'electowiki.org/wiki/2009_Burlington_mayoral_election',
+        id='core_026'
+    ),
     # TEST 002:
     # Test roundtripping jabmod with a mock election example
     pytest.param(

@@ -20,7 +20,16 @@ import sys
 
 try:
     from abiflib import *
-    from abiflib.sfjson_fmt import convert_sfjson_to_jabmod, list_contests
+    from abiflib.sfjson_fmt import (
+        convert_sfjson_to_jabmod,
+        list_contests as list_sfjson_contests,
+        get_contest_list as get_sfjson_contests,
+    )
+    from abiflib.stlcvr_fmt import (
+        convert_stlcvr_to_jabmod,
+        list_contests as list_stlcvr_contests,
+        get_contest_list as get_stlcvr_contests,
+    )
 except ModuleNotFoundError as e:
     print(f"ModuleNotFoundError: {e.name}\n")
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -44,6 +53,7 @@ INPUT_FORMATS = [
     {'nameq': 'Brian Olson\'s format which URL-encoded version of the raw ballots'},
     {'preflib': 'Files downloaded from preflib.org'},
     {'sfjson': 'San Francisco JSON CVR format'},
+    {'stlcvr': 'St. Louis Hart Verity XML CVR (zip container)'},
     {'sftxt': 'Text files published by the City and County of San Francisco'},
     {'widj': 'Legacy format from Electowidget'}
 ]
@@ -146,9 +156,13 @@ def main():
     parser.add_argument('--add-scores', action="store_true",
                         help='Add scores to votelines when only rankings are provided')
     parser.add_argument('--contestid', type=int,
-                        help='The ID of the contest to process from a container')
+                        help='Contest ID from container (native for sfjson, positional for stlcvr)')
+    parser.add_argument('--contest',
+                        help='Contest selection by name or slug (format-agnostic)')
     parser.add_argument('-l', '--list-contests', action='store_true',
                         help='List contests in a container and exit')
+    parser.add_argument('--list-contests-json', action='store_true',
+                        help='List contests as JSON and exit')
 
     args = parser.parse_args()
     abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
@@ -168,14 +182,30 @@ def main():
         pr = cProfile.Profile()
         pr.enable()
 
-    if not args.input_file and not args.list_contests and not args.container:
+    if not args.input_file and not args.list_contests and not args.list_contests_json and not args.container:
         parser.error("Missing input file.  Please specify an input file or "
                      "container file.")
-    elif args.list_contests and args.container:
-        list_contests(args.container)
+    elif (args.list_contests or args.list_contests_json) and not args.container:
+        print("Error: The --list-contests flags require a --container file.")
         sys.exit()
-    elif args.list_contests and not args.container:
-        print("Error: The --list-contests flag requires a --container file.")
+    elif (args.list_contests or args.list_contests_json) and args.container:
+        # Route to the appropriate contest lister based on input format
+        if args.fromfmt == 'sfjson':
+            if args.list_contests_json:
+                contests = get_sfjson_contests(args.container)
+                payload = { 'format': 'sfjson', 'container': args.container, 'contests': contests }
+                print(json.dumps(payload, indent=2))
+            else:
+                list_sfjson_contests(args.container)
+        elif args.fromfmt == 'stlcvr':
+            if args.list_contests_json:
+                contests = get_stlcvr_contests(args.container)
+                payload = { 'format': 'stlcvr', 'container': args.container, 'contests': contests }
+                print(json.dumps(payload, indent=2))
+            else:
+                list_stlcvr_contests(args.container)
+        else:
+            print(f"Error: --list-contests with --container is not supported for format '{args.fromfmt}' yet.")
         sys.exit()
 
     # Determine input format based on file extension or override from
@@ -214,6 +244,7 @@ def main():
     if args.modifier:
         modifiers = set(args.modifier)
     else:
+        # Default pairwise summaries (no consolidation unless requested)
         modifiers = set(['candlist', 'Copeland', 'winlosstie'])
     add_ratings = args.add_scores
 
@@ -227,8 +258,42 @@ def main():
             sys.exit()
 
     if args.container:
+        # Resolve contest selection precedence: --contest then --contestid
+        resolved_contestid = args.contestid
+        if args.contest:
+            want = args.contest.strip().lower()
+            if input_format == 'sfjson':
+                contests = get_sfjson_contests(args.container)
+                matches = [c for c in contests if (c.get('name') or '').strip().lower() == want]
+                if not matches:
+                    valid = ', '.join([str(c.get('name')) for c in contests])
+                    print(f"Error: contest '{args.contest}' not found. Available: {valid}")
+                    sys.exit()
+                if len(matches) > 1:
+                    print(f"Error: multiple contests matched '{args.contest}'. Please use --contestid.")
+                    sys.exit()
+                resolved_contestid = matches[0]['native_id']
+            elif input_format == 'stlcvr':
+                contests = get_stlcvr_contests(args.container)
+                chosen = None
+                for c in contests:
+                    cname = (c.get('name') or '').strip().lower()
+                    cslug = (c.get('slug') or '').strip().lower()
+                    if want == cname or want == cslug:
+                        if chosen is not None:
+                            print(f"Error: multiple contests matched '{args.contest}'. Please use --contestid.")
+                            sys.exit()
+                        chosen = c
+                if not chosen:
+                    valid = ', '.join([(c.get('slug') or c.get('name')) for c in contests])
+                    print(f"Error: contest '{args.contest}' not found. Available: {valid}")
+                    sys.exit()
+                resolved_contestid = chosen['pos']  # 1-based positional index
+
         if input_format == 'sfjson':
-            abifmodel = convert_sfjson_to_jabmod(args.container, contestid=args.contestid)
+            abifmodel = convert_sfjson_to_jabmod(args.container, contestid=resolved_contestid)
+        elif input_format == 'stlcvr':
+            abifmodel = convert_stlcvr_to_jabmod(args.container, contestid=resolved_contestid)
         else:
             print(f"Error: The --container flag is not supported for the '{input_format}' format yet.")
             sys.exit()

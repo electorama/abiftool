@@ -11,6 +11,12 @@ This is a very incomplete list of incomplete tasks for abiftool
   - [ ] See [[../CHANGELOG.org]]
 * Post 0.34.0
   - [ ] Create bifhub and merge fetchmgr.py into it (see awt/docs/bifhub.md)
+  - [ ] Add `source_url` metadata to all generated localabif outputs (provenance)
+        Ensure every converter/fetch path that writes to `localabif/` sets
+        `metadata.source_url` to the exact download URL used (e.g., `url` or
+        first entry in `urls`). Apply to sfjson, sftxt, preflib, nycdems,
+        debvote, nameq (including bolson-nameq data from Brian Olson's repo),
+        and any others handled by fetchmgr or abiflib.
   - [ ] Set ballot_type/tally_method when converting real elections to ABIF
         e.g. sftxt_fmt.py, preflib_fmt.py, nycdem_fmt.py, debvote_fmt.py, etc.
   - [ ] Update fetchmgr.py to automatically set ballot_type metadata during import

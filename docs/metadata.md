@@ -10,11 +10,24 @@ An alphabetical list of metadata fields that one may see in an ABIF file.
 - **`ballotcount_abif_metadata`**: Original ballot count from ABIF metadata (if different from calculated)
 - **`comments`**: Array of comment tuples (line_number, comment_text) when `storecomments=True`
 - **`contestid`**: Numeric identifier for specific contest within multi-contest elections
+- **`contest_name`**: Human-readable name of the selected contest (e.g., "MAYOR")
+- **`contest_slug`**: Normalized token form of the contest name (e.g., `mayor`, `alderman-ward3`)
 - **`description`**: Detailed description of the election context and background
 - **`emptyballotcount`**: Number of empty/blank ballots
 - **`filename`**: Source filename for the election data
+- **`max_rating`**: Maximum rating value present in the dataset (e.g., 1 for approval-style ballots)
 - **`is_ranking_to_rating`**: Boolean flag indicating that ranked ballots were converted to ratings (triggers conversion notices)
 - **`max_rating`**: Maximum rating/score value for rated ballots (e.g., 5 for STAR's 0-5 scale, 1 for approval)
+- **`election_name`**: Election event name/title as provided by the source (when available)
+- **`election_date`**: Election date as provided by the source (when available)
+- **`jurisdiction`**: Jurisdiction or authority name (when available)
+- **`contest_native_id`**: Native contest identifier from the source system (string or number)
+- **`wikipedia_url`**: Link to the Wikipedia article for this contest
+- **`wikidata_url`**: Link to the Wikidata entity for this contest
+- **`ballotpedia_url`**: Link to the Ballotpedia page for this contest
+- **`official_results_url`**: Canonical official results page or PDF for this contest
+- **`electowiki_url`**: Link to the Electowiki page for this contest
+- **`ext_url_01`** .. **`ext_url_09`**: Ordered external reference links (see guidance below)
 - **`tally_method`**: The method used to determine the winner(s) of the election.
 - **`title`**: Human-readable election title (e.g., "2009 Burlington mayoral election")
 - **`version`**: ABIF format version (e.g., "0.1")
@@ -33,6 +46,10 @@ Describes the type of ballot format used:
 - `{ballot_type: "choose_one"}` - Single-choice ballots (FPTP/plurality)
 - `{ballot_type: "ranked"}` - Ranked choice ballots (preference order)
 - `{ballot_type: "rated"}` - Rated/scored ballots (numerical scores)  
+
+Note: abiflib will auto-detect `ballot_type` from the data, but some
+converters may set it explicitly (e.g., approval-style datasets set
+`ballot_type: choose_many` and `max_rating: 1`).
 
 ### `tally_method` 
 Specifies how ballots are counted/tallied:
@@ -53,3 +70,13 @@ automatically set by abiflib during processing:
 - `ballotcount` is recalculated from voteline quantities, and 
 - `is_ranking_to_rating` is set when STAR/score methods process ranked ballots
 - `filename` may be set by HTML output generators
+ - Converters for container formats may set `contest_name` and `contest_slug`; use
+   `source_url` for provenance. Avoid embedding local paths or internal parser names.
+
+## External Reference URL Guidance
+
+- Dedicated fields are preferred for the most common references: `wikipedia_url`, `wikidata_url`, `ballotpedia_url`, `official_results_url`, and `electowiki_url`.
+- Use `ext_url_01`..`ext_url_09` as an ordered set for additional external references.
+  - Ordering is meaningful; place preferred sources first (e.g., community analysis, well‑known data portals, quality news coverage).
+  - Examples include Approval.Vote reports, official but ancillary pages, news articles, blog posts, and data portals.
+  - Keep entries as absolute URLs; avoid mixing titles in the list — titles can be derived at render time if needed.

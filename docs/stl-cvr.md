@@ -4,7 +4,7 @@
 
 Design document for adding St. Louis Cast Vote Record (CVR) support to abiftool, enabling conversion of Hart Verity XML ballot data to ABIF format for analysis with abiflib.
 
-Current status: fetchmgr now downloads the official zip and can emit stub ABIF files (metadata only) for the target contests. Full XML parsing and conversion will follow in `abiflib`/`abiftool.py`.
+Current status: end-to-end supported. fetchmgr downloads the official zip and, using `abiflib.stlcvr_fmt`, converts each specified contest directly to ABIF. If conversion encounters an error, it falls back to emitting a stub ABIF (metadata only) so the pipeline is still traceable.
 
 ## St. Louis 2025 Election Data
 
@@ -77,13 +77,17 @@ Hart Verity XML → jabmod (internal abiflib model) → ABIF (output)
 
 Note: abiflib should parse and normalize the St. Louis CVR directly into jabmod (the internal JSON ABIF model). ABIF should be produced only as an output representation by calling `convert_jabmod_to_abif`, keeping jabmod as the authoritative in-memory structure for downstream analyses and report generation.
 
-### 0. Fetch + Stub Creation
+Ballot identity: individual ballots are not assigned persistent IDs in jabmod/ABIF. We do not store `CvrGuid` values; instead, we aggregate into consolidated votelines. Optional validation of GUID uniqueness may be performed during conversion, but no per-ballot identifiers are emitted.
+
+### 0. End-to-End via fetchmgr
 
 - Fetchspec: `abiftool/fetchspecs/stl-elections-2025.fetchspec.json` (one web entry per contest; mirrors SF specs)
-- Running `fetchmgr.py` downloads the zip and writes placeholder ABIF files with metadata (no ballots yet): `localabif/stlouis/*.abif`.
-- These stubs include `source_zip`, `contestid`, `contestslug`, `contest_name`, and `description` where provided.
+- Running `fetchmgr.py` downloads the zip once and converts each requested contest to ABIF using `abiflib.stlcvr_fmt.convert_stlcvr_to_jabmod(...)`, writing to `localabif/stlouis/*.abif`.
+- On conversion failure, fetchmgr writes a stub ABIF with metadata (`contestid`, `contestslug`, `contest_name`, `description`) to preserve traceability.
 
-### 1. XML Parser Module (planned)
+Consolidation: conversion paths (fetchmgr and CLI default) consolidate votelines by default, reducing output size and emphasizing aggregate patterns.
+
+### 1. XML Parser Module
 
 ```python
 class StLouisCvrParser:
@@ -97,7 +101,7 @@ class StLouisCvrParser:
         """Convert 'MAYOR' → 'mayor', 'ALDERMAN - WARD 3' → 'alderman-ward3'"""
 ```
 
-### 2. Ballot Data Model (planned)
+### 2. Ballot Data Model
 
 ```python
 @dataclass
@@ -130,12 +134,12 @@ class Contest:
 ## Expected Outputs
 
 ### ABIF Files Generated
-- Stub phase (in place now): files are created with metadata only (no ballots)
+- Current conversion output (end-to-end):
   - `stl-2025-mayor.abif`
   - `stl-2025-comptroller.abif`
   - `stl-2025-alderman-ward3.abif`
   - `stl-2025-alderman-ward11.abif`
-- Full conversion phase (planned): same filenames populated with full ballots and candidate lists
+  Each file contains candidates and approval-style votelines (rating=1 for approved candidates). If a contest fails to convert, a metadata-only stub is written instead.
 
 ### Metadata Preservation
 - Precinct information for geographic analysis
@@ -151,3 +155,9 @@ class Contest:
   - `abiflib` for ABIF format handling
   - `click` for CLI interface
   - `tqdm` for progress tracking
+
+## Contest Selection and Listings
+
+- `--contestid` semantics: native ID for `sfjson`; 1-based positional index for `stlcvr`.
+- `--contest` selector: accepts human-readable name (both formats) or slug (`stlcvr`). Takes precedence over `--contestid`.
+- `--list-contests-json`: emits JSON with `pos`, `name`, `slug` (stlcvr), and `native_id` for scripting. See `abiftool/docs/contestid.md` for schema and examples.

@@ -24,12 +24,26 @@ from abiflib.util import utf8_string_to_abif_token as _short_token
 
 def list_contests(container_path):
     """Lists the contests in a San Francisco JSON CVR zip file."""
+    contests = get_contest_list(container_path)
+    for i, c in enumerate(contests, start=1):
+        print(f"Contest {i}: {c['name']} (native_id: {c['native_id']})")
+
+def get_contest_list(container_path):
+    """Return a list of contest dicts for JSON listing and selection.
+
+    Each dict includes: pos (1-based), name, native_id.
+    """
     with zipfile.ZipFile(container_path, 'r') as zf:
         with zf.open('ContestManifest.json') as f:
             contestmanblob = json.load(f)
-
-        for contest in contestmanblob['List']:
-            print(f"Contest ID: {contest['Id']}, Description: {contest['Description']}")
+    contests = []
+    for i, contest in enumerate(contestmanblob['List'], start=1):
+        contests.append({
+            'pos': i,
+            'name': contest.get('Description'),
+            'native_id': contest.get('Id')
+        })
+    return contests
 
 def convert_sfjson_to_jabmod(container_path, contestid=None):
     """Converts a zip file of San Francisco JSON CVRs to a jabmod."""
