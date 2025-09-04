@@ -212,12 +212,12 @@ def convert_stlcvr_to_jabmod(zip_path: str,
     - Tracks ballotcount and emptyballotcount in metadata.
     """
     target_slug, contest_meta = _select_contest_slug(zip_path, contestid)
+    contest_name_local = contest_meta.get('name')
 
     abifmodel = get_emptyish_abifmodel()
     abifmodel['metadata']['ballotcount'] = 0
     abifmodel['metadata']['emptyballotcount'] = 0
-    abifmodel['metadata']['contest_slug'] = target_slug
-    abifmodel['metadata']['contest_name'] = contest_meta.get('name')
+    # Do not persist contest_slug or contest_name in metadata
     # Explicitly indicate approval-style ballots and cap rating at 1
     abifmodel['metadata']['ballot_type'] = 'choose_many'
     abifmodel['metadata']['max_rating'] = 1
@@ -238,33 +238,6 @@ def convert_stlcvr_to_jabmod(zip_path: str,
 
             # Opportunistically set event-level metadata once
             _maybe_set_event_metadata(abifmodel, root)
-            # Compose a descriptive title from internal metadata without altering case
-            if not abifmodel['metadata'].get('title'):
-                cname = abifmodel['metadata'].get('contest_name')
-                ename = abifmodel['metadata'].get('election_name')
-                juris = abifmodel['metadata'].get('jurisdiction')
-                edate = abifmodel['metadata'].get('election_date')
-
-                # Build base (election_name: contest_name) or fallback to contest_name or election_name
-                base = None
-                if ename and cname:
-                    base = f"{ename}: {cname}"
-                elif cname:
-                    base = cname
-                elif ename:
-                    base = ename
-
-                # Build prefix (jurisdiction and/or election_date)
-                prefix = None
-                if juris and edate:
-                    prefix = f"{juris} {edate}"
-                elif juris:
-                    prefix = juris
-                elif edate:
-                    prefix = edate
-
-                if base:
-                    abifmodel['metadata']['title'] = f"{prefix}: {base}" if prefix else base
 
             contests_el = root.find(f'{NS}Contests')
             if contests_el is None:
@@ -335,5 +308,20 @@ def convert_stlcvr_to_jabmod(zip_path: str,
                 abifmodel['metadata'][k] = list(v)
             else:
                 abifmodel['metadata'][k] = v
+
+    # Compose title after merging extra metadata, preserving original casing
+    if not abifmodel['metadata'].get('title'):
+        cname = contest_name_local
+        ename = abifmodel['metadata'].get('election_name')
+        edate = abifmodel['metadata'].get('election_date')
+        if ename and edate and cname:
+            abifmodel['metadata']['title'] = f"{ename} ({edate}; {cname})"
+        else:
+            if ename and cname:
+                abifmodel['metadata']['title'] = f"{ename}: {cname}"
+            elif cname:
+                abifmodel['metadata']['title'] = cname
+            elif ename:
+                abifmodel['metadata']['title'] = ename
 
     return abifmodel

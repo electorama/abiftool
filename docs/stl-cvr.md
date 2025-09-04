@@ -83,7 +83,7 @@ Ballot identity: individual ballots are not assigned persistent IDs in jabmod/AB
 
 - Fetchspec: `abiftool/fetchspecs/stl-elections-2025.fetchspec.json` (one web entry per contest; mirrors SF specs)
 - Running `fetchmgr.py` downloads the zip once and converts each requested contest to ABIF using `abiflib.stlcvr_fmt.convert_stlcvr_to_jabmod(...)`, writing to `localabif/stlouis/*.abif`.
-- On conversion failure, fetchmgr writes a stub ABIF with metadata (`contestid`, `contestslug`, `contest_name`, `description`) to preserve traceability.
+- On conversion failure, fetchmgr writes a stub ABIF with metadata (`contestid`, `description`) to preserve traceability.
 
 Consolidation: conversion paths (fetchmgr and CLI default) consolidate votelines by default, reducing output size and emphasizing aggregate patterns.
 

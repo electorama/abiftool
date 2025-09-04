@@ -231,6 +231,10 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
                     'official_results_url', 'electowiki_url'):
                 if urlkey in extfile:
                     extra_meta[urlkey] = extfile[urlkey]
+            # Optional election descriptors for better ABIF titles
+            for metakey in ('election_name', 'election_date', 'jurisdiction'):
+                if metakey in extfile:
+                    extra_meta[metakey] = extfile[metakey]
             # Direct source URL of the downloaded container
             if 'source_url' in extfile:
                 extra_meta['source_url'] = extfile['source_url']
@@ -274,9 +278,9 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
                 }
                 if fetchdesc:
                     jabmod['metadata']['description'] = fetchdesc
-                for k in ('contestid', 'contestslug', 'contest_name'):
-                    if k in extfile:
-                        jabmod['metadata'][k] = extfile[k]
+            for k in ('contestid',):
+                if k in extfile:
+                    jabmod['metadata'][k] = extfile[k]
                 # Attach external URL metadata on stub as well
                 for k, v in extra_meta.items():
                     jabmod['metadata'][k] = v

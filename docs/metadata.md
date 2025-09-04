@@ -10,8 +10,6 @@ An alphabetical list of metadata fields that one may see in an ABIF file.
 - **`ballotcount_abif_metadata`**: Original ballot count from ABIF metadata (if different from calculated)
 - **`comments`**: Array of comment tuples (line_number, comment_text) when `storecomments=True`
 - **`contestid`**: Numeric identifier for specific contest within multi-contest elections
-- **`contest_name`**: Human-readable name of the selected contest (e.g., "MAYOR")
-- **`contest_slug`**: Normalized token form of the contest name (e.g., `mayor`, `alderman-ward3`)
 - **`description`**: Detailed description of the election context and background
 - **`emptyballotcount`**: Number of empty/blank ballots
 - **`filename`**: Source filename for the election data
