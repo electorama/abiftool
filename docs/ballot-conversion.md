@@ -52,7 +52,17 @@ The following neutral variants can replace or complement Strategic Droop Simulat
 ## Approval → Ranked Conversion
 
 ### Problem Statement
-Converting approval ballots to ranked form enables IRV/RCV "what‑if" analysis, but multiple reasonable interpretations exist. The options below outline several high‑quality approaches with differing trade‑offs in transparency, computational cost, determinism, and how faithfully they preserve the approval signal.
+
+Sometimes we only have choose-many ballots (e.g. the St. Louis mayoral
+results), but it seems likethere should be ways of making crude
+estimates of how those voters would have voted if they had a full
+ranked ballot (like those used in in IRV elections or
+Condorcet/Copeland elections).  The options below outline several ways
+of estimating how folks in an approval-voting elections might have
+voted in alternative voting methods.  Since a "choose-many" has less
+information than a ranked ballot or a STAR-rated ballot, all of these
+are estimates that cannot completely capture the intent fo the
+aggregate electorate.  It's fun to guess, though!
 
 ### Proposed Algorithms
 
@@ -182,7 +192,14 @@ Notes:
 **Quality**: Medium  
 **Complexity**: Low
 
-Idea: Build a full ranking for each ballot deterministically, without fractions or randomness, by ordering within the approved set using a global, contest‑wide order: candidates with fewer total approvals rank higher; the approval winner ranks lowest within the approved tier. Only approved candidates appear on each voter’s ranking; unapproved do not appear (ballots exhaust after approved set).
+Idea: The least_approval_first algorithm orders all candidates in
+reverse approval order, and then assumes that the candidate with the
+lowest aggregate approval is the one that ranks highest among the
+candidates of the candidates approved on a particular ballot.  ChatGPT
+and I came up with the least-approval-first algorithm.  ChatGPT
+suggested a predetermined global order; my particular flourish was
+choosing reverse aggregate approval as the deterministic order.  It's
+a quick-n-dirty estimate that's not too hard to calculate.
 
 Procedure:
 1. Compute global approval totals per candidate across all ballots.
@@ -200,16 +217,19 @@ Cons:
 
 Variant: If desired to reduce exhaustion to near zero, append unapproved candidates in a deterministic order (e.g., same global order) after the approved list. This changes the interpretation and should be clearly disclosed; default here keeps only approved candidates.
 
-### Selection Considerations (Non‑Prescriptive)
+### Selection Considerations
 
-When choosing among Options A–F, consider:
-- Determinism vs. randomness tolerance
+Considerations:
+
+- Randomness versus determinism
 - Willingness to use fractional weights
 - Appetite for computational cost (e.g., ensembles)
 - Desire to minimize ballot exhaustion vs. preserve strict "approved‑only" ordering
 - Transparency and explainability to end users
 
-Any of the options A–F can be appropriate depending on context and goals.
+For abiflib (and awt), the lead awt developer decided to implement
+option F (the "least-approval-first" algorithm) for awt 0.34.  Other
+algorithms may be added in future versions.
 
 ## Implementation Guidelines
 

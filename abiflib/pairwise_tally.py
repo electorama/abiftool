@@ -52,8 +52,20 @@ def pairwise_count_dict(abifmodel):
     return pairwise_matrix
 
 
-def pairwise_result_from_abifmodel(abifmodel):
+def pairwise_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False):
     '''Calculate pairwise results with notices (main entry point for web interface)'''
+    # Optionally transform choose-many to ranked using least_approval_first
+    transformed = False
+    try:
+        from .util import find_ballot_type
+        bt = find_ballot_type(abifmodel)
+    except Exception:
+        bt = None
+    if transform_ballots and bt and bt != 'ranked':
+        from .approval_tally import build_ranked_from_choose_many
+        abifmodel = build_ranked_from_choose_many(abifmodel)
+        transformed = True
+
     candidates = abifmodel['candidates']
     candtoks = list(candidates.keys())
 
@@ -98,6 +110,12 @@ def pairwise_result_from_abifmodel(abifmodel):
 
     # Add notices if there are ties or cycles
     notices = []
+    if transformed:
+        notices.append({
+            "notice_type": "warning",
+            "short": "Note — ranked ballots inferred from choose-many ballots and approval results",
+            "long": 'Condorcet/Copeland was not used in this election. The ranked ballots shown here were inferred from choose-many ballots using approval results to create a deterministic global order within each voter\'s approved set. These results are hypothetical and provided for what-if analysis.'
+        })
     if has_ties_or_cycles:
         notices.append({
             "notice_type": "note",
@@ -109,10 +127,10 @@ def pairwise_result_from_abifmodel(abifmodel):
     return result
 
 
-def get_pairwise_report(abifmodel):
+def get_pairwise_report(abifmodel, *, transform_ballots: bool = False):
     """Generate human-readable pairwise voting report with notices."""
     from abiflib.text_output import format_notices_for_text_output, textgrid_for_2D_dict
-    result = pairwise_result_from_abifmodel(abifmodel)
+    result = pairwise_result_from_abifmodel(abifmodel, transform_ballots=transform_ballots)
 
     retval = ""
     # Add the main pairwise matrix display

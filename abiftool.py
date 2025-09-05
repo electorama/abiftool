@@ -368,15 +368,20 @@ def main():
                 abifmodel, include_irv_extra=include_irv_extra)
             outstr += json.dumps(clean_dict(IRV_dict), indent=4)
         elif output_format == 'paircountjson' or 'pairwise' in modifiers:
+            # Transform ballots for pairwise if requested; handled in abiflib
+            transform_pair = False
+            try:
+                from abiflib.util import find_ballot_type
+                transform_pair = ('transform-ballots' in modifiers) and (find_ballot_type(abifmodel) != 'ranked')
+            except Exception:
+                transform_pair = ('transform-ballots' in modifiers)
+
+            from abiflib.pairwise_tally import pairwise_result_from_abifmodel
+            pairwise_result = pairwise_result_from_abifmodel(abifmodel, transform_ballots=transform_pair)
             if 'notices' in modifiers:
-                # Use new function that includes notices
-                from abiflib.pairwise_tally import pairwise_result_from_abifmodel
-                pairwise_result = pairwise_result_from_abifmodel(abifmodel)
                 outstr += json.dumps(pairwise_result, indent=4)
             else:
-                # Use original function for backward compatibility
-                pairdict = pairwise_count_dict(abifmodel)
-                outstr += json.dumps(pairdict, indent=4)
+                outstr += json.dumps(pairwise_result['pairwise_matrix'], indent=4)
         elif 'STAR' in modifiers:
             STAR_dict = STAR_result_from_abifmodel(abifmodel)
             outstr += json.dumps(STAR_dict, indent=4)
@@ -421,8 +426,17 @@ def main():
             if 'margins' in modifiers:
                 victory_method = 'margins'
 
-            # Generate and display pairwise summary
-            pairdict = pairwise_count_dict(abifmodel)
+            # Generate and display pairwise summary (respect transform)
+            transform_pair = False
+            try:
+                from abiflib.util import find_ballot_type
+                transform_pair = ('transform-ballots' in modifiers) and (find_ballot_type(abifmodel) != 'ranked')
+            except Exception:
+                transform_pair = ('transform-ballots' in modifiers)
+
+            from abiflib.pairwise_tally import pairwise_result_from_abifmodel
+            pairwise_result = pairwise_result_from_abifmodel(abifmodel, transform_ballots=transform_pair)
+            pairdict = pairwise_result['pairwise_matrix']
             wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
             victory_data = calculate_pairwise_victory_sizes(pairdict, victory_method)
 
@@ -437,7 +451,7 @@ def main():
             if 'notices' in modifiers:
                 # Use new function that includes notices
                 from abiflib.pairwise_tally import get_pairwise_report
-                outstr += get_pairwise_report(abifmodel)
+                outstr += get_pairwise_report(abifmodel, transform_ballots=transform_pair)
             else:
                 # Use original function for backward compatibility
                 pairdict = pairwise_count_dict(abifmodel)
@@ -459,8 +473,8 @@ def main():
             except Exception:
                 bt = None
             if ('transform-ballots' in modifiers) and bt and bt != 'ranked':
-                from abiflib.approval_tally import approval_to_ranked_global_order
-                abif_for_irv = approval_to_ranked_global_order(abifmodel, include_unapproved=False)
+                from abiflib.approval_tally import build_ranked_from_choose_many
+                abif_for_irv = build_ranked_from_choose_many(abifmodel)
 
             irvdict = IRV_dict_from_jabmod(
                 abif_for_irv, include_irv_extra=include_irv_extra)

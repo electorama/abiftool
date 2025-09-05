@@ -264,15 +264,13 @@ def _calculate_approval_from_jabmod(abifmodel):
     }
 
 
-def approval_to_ranked_global_order(abifmodel, include_unapproved: bool = False, tie_breaker: str = 'token'):
-    """Convert choose_many ballots to ranked ballots (ranked_global_order)
+def build_ranked_from_choose_many(abifmodel, tie_breaker: str = 'token'):
+    """Build ranked ballots from choose_many ballots (least_approval_first)
 
     - Global/aggregate order is ascending by total approvals (fewest
       approvals rank highest).
     - Each ballot ranks only its approved candidates in that
       global/aggregate approval order.
-    - If include_unapproved is True, append the remaining candidates
-      in the same global order.
     - Returns a new jabmod with ranked prefs and attaches _conversion_meta.
     """
     # Ensure we have an approval jabmod for counting totals
@@ -281,8 +279,8 @@ def approval_to_ranked_global_order(abifmodel, include_unapproved: bool = False,
     if bt not in ('approval', 'choose_many'):
         base_for_counts = convert_to_approval_favorite_viable_half(abifmodel)
 
-    # Compute global order (least-approval-first)
-    global_order = compute_global_order_least_approval_first(base_for_counts, tie_breaker=tie_breaker)
+    # Compute order (least_approval_first)
+    order = get_order_least_approval_first(base_for_counts, tie_breaker=tie_breaker)
     all_tokens = list(base_for_counts.get('candidates', {}).keys())
 
     # Build ranked jabmod
@@ -298,13 +296,10 @@ def approval_to_ranked_global_order(abifmodel, include_unapproved: bool = False,
             if isinstance(p, dict):
                 if ('rating' in p and p['rating'] == 1) or ('rank' in p and p['rank'] == 1):
                     approved.append(tok)
-        # Order approvals by global order
-        ordered = [tok for tok in global_order if tok in approved]
+        # Order approvals by computed order
+        ordered = [tok for tok in order if tok in approved]
 
-        # Optionally append unapproved to reduce exhaustion (default False)
-        if include_unapproved:
-            remaining = [tok for tok in global_order if tok not in approved]
-            ordered.extend(remaining)
+        # Note: we intentionally do not append unapproved candidates.
 
         # Build ranked prefs
         new_prefs = {}
@@ -319,11 +314,10 @@ def approval_to_ranked_global_order(abifmodel, include_unapproved: bool = False,
     # Attach conversion metadata
     orig_bt = find_ballot_type(abifmodel)
     ranked_jabmod['_conversion_meta'] = {
-        'method': 'global_order_v1',
+        'method': 'least_approval_first',
         'original_ballot_type': orig_bt,
         'parameters': {
             'basis': 'ascending_total_approvals',
-            'include_unapproved': include_unapproved,
             'tie_breaker': tie_breaker,
         }
     }
@@ -331,8 +325,8 @@ def approval_to_ranked_global_order(abifmodel, include_unapproved: bool = False,
     return ranked_jabmod
 
 
-def compute_global_order_least_approval_first(abifmodel, tie_breaker: str = 'token'):
-    """Compute deterministic global order (Option F) by ascending total approvals.
+def get_order_least_approval_first(abifmodel, tie_breaker: str = 'token'):
+    """Get deterministic global order by ascending total approvals.
 
     - If the input is not approval/choose_many, convert via favorite_viable_half first.
     - Returns a list of candidate tokens sorted by (total approvals asc, tie by token).
@@ -501,7 +495,7 @@ def main():
     approval_dict = approval_result_from_abifmodel(jabmod)
     output = ""
     if args.global_order:
-        order = compute_global_order_least_approval_first(jabmod)
+        order = get_order_least_approval_first(jabmod)
         display_names = [jabmod.get('candidates', {}).get(tok, tok) for tok in order]
         output += "Global order (least-approval-first):\n"
         for i, (tok, name) in enumerate(zip(order, display_names), start=1):

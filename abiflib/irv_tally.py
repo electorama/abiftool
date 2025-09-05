@@ -472,8 +472,8 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
 
     if transform_ballots and ballot_type and ballot_type != 'ranked':
         # Perform Option F conversion via approval_tally helper
-        from .approval_tally import approval_to_ranked_global_order
-        jabmod = approval_to_ranked_global_order(jabmod, include_unapproved=False)
+        from .approval_tally import build_ranked_from_choose_many
+        jabmod = build_ranked_from_choose_many(jabmod)
         transformed = True
 
     # Get the basic IRV computation
