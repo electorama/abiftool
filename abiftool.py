@@ -91,7 +91,8 @@ MODIFIERS = [
     {'STAR': 'Provide STAR results'},
     {'svg': 'Add SVG to the output if avaiable'},
     {'winning-votes': 'Use winning-votes victory measurements in pairwise summaries'},
-    {'winlosstie': 'Provide win-loss-tie table (default)'}
+    {'winlosstie': 'Provide win-loss-tie table (default)'},
+    {'transform-ballots': 'Transform ballots prior to tabulation when needed (e.g., Approval→Ranked for IRV)'}
 ]
 
 ABIF_VERSION = "0.1"
@@ -450,9 +451,36 @@ def main():
             outstr += get_approval_report(abifmodel)
         if 'IRV' in modifiers:
             include_irv_extra = 'IRVextra' in modifiers
+            # Optionally transform approval ballots to ranked (Option F)
+            abif_for_irv = abifmodel
+            try:
+                from abiflib.util import find_ballot_type
+                bt = find_ballot_type(abifmodel)
+            except Exception:
+                bt = None
+            if ('transform-ballots' in modifiers) and bt and bt != 'ranked':
+                from abiflib.approval_tally import approval_to_ranked_global_order
+                abif_for_irv = approval_to_ranked_global_order(abifmodel, include_unapproved=False)
+
             irvdict = IRV_dict_from_jabmod(
-                abifmodel, include_irv_extra=include_irv_extra)
+                abif_for_irv, include_irv_extra=include_irv_extra)
             outstr += get_IRV_report(irvdict)
+            # Append notices if requested
+            if 'notices' in modifiers:
+                from abiflib.text_output import format_notices_for_text_output
+                notices = list(irvdict.get('notices', []))
+                if bt and bt != 'ranked':
+                    notices.append({
+                        'notice_type': 'warning',
+                        'short': 'Note — ranked ballots inferred from choose-many ballots and approval results',
+                        'long': (
+                            'IRV/RCV was not used in this election. The ranked ballots shown here were inferred '
+                            'from choose-many ballots using approval results to create a deterministic global order '
+                            'within each voter’s approved set. These results are hypothetical and provided for what-if analysis.'
+                        )
+                    })
+                if notices:
+                    outstr += format_notices_for_text_output(notices)
         if 'score' in modifiers:
             outstr += score_report(abifmodel)
         if 'STAR' in modifiers:

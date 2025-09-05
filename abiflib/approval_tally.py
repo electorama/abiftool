@@ -15,6 +15,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# Allow running this module directly by ensuring the package root is
+# on sys.path
+import os as _os, sys as _sys
+if __package__ is None or __package__ == "":
+    _pkg_root = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
+    if _pkg_root not in _sys.path:
+        _sys.path.insert(0, _pkg_root)
+
 from abiflib.core import convert_abif_to_jabmod
 from abiflib.util import clean_dict, candlist_text_from_abif, find_ballot_type
 from abiflib.fptp_tally import FPTP_result_from_abifmodel
@@ -256,6 +264,93 @@ def _calculate_approval_from_jabmod(abifmodel):
     }
 
 
+def approval_to_ranked_global_order(abifmodel, include_unapproved: bool = False, tie_breaker: str = 'token'):
+    """Convert choose_many ballots to ranked ballots (ranked_global_order)
+
+    - Global/aggregate order is ascending by total approvals (fewest
+      approvals rank highest).
+    - Each ballot ranks only its approved candidates in that
+      global/aggregate approval order.
+    - If include_unapproved is True, append the remaining candidates
+      in the same global order.
+    - Returns a new jabmod with ranked prefs and attaches _conversion_meta.
+    """
+    # Ensure we have an approval jabmod for counting totals
+    bt = find_ballot_type(abifmodel)
+    base_for_counts = abifmodel
+    if bt not in ('approval', 'choose_many'):
+        base_for_counts = convert_to_approval_favorite_viable_half(abifmodel)
+
+    # Compute global order (least-approval-first)
+    global_order = compute_global_order_least_approval_first(base_for_counts, tie_breaker=tie_breaker)
+    all_tokens = list(base_for_counts.get('candidates', {}).keys())
+
+    # Build ranked jabmod
+    ranked_jabmod = copy.deepcopy(abifmodel)
+    ranked_jabmod['votelines'] = []
+
+    for vline in abifmodel.get('votelines', []):
+        qty = vline.get('qty', 0)
+        prefs = vline.get('prefs', {})
+        # Determine approved candidates on this ballot
+        approved = []
+        for tok, p in prefs.items():
+            if isinstance(p, dict):
+                if ('rating' in p and p['rating'] == 1) or ('rank' in p and p['rank'] == 1):
+                    approved.append(tok)
+        # Order approvals by global order
+        ordered = [tok for tok in global_order if tok in approved]
+
+        # Optionally append unapproved to reduce exhaustion (default False)
+        if include_unapproved:
+            remaining = [tok for tok in global_order if tok not in approved]
+            ordered.extend(remaining)
+
+        # Build ranked prefs
+        new_prefs = {}
+        for idx, tok in enumerate(ordered, start=1):
+            new_prefs[tok] = {'rank': idx}
+
+        new_vline = {'qty': qty, 'prefs': new_prefs}
+        if ordered:
+            new_vline['prefstr'] = '>'.join(ordered)
+        ranked_jabmod['votelines'].append(new_vline)
+
+    # Attach conversion metadata
+    orig_bt = find_ballot_type(abifmodel)
+    ranked_jabmod['_conversion_meta'] = {
+        'method': 'global_order_v1',
+        'original_ballot_type': orig_bt,
+        'parameters': {
+            'basis': 'ascending_total_approvals',
+            'include_unapproved': include_unapproved,
+            'tie_breaker': tie_breaker,
+        }
+    }
+
+    return ranked_jabmod
+
+
+def compute_global_order_least_approval_first(abifmodel, tie_breaker: str = 'token'):
+    """Compute deterministic global order (Option F) by ascending total approvals.
+
+    - If the input is not approval/choose_many, convert via favorite_viable_half first.
+    - Returns a list of candidate tokens sorted by (total approvals asc, tie by token).
+    """
+    bt = find_ballot_type(abifmodel)
+    if bt not in ('approval', 'choose_many'):
+        abifmodel = convert_to_approval_favorite_viable_half(abifmodel)
+
+    results = _calculate_approval_from_jabmod(abifmodel)
+    counts = results.get('approval_counts', {})
+    items = [(tok, cnt) for tok, cnt in counts.items() if tok is not None]
+    if tie_breaker == 'token':
+        items.sort(key=lambda x: (x[1], x[0]))
+    else:
+        items.sort(key=lambda x: (x[1], x[0]))
+    return [tok for tok, _ in items]
+
+
 def _generate_conversion_notices(conversion_meta):
     """Generate notices for ballot conversion."""
     notices = []
@@ -397,12 +492,21 @@ def main():
     parser.add_argument('input_file', help='Input .abif file')
     parser.add_argument('-j', '--json', action="store_true",
                         help='Provide raw json output')
+    parser.add_argument('--global-order', action='store_true',
+                        help='Print least-approval-first candidate order (Option F)')
 
     args = parser.parse_args()
     abiftext = pathlib.Path(args.input_file).read_text()
     jabmod = convert_abif_to_jabmod(abiftext)
     approval_dict = approval_result_from_abifmodel(jabmod)
     output = ""
+    if args.global_order:
+        order = compute_global_order_least_approval_first(jabmod)
+        display_names = [jabmod.get('candidates', {}).get(tok, tok) for tok in order]
+        output += "Global order (least-approval-first):\n"
+        for i, (tok, name) in enumerate(zip(order, display_names), start=1):
+            output += f"  {i:2d}. {name} ({tok})\n"
+        output += "\n"
     if args.json:
         output += json.dumps(clean_dict(approval_dict), indent=4)
     else:

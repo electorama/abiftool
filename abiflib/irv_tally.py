@@ -449,32 +449,46 @@ def IRV_dict_from_jabmod(jabmod, include_irv_extra=False):
     return retval
 
 
-def IRV_result_from_abifmodel(abifmodel):
-    """Create IRV result with summary data for consistent display in CLI and web"""
+def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, include_irv_extra: bool = False):
+    """Create IRV result with summary data for consistent display in CLI and web.
+
+    If transform_ballots is True and the detected ballot type is not 'ranked',
+    convert approval/choose_many ballots to ranked using Option F (global
+    least‑approval‑first order) before running IRV, and attach a disclaimer
+    notice indicating the hypothetical nature of the result.
+    """
     from . import convert_abif_to_jabmod
     if isinstance(abifmodel, str):
         jabmod = convert_abif_to_jabmod(abifmodel)
     else:
         jabmod = abifmodel
 
-    # Get the basic IRV computation
-    irv_dict = IRV_dict_from_jabmod(jabmod)
-
-    # Add disclaimer notice when IRV is being displayed for non-ranked ballots
+    transformed = False
     try:
         from .util import find_ballot_type
         ballot_type = find_ballot_type(jabmod)
     except Exception:
         ballot_type = None
-    if ballot_type and ballot_type != 'ranked':
+
+    if transform_ballots and ballot_type and ballot_type != 'ranked':
+        # Perform Option F conversion via approval_tally helper
+        from .approval_tally import approval_to_ranked_global_order
+        jabmod = approval_to_ranked_global_order(jabmod, include_unapproved=False)
+        transformed = True
+
+    # Get the basic IRV computation
+    irv_dict = IRV_dict_from_jabmod(jabmod, include_irv_extra=include_irv_extra)
+
+    # Add disclaimer notice when transformed from non-ranked ballots
+    if transformed:
         notices = list(irv_dict.get('notices', []))
         notices.append({
             'notice_type': 'warning',
-            'short': 'IRV not used in this election',
+            'short': 'Note — ranked ballots inferred from choose-many ballots and approval results',
             'long': (
-                'IRV/RCV was not used in this election. The results shown here are '
-                'hypothetical and depend on how non-ranked ballots are converted to '
-                'rankings and on tie-breaking rules.'
+                'IRV/RCV was not used in this election. The ranked ballots shown here were inferred '
+                'from choose-many ballots using approval results to create a deterministic global order '
+                'within each voter’s approved set. These results are hypothetical and provided for what-if analysis.'
             )
         })
         irv_dict['notices'] = notices
