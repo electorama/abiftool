@@ -460,6 +460,25 @@ def IRV_result_from_abifmodel(abifmodel):
     # Get the basic IRV computation
     irv_dict = IRV_dict_from_jabmod(jabmod)
 
+    # Add disclaimer notice when IRV is being displayed for non-ranked ballots
+    try:
+        from .util import find_ballot_type
+        ballot_type = find_ballot_type(jabmod)
+    except Exception:
+        ballot_type = None
+    if ballot_type and ballot_type != 'ranked':
+        notices = list(irv_dict.get('notices', []))
+        notices.append({
+            'notice_type': 'warning',
+            'short': 'IRV not used in this election',
+            'long': (
+                'IRV/RCV was not used in this election. The results shown here are '
+                'hypothetical and depend on how non-ranked ballots are converted to '
+                'rankings and on tie-breaking rules.'
+            )
+        })
+        irv_dict['notices'] = notices
+
     # Add summary information
     result = {}
     result['irv_dict'] = irv_dict

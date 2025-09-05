@@ -6,7 +6,9 @@ This is a very incomplete list of incomplete tasks for abiftool
    - [ ] Make more "pythonic" (whatever that means)
 ** Refactoring (refactor)
    - [ ] Clean up Python imports
-* For 0.34.0
+* For 0.34.0 - BLOCKED
+  - [X] **CRITICAL: Fix STL election discovery in awt**
+  - [ ] Add disclaimer about ranked ballots from approval elections are estimates
   - [ ] Review [[https://github.com/electorama/abiftool/issues][bug list]]
   - [ ] See [[../CHANGELOG.org]]
 * Post 0.34.0
