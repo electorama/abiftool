@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
+from .util import find_ballot_type
 import copy
 import json
 from pprint import pprint
@@ -30,7 +31,7 @@ def FPTP_result_from_abifmodel(abifmodel):
     for cand_token in abifmodel['candidates'].keys():
         toppicks[cand_token] = 0
 
-    invalid_ballots = 0
+    invalid_ballots = 0  # ballots with multiple first choices (overvotes)
 
     for vline in abifmodel['votelines']:
         first_prefs = []
@@ -42,7 +43,7 @@ def FPTP_result_from_abifmodel(abifmodel):
             # valid votes
             toppicks[first_prefs[0]] += vline['qty']
         elif len(first_prefs) > 1:
-            # overvotes
+            # Overvotes: multiple candidates marked as first choice
             invalid_ballots += vline['qty']
 
     # Calculate winner based on the new toppicks
@@ -64,6 +65,9 @@ def FPTP_result_from_abifmodel(abifmodel):
 
     top_pct = (maxtop / total_valid_votes) * 100 if total_valid_votes > 0 else 0
 
+    # Derive blank ballot count (those with no first choice at all)
+    blank_ballots = max(toppicks[None] - invalid_ballots, 0)
+
     result = {
         'toppicks': toppicks,
         'winners': winners,
@@ -71,16 +75,39 @@ def FPTP_result_from_abifmodel(abifmodel):
         'top_pct': top_pct,
         'total_votes_recounted': total_valid_votes,
         'total_votes': total_ballots_processed,
-        'invalid_ballots': invalid_ballots
+        # Keep existing key for overvotes for backward compatibility
+        'invalid_ballots': invalid_ballots,
+        # New explicit fields
+        'overvote_ballots': invalid_ballots,
+        'blank_ballots': blank_ballots
     }
 
     # Add notice if this election uses ranked ballots
     notices = []
-    if abifmodel.get('metadata', {}).get('ballot_type') == 'ranked':
+    ballot_type = find_ballot_type(abifmodel)
+    if ballot_type == 'ranked':
         notices.append({
             'notice_type': 'note',
             'short': 'Only using first-choices on ranked ballots'
         })
+    else:
+        # For non-ranked ballots (e.g., approval/choose_many), explain coercion
+        if invalid_ballots > 0 or blank_ballots > 0:
+            # Build a concise short notice and a fuller explanation
+            short = "Overvotes from 'choose_many' ballots not counted in FPTP"
+            long_parts = [
+                "This election used 'choose_many' ballots (e.g., approval).",
+                "For FPTP, each ballot must select exactly one first-choice candidate.",
+                "Ballots with multiple top choices are treated as overvotes and do not count for any candidate;",
+                "they are reported under Overvotes and included in the 'None' total."
+            ]
+            if blank_ballots > 0:
+                long_parts.append("Blank ballots (with no top choice) are also included in 'None'.")
+            notices.append({
+                'notice_type': 'warning',
+                'short': short,
+                'long': ' '.join(long_parts)
+            })
 
     if notices:
         result['notices'] = notices

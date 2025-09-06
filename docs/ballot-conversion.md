@@ -267,6 +267,14 @@ To make “what‑if IRV” from approval ballots accessible via the CLI with mi
   - When not present, the current behavior remains (no conversion), and IRV will include a disclaimer notice for non‑ranked ballots.
   - Future (post‑0.34): `transform-ballots` could accept parameters to choose among Options A–F; for 0.34 it defaults to Option F.
 
+### Merge Approval Into Transform Ballots (AWT)
+
+- Remove the separate “Approval voting results?” checkbox. Use “Transform ballots” to govern all inference behaviors.
+- Behavior:
+  - Choose‑many inputs: Approval results shown natively regardless of transform.
+  - Ranked/rated inputs: Approval results shown only when transform is enabled (inferred via favorite_viable_half) with existing notice; hidden otherwise.
+  - IRV/Pairwise: as above (least_approval_first for choose‑many inputs when transform is enabled).
+
 Notes:
 - Existing `-m IRV` and `-m notices` continue to work as before. The new modifiers only affect IRV when input ballots are not ranked.
 - Text output should show the conversion disclaimer via `-m notices` so users see the caveat in plain text.
