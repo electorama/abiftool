@@ -9,6 +9,12 @@ This is a very incomplete list of incomplete tasks for abiftool
 * For 0.34.0 - BLOCKED
   - [X] **CRITICAL: Fix STL election discovery in awt**
   - [ ] Add disclaimer about ranked ballots from approval elections are estimates
+  - [ ] **AWT: "See transformed ballots" accordion UI**
+        When transform_ballots is enabled for ANY method (not just IRV/Pairwise),
+        add accordion link that reveals transformed ABIF inline on results page.
+        Applies to all voting methods where ballot transformation occurs:
+        IRV, Pairwise/Condorcet, STAR, etc. See ballot-conversion-claude.md for
+        complete implementation guidance.
   - [ ] Review [[https://github.com/electorama/abiftool/issues][bug list]]
   - [ ] See [[../CHANGELOG.org]]
 * Post 0.34.0

@@ -251,6 +251,8 @@ All conversions must generate appropriate notices:
 }
 ```
 
+Required policy: whenever a transformation changes the ballot representation used by a specific method (e.g., IRV/RCV, Condorcet/Copeland, STAR), that method’s result MUST include a notice disclosing the transformation. The notice should be data-driven (naming the source and target ballot types and the algorithm used) and rendered by clients directly beneath the method’s header. This ensures users can always see when results are based on inferred ballots.
+
 ### Testing Requirements
 - **Synthetic data**: Test with known preference structures
 - **Roundtrip testing**: Verify ranked → approval → ranked preserves key properties
