@@ -104,7 +104,7 @@ def FPTP_result_from_abifmodel(abifmodel):
             if blank_ballots > 0:
                 long_parts.append("Blank ballots (with no top choice) are also included in 'None'.")
             notices.append({
-                'notice_type': 'warning',
+                'notice_type': 'note',
                 'short': short,
                 'long': ' '.join(long_parts)
             })

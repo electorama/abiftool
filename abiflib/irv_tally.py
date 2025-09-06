@@ -480,11 +480,11 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
     irv_dict = IRV_dict_from_jabmod(jabmod, include_irv_extra=include_irv_extra)
 
     # Add disclaimer notice when transformed from non-ranked ballots
-    if transformed:
+    if transformed and ballot_type in ('choose_many', 'approval'):
         notices = list(irv_dict.get('notices', []))
         notices.append({
-            'notice_type': 'warning',
-            'short': 'Note — ranked ballots inferred from choose-many ballots and approval results',
+            'notice_type': 'note',
+            'short': 'Ranked ballots inferred from choose-many ballots and approval results',
             'long': (
                 'IRV/RCV was not used in this election. The ranked ballots shown here were inferred '
                 'from choose-many ballots using approval results to create a deterministic global order '

@@ -110,18 +110,38 @@ def pairwise_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False
 
     # Add notices if there are ties or cycles
     notices = []
-    if transformed:
+    if transformed and bt in ('choose_many', 'approval'):
         notices.append({
-            "notice_type": "warning",
-            "short": "Note — ranked ballots inferred from choose-many ballots and approval results",
+            "notice_type": "note",
+            "short": "Ranked ballots inferred from choose-many ballots and approval results",
             "long": 'Condorcet/Copeland was not used in this election. The ranked ballots shown here were inferred from choose-many ballots using approval results to create a deterministic global order within each voter\'s approved set. These results are hypothetical and provided for what-if analysis.'
         })
     if has_ties_or_cycles:
-        notices.append({
-            "notice_type": "note",
-            "short": "Condorcet cycle or Copeland tie",
-            "long": '"Victories" and "losses" sometimes aren\'t displayed in the expected location when there are ties and/or cycles in the results, but the numbers provided should be accurate.'
-        })
+        # Prefer a detailed Copeland tie notice naming candidates when applicable
+        copecount = full_copecount_from_abifmodel(abifmodel, pairdict=pairwise_matrix)
+        copewinners = get_Copeland_winners(copecount)
+        if len(copewinners) >= 2:
+            candnames = abifmodel.get('candidates', {})
+            tied_names = [candnames.get(tok, tok) for tok in copewinners]
+            if len(tied_names) >= 2:
+                tied_list = " and ".join(tied_names)
+            else:
+                tied_list = tied_names[0]
+            notices.append({
+                "notice_type": "note",
+                "short": "Condorcet cycle or Copeland tie",
+                "long": (
+                    f"This election has no Condorcet winner. {tied_list} are tied for the most pairwise victories (Copeland tie). "
+                    "Each of these candidates beats the same number of opponents in head-to-head comparisons, creating a cycle in the tournament. "
+                    "The Copeland/pairwise table below shows the detailed win-loss-tie records that result in this tie."
+                )
+            })
+        else:
+            notices.append({
+                "notice_type": "note",
+                "short": "Condorcet cycle or Copeland tie",
+                "long": '"Victories" and "losses" sometimes aren\'t displayed in the expected location when there are ties and/or cycles in the results, but the numbers provided should be accurate.'
+            })
 
     result['notices'] = notices
     return result
