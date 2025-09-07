@@ -233,6 +233,15 @@ algorithms may be added in future versions.
 
 ## Implementation Guidelines
 
+### Central Transform Module
+
+As of 0.34, method-agnostic transformations live in `abiflib/transform_core.py`:
+
+- `ranked_to_choose_many_favorite_viable_half(abifmodel)` — converts ranked/rated ballots to approval (choose_many) with `_conversion_meta` for provenance.
+- `choose_many_to_ranked_least_approval_first(abifmodel, tie_breaker='token')` — converts choose_many ballots to ranked using least_approval_first global order.
+
+Tally modules (IRV/RCV, Condorcet/Copeland, Approval) delegate to these helpers when `transform_ballots` is enabled and the input ballot type is incompatible with the method. Notices remain method‑specific and are attached by the respective tally modules while reusing the `_conversion_meta` from the transformed jabmod.
+
 ### Conversion Quality Indicators
 Each conversion should include metadata indicating:
 - **Source format**: Original ballot type

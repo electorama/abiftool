@@ -471,9 +471,9 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
         ballot_type = None
 
     if transform_ballots and ballot_type and ballot_type != 'ranked':
-        # Perform Option F conversion via approval_tally helper
-        from .approval_tally import build_ranked_from_choose_many
-        jabmod = build_ranked_from_choose_many(jabmod)
+        # Perform Option F conversion via transform_core helper
+        from .transform_core import choose_many_to_ranked_least_approval_first
+        jabmod = choose_many_to_ranked_least_approval_first(jabmod)
         transformed = True
 
     # Get the basic IRV computation
@@ -491,6 +491,25 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
                 'within each voter’s approved set. These results are hypothetical and provided for what-if analysis.'
             )
         })
+        irv_dict['notices'] = notices
+    # Add overvote explanation notice when NOT transformed and ballots are choose-many
+    elif (not transformed) and ballot_type in ('choose_many', 'approval'):
+        notices = list(irv_dict.get('notices', []))
+        try:
+            total_overvotes = sum(rm.get('overvoteqty', 0) for rm in irv_dict.get('roundmeta', []) if isinstance(rm, dict))
+            startingqty = (irv_dict.get('roundmeta') or [{}])[0].get('startingqty', 0)
+        except Exception:
+            total_overvotes = 0
+            startingqty = 0
+        short = 'IRV/RCV run on choose-many ballots; many overvotes discarded'
+        long = (
+            'These ballots are choose-many (approval-style), where voters may select multiple candidates at once. '
+            'Under IRV/RCV, a ballot must indicate a single top-ranked candidate in each round. '
+            'Ballots with multiple candidates at the top are treated as overvotes and are discarded for that round. '
+            f'This can lead to a large number of overvotes (observed total: {total_overvotes:,} of {startingqty:,} starting votes across rounds). '
+            'Enable “Transform ballots” to infer ranked ballots prior to IRV/RCV if you want a what‑if ranked analysis.'
+        )
+        notices.append({'notice_type': 'note', 'short': short, 'long': long})
         irv_dict['notices'] = notices
 
     # Add summary information

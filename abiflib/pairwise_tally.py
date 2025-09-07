@@ -62,8 +62,8 @@ def pairwise_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False
     except Exception:
         bt = None
     if transform_ballots and bt and bt != 'ranked':
-        from .approval_tally import build_ranked_from_choose_many
-        abifmodel = build_ranked_from_choose_many(abifmodel)
+        from .transform_core import choose_many_to_ranked_least_approval_first
+        abifmodel = choose_many_to_ranked_least_approval_first(abifmodel)
         transformed = True
 
     candidates = abifmodel['candidates']

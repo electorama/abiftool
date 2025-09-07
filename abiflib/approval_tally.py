@@ -17,7 +17,8 @@
 
 # Allow running this module directly by ensuring the package root is
 # on sys.path
-import os as _os, sys as _sys
+import os as _os
+import sys as _sys
 if __package__ is None or __package__ == "":
     _pkg_root = _os.path.abspath(_os.path.join(_os.path.dirname(__file__), ".."))
     if _pkg_root not in _sys.path:
@@ -39,142 +40,12 @@ import textwrap
 
 
 def convert_to_approval_favorite_viable_half(abifmodel):
-    """Convert ranked/rated ballots to approval using favorite_viable_half algorithm."""
-    # Step 1: Get FPTP results to determine viable candidates
-    fptp_results = FPTP_result_from_abifmodel(abifmodel)
-    total_valid_votes = fptp_results['total_votes_recounted']
-    ballot_type = find_ballot_type(abifmodel)
+    """Deprecated shim. Use transform_core.ranked_to_choose_many_favorite_viable_half.
 
-    # Step 2: Determine number of viable candidates using iterative Hare quota
-    sorted_candidates = sorted(fptp_results['toppicks'].items(),
-                               key=lambda x: x[1], reverse=True)
-
-    # Filter out None (invalid ballots) from candidates
-    sorted_candidates = [(cand, votes) for cand, votes in sorted_candidates if cand is not None]
-
-    if not sorted_candidates:
-        # Return empty approval jabmod for no valid candidates
-        approval_jabmod = copy.deepcopy(abifmodel)
-        approval_jabmod['votelines'] = []
-        return approval_jabmod
-
-    frontrunner_votes = sorted_candidates[0][1]  # Top candidate's vote total
-
-    # Find minimum number of figurative seats where frontrunner exceeds Hare quota
-    # This is the algorithm as described: iterate through seat counts and find the
-    # first (minimum) number where frontrunner_votes > quota
-    number_of_viable_candidates = 2  # Default fallback
-
-    # Check each possible number of seats, starting from 2
-    for seats in range(2, len(sorted_candidates) + 2):  # +2 because we want seats, not candidates
-        # Calculate Hare quota for this number of seats: total_votes / seats
-        quota = total_valid_votes // seats
-
-        if frontrunner_votes > quota:
-            # Found the minimum number of seats where frontrunner exceeds quota
-            number_of_viable_candidates = seats
-            break
-
-    # If frontrunner never exceeds quota even with maximum seats, use fallback
-    if number_of_viable_candidates == 2 and frontrunner_votes <= (total_valid_votes // 2):
-        # Frontrunner is very weak, estimate conservatively
-        number_of_viable_candidates = min(len(sorted_candidates), 10)    # Create list of top N candidates based on first-place votes
-    viable_candidates = []
-    for i in range(min(number_of_viable_candidates, len(sorted_candidates))):
-        candidate, votes = sorted_candidates[i]
-        viable_candidates.append(candidate)
-
-    # Step 3: Calculate viable-candidate-maximum (half of viable)
-    viable_candidate_maximum = (len(viable_candidates) + 1) // 2
-
-    # Step 4: Create new approval jabmod by converting votelines
-    approval_jabmod = copy.deepcopy(abifmodel)
-    approval_jabmod['votelines'] = []
-
-    for vline in abifmodel['votelines']:
-        # Get ranked preferences for this ballot (sorted by rank)
-        ranked_prefs = []
-        for cand, prefs in vline['prefs'].items():
-            if 'rank' in prefs:
-                ranked_prefs.append((cand, prefs['rank']))
-
-        # Sort by rank (lower rank number = higher preference)
-        ranked_prefs.sort(key=lambda x: x[1])
-
-        if not ranked_prefs:
-            # Skip empty ballots
-            continue
-
-        # Check for overvotes at top rank
-        top_rank = ranked_prefs[0][1]
-        top_candidates = [cand for cand, rank in ranked_prefs if rank == top_rank]
-
-        if len(top_candidates) > 1:
-            # Skip overvoted ballots
-            continue
-
-        # Apply halfviable approval rules
-
-        # 1. Identify the top viable-candidate-maximum viable candidates on THIS ballot
-        vcm_viable_candidates_on_ballot = []
-        for candidate, rank in ranked_prefs:
-            if candidate in viable_candidates:
-                vcm_viable_candidates_on_ballot.append(candidate)
-                if len(vcm_viable_candidates_on_ballot) == viable_candidate_maximum:
-                    break
-
-        # 2. Find the lowest-ranked candidate in that specific group
-        if not vcm_viable_candidates_on_ballot:
-            # No viable candidates were ranked, so no approvals
-            approvals = []
-        else:
-            # The cutoff candidate is the last one in our list
-            cutoff_candidate = vcm_viable_candidates_on_ballot[-1]
-
-            # 3. Approve all candidates ranked at or above the cutoff
-            approvals = []
-            cutoff_found = False
-            for candidate, rank in ranked_prefs:
-                approvals.append(candidate)
-                if candidate == cutoff_candidate:
-                    cutoff_found = True
-                    break
-
-            if not cutoff_found:
-                # This should not happen if logic is correct, but as safeguard
-                approvals = vcm_viable_candidates_on_ballot
-
-        # Create new approval voteline
-        new_prefs = {}
-        for candidate in approvals:
-            new_prefs[candidate] = {'rating': 1, 'rank': 1}
-
-        if new_prefs:  # Only add votelines with actual approvals
-            new_vline = {
-                'qty': vline['qty'],
-                'prefs': new_prefs
-            }
-            if 'prefstr' in vline:
-                # Create a simple approval prefstr
-                approved_cands = list(new_prefs.keys())
-                new_vline['prefstr'] = '='.join(approved_cands) + '/1'
-
-            approval_jabmod['votelines'].append(new_vline)
-
-    # Calculate total ballots processed
-    total_ballots = sum(vline['qty'] for vline in abifmodel['votelines'])
-
-    # Store conversion metadata for notices
-    approval_jabmod['_conversion_meta'] = {
-        'method': 'favorite_viable_half',
-        'original_ballot_type': ballot_type,
-        'viable_candidates': viable_candidates,
-        'viable_candidate_maximum': viable_candidate_maximum,
-        'total_ballots': total_ballots,
-        'candidate_names': abifmodel.get('candidates', {})
-    }
-
-    return approval_jabmod
+    Retained for backward compatibility until callers migrate.
+    """
+    from .transform_core import ranked_to_choose_many_favorite_viable_half
+    return ranked_to_choose_many_favorite_viable_half(abifmodel)
 
 
 def approval_result_from_abifmodel(abifmodel):
@@ -265,84 +136,20 @@ def _calculate_approval_from_jabmod(abifmodel):
 
 
 def build_ranked_from_choose_many(abifmodel, tie_breaker: str = 'token'):
-    """Build ranked ballots from choose_many ballots (least_approval_first)
+    """Deprecated shim. Use transform_core.choose_many_to_ranked_least_approval_first.
 
-    - Global/aggregate order is ascending by total approvals (fewest
-      approvals rank highest).
-    - Each ballot ranks only its approved candidates in that
-      global/aggregate approval order.
-    - Returns a new jabmod with ranked prefs and attaches _conversion_meta.
+    Retained for backward compatibility until callers migrate.
     """
-    # Ensure we have an approval jabmod for counting totals
-    bt = find_ballot_type(abifmodel)
-    base_for_counts = abifmodel
-    if bt not in ('approval', 'choose_many'):
-        base_for_counts = convert_to_approval_favorite_viable_half(abifmodel)
-
-    # Compute order (least_approval_first)
-    order = get_order_least_approval_first(base_for_counts, tie_breaker=tie_breaker)
-    all_tokens = list(base_for_counts.get('candidates', {}).keys())
-
-    # Build ranked jabmod
-    ranked_jabmod = copy.deepcopy(abifmodel)
-    ranked_jabmod['votelines'] = []
-
-    for vline in abifmodel.get('votelines', []):
-        qty = vline.get('qty', 0)
-        prefs = vline.get('prefs', {})
-        # Determine approved candidates on this ballot
-        approved = []
-        for tok, p in prefs.items():
-            if isinstance(p, dict):
-                if ('rating' in p and p['rating'] == 1) or ('rank' in p and p['rank'] == 1):
-                    approved.append(tok)
-        # Order approvals by computed order
-        ordered = [tok for tok in order if tok in approved]
-
-        # Note: we intentionally do not append unapproved candidates.
-
-        # Build ranked prefs
-        new_prefs = {}
-        for idx, tok in enumerate(ordered, start=1):
-            new_prefs[tok] = {'rank': idx}
-
-        new_vline = {'qty': qty, 'prefs': new_prefs}
-        if ordered:
-            new_vline['prefstr'] = '>'.join(ordered)
-        ranked_jabmod['votelines'].append(new_vline)
-
-    # Attach conversion metadata
-    orig_bt = find_ballot_type(abifmodel)
-    ranked_jabmod['_conversion_meta'] = {
-        'method': 'least_approval_first',
-        'original_ballot_type': orig_bt,
-        'parameters': {
-            'basis': 'ascending_total_approvals',
-            'tie_breaker': tie_breaker,
-        }
-    }
-
-    return ranked_jabmod
+    from .transform_core import choose_many_to_ranked_least_approval_first
+    return choose_many_to_ranked_least_approval_first(abifmodel, tie_breaker=tie_breaker)
 
 
 def get_order_least_approval_first(abifmodel, tie_breaker: str = 'token'):
-    """Get deterministic global order by ascending total approvals.
-
-    - If the input is not approval/choose_many, convert via favorite_viable_half first.
-    - Returns a list of candidate tokens sorted by (total approvals asc, tie by token).
+    """Deprecated shim. Use transform_core.choose_many_to_ranked_least_approval_first
+    to compute the order, or call transform_core internals.
     """
-    bt = find_ballot_type(abifmodel)
-    if bt not in ('approval', 'choose_many'):
-        abifmodel = convert_to_approval_favorite_viable_half(abifmodel)
-
-    results = _calculate_approval_from_jabmod(abifmodel)
-    counts = results.get('approval_counts', {})
-    items = [(tok, cnt) for tok, cnt in counts.items() if tok is not None]
-    if tie_breaker == 'token':
-        items.sort(key=lambda x: (x[1], x[0]))
-    else:
-        items.sort(key=lambda x: (x[1], x[0]))
-    return [tok for tok, _ in items]
+    from .transform_core import _get_order_least_approval_first as _core_laf
+    return _core_laf(abifmodel, tie_breaker=tie_breaker)
 
 
 def _generate_conversion_notices(conversion_meta):
@@ -394,6 +201,21 @@ def _generate_conversion_notices(conversion_meta):
             f"(considering up to {viable_candidate_maximum} viable candidates per ballot)."
         )
 
+        notices.append({
+            "notice_type": "note",
+            "short": short_text,
+            "long": long_text
+        })
+    elif method == 'all_ranked_approved':
+        original_ballot_type = conversion_meta.get('original_ballot_type', 'unknown')
+        total_ballots = conversion_meta.get('total_ballots', 0)
+        short_text = (
+            f"Approval counts derived from {total_ballots:,} {original_ballot_type} ballots by treating all ranked candidates as approved"
+        )
+        long_text = (
+            "Each ballot approves every candidate that appears with any rank on the ballot; "
+            "candidates not ranked are not approved. This avoids modeling strategic behavior, but may over-approve compared to real approval voting preferences."
+        )
         notices.append({
             "notice_type": "note",
             "short": short_text,
