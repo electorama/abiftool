@@ -186,8 +186,8 @@ def STAR_result_from_abifmodel(abifmodel):
             retval['winner_tokens'] = [fin1, fin2]
 
     # Add percentage strings for both text output and template use
-    tvot = retval['totalvoters']
-    total_stars = retval['total_all_scores']
+    tvot = retval.get('totalvoters', 0)
+    total_stars = retval.get('total_all_scores', 0)
 
     # Add percentage strings to candidate score data
     for candtok in retval['ranklist']:
@@ -196,9 +196,9 @@ def STAR_result_from_abifmodel(abifmodel):
         candinfo['voter_pct_str'] = f"{candinfo['votercount']/tvot:.1%}" if tvot else "0.0%"
 
     # Add percentage strings for finalists
-    retval['fin1votes_pct_str'] = f"{retval['fin1votes']/tvot:.1%}" if tvot else "0.0%"
-    if retval['fin2votes']:
-        retval['fin2votes_pct_str'] = f"{retval['fin2votes']/tvot:.1%}" if tvot else "0.0%"
+    retval['fin1votes_pct_str'] = f"{retval.get('fin1votes', 0)/tvot:.1%}" if tvot else "0.0%"
+    # Always set fin2votes_pct_str, even when zero, to avoid KeyError in reporting paths
+    retval['fin2votes_pct_str'] = f"{retval.get('fin2votes', 0)/tvot:.1%}" if tvot else "0.0%"
     retval['final_abstentions_pct_str'] = f"{retval['final_abstentions']/tvot:.1%}" if tvot else "0.0%"
 
     return retval
@@ -234,9 +234,11 @@ def STAR_report(jabmod):
         retval += f" -- {candinfo['candname']}\n"
 
     retval += f"Finalists: \n"
-    retval += f"- {sr['fin1n']} preferred by {sr['fin1votes']:,} of {tvot:,} voters ({sr['fin1votes_pct_str']})\n"
-    if sr['fin2n']:
-        retval += f"- {sr['fin2n']} preferred by {sr['fin2votes']:,} of {tvot:,} voters ({sr['fin2votes_pct_str']})\n"
+    fin1n = sr.get('fin1n')
+    fin2n = sr.get('fin2n')
+    retval += f"- {fin1n} preferred by {sr.get('fin1votes', 0):,} of {tvot:,} voters ({sr.get('fin1votes_pct_str', '0.0%')})\n"
+    if fin2n:
+        retval += f"- {fin2n} preferred by {sr.get('fin2votes', 0):,} of {tvot:,} voters ({sr.get('fin2votes_pct_str', '0.0%')})\n"
     retval += f"- {sr['final_abstentions']:,} abstentions ({sr['final_abstentions_pct_str']})\n"
     retval += f"STAR Winner: {sr['winner']}\n"
 
