@@ -133,8 +133,13 @@ def _get_order_least_approval_first(abifmodel, tie_breaker: str = 'token'):
     Converts to approval first if needed using favorite_viable_half.
     """
     bt = find_ballot_type(abifmodel)
-    if bt not in ('approval', 'choose_many'):
+    # Only convert ranked to approval; choose_one is already effectively binary at rank 1
+    if bt == 'ranked':
         abifmodel = ranked_to_choose_many_favorite_viable_half(abifmodel)
+    elif bt in ('choose_many', 'choose_one'):
+        pass
+    else:
+        raise ValueError(f"Unsupported ballot_type for order computation: {bt}")
     counts = _compute_approval_counts_for_order(abifmodel)
     items = [(tok, cnt) for tok, cnt in counts.items() if tok is not None]
     if tie_breaker == 'token':
@@ -153,8 +158,13 @@ def choose_many_to_ranked_least_approval_first(abifmodel, tie_breaker: str = 'to
     """
     bt = find_ballot_type(abifmodel)
     base_for_counts = abifmodel
-    if bt not in ('approval', 'choose_many'):
+    # Only convert ranked; treat choose_one as binary approvals (rank==1)
+    if bt == 'ranked':
         base_for_counts = ranked_to_choose_many_favorite_viable_half(abifmodel)
+    elif bt in ('choose_many', 'choose_one'):
+        pass
+    else:
+        raise ValueError(f"Unsupported ballot_type for choose_many→ranked: {bt}")
 
     order = _get_order_least_approval_first(base_for_counts, tie_breaker=tie_breaker)
 
@@ -194,7 +204,7 @@ def ranked_to_choose_many_all_ranked_approved(abifmodel):
     avoids emitting notices upstream.
     """
     bt = find_ballot_type(abifmodel)
-    if bt in ('approval', 'choose_many'):
+    if bt == 'choose_many':
         return abifmodel
     approval_jabmod = copy.deepcopy(abifmodel)
     approval_jabmod['votelines'] = []

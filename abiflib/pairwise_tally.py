@@ -61,7 +61,7 @@ def pairwise_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False
         bt = find_ballot_type(abifmodel)
     except Exception:
         bt = None
-    if transform_ballots and bt and bt != 'ranked':
+    if transform_ballots and bt == 'choose_many':
         from .transform_core import choose_many_to_ranked_least_approval_first
         abifmodel = choose_many_to_ranked_least_approval_first(abifmodel)
         transformed = True
@@ -110,11 +110,20 @@ def pairwise_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False
 
     # Add notices if there are ties or cycles
     notices = []
-    if transformed and bt in ('choose_many', 'approval'):
+    if transformed and bt == 'choose_many':
         notices.append({
             "notice_type": "note",
             "short": "Ranked ballots inferred from choose-many ballots and approval results",
             "long": 'Condorcet/Copeland was not used in this election. The ranked ballots shown here were inferred from choose-many ballots using approval results to create a deterministic global order within each voter\'s approved set. These results are hypothetical and provided for what-if analysis.'
+        })
+    elif bt == 'choose_one':
+        notices.append({
+            "notice_type": "note",
+            "short": "Pairwise comparisons derived from top-choice-only ballots",
+            "long": (
+                "Pairwise/Condorcet comparisons use only each voter\'s top choice from choose_one ballots. "
+                "No lower preferences are available, so many matchups will show a large 'No preference' count."
+            )
         })
     if has_ties_or_cycles:
         # Prefer a detailed Copeland tie notice naming candidates when applicable

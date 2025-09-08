@@ -82,7 +82,7 @@ def FPTP_result_from_abifmodel(abifmodel):
         'blank_ballots': blank_ballots
     }
 
-    # Add notice if this election uses ranked ballots
+    # Add notices
     notices = []
     ballot_type = find_ballot_type(abifmodel)
     if ballot_type == 'ranked':
@@ -90,24 +90,24 @@ def FPTP_result_from_abifmodel(abifmodel):
             'notice_type': 'note',
             'short': 'Only using first-choices on ranked ballots'
         })
-    else:
-        # For non-ranked ballots (e.g., approval/choose_many), explain coercion
+    elif ballot_type == 'choose_many':
         if invalid_ballots > 0 or blank_ballots > 0:
-            # Build a concise short notice and a fuller explanation
-            short = "Overvotes from 'choose_many' ballots not counted in FPTP"
+            short = "Overvotes from approval/choose-many ballots not counted in FPTP"
             long_parts = [
-                "This election used 'choose_many' ballots (e.g., approval).",
+                "This election used approval/choose-many ballots.",
                 "For FPTP, each ballot must select exactly one first-choice candidate.",
                 "Ballots with multiple top choices are treated as overvotes and do not count for any candidate;",
                 "they are reported under Overvotes and included in the 'None' total."
             ]
             if blank_ballots > 0:
                 long_parts.append("Blank ballots (with no top choice) are also included in 'None'.")
-            notices.append({
-                'notice_type': 'note',
-                'short': short,
-                'long': ' '.join(long_parts)
-            })
+            notices.append({'notice_type': 'note', 'short': short, 'long': ' '.join(long_parts)})
+    elif ballot_type == 'choose_one':
+        # For choose_one, no special notice; overvotes/blank are reported in counts
+        pass
+    else:
+        # Unexpected type; avoid misleading notice
+        notices.append({'notice_type': 'note', 'short': f"FPTP run on ballot_type={ballot_type}"})
 
     if notices:
         result['notices'] = notices

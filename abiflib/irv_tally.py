@@ -470,8 +470,8 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
     except Exception:
         ballot_type = None
 
-    if transform_ballots and ballot_type and ballot_type != 'ranked':
-        # Perform Option F conversion via transform_core helper
+    if transform_ballots and ballot_type == 'choose_many':
+        # Perform Option F conversion via transform_core helper on approval-style ballots only
         from .transform_core import choose_many_to_ranked_least_approval_first
         jabmod = choose_many_to_ranked_least_approval_first(jabmod)
         transformed = True
@@ -480,7 +480,7 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
     irv_dict = IRV_dict_from_jabmod(jabmod, include_irv_extra=include_irv_extra)
 
     # Add disclaimer notice when transformed from non-ranked ballots
-    if transformed and ballot_type in ('choose_many', 'approval'):
+    if transformed and ballot_type == 'choose_many':
         notices = list(irv_dict.get('notices', []))
         notices.append({
             'notice_type': 'note',
@@ -493,7 +493,7 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
         })
         irv_dict['notices'] = notices
     # Add overvote explanation notice when NOT transformed and ballots are choose-many
-    elif (not transformed) and ballot_type in ('choose_many', 'approval'):
+    elif (not transformed) and ballot_type == 'choose_many':
         notices = list(irv_dict.get('notices', []))
         try:
             total_overvotes = sum(rm.get('overvoteqty', 0) for rm in irv_dict.get('roundmeta', []) if isinstance(rm, dict))
@@ -510,6 +510,18 @@ def IRV_result_from_abifmodel(abifmodel, *, transform_ballots: bool = False, inc
             'Enable “Transform ballots” to infer ranked ballots prior to IRV/RCV if you want a what‑if ranked analysis.'
         )
         notices.append({'notice_type': 'note', 'short': short, 'long': long})
+        irv_dict['notices'] = notices
+    elif ballot_type == 'choose_one':
+        notices = list(irv_dict.get('notices', []))
+        notices.append({
+            'notice_type': 'note',
+            'short': 'IRV/RCV applied to choose_one ballots (no transfers)',
+            'long': (
+                'These ballots indicate only a single top choice per voter. '
+                'IRV/RCV on choose_one ballots cannot transfer votes or use lower preferences, '
+                'so the result is equivalent to plurality on first choices.'
+            )
+        })
         irv_dict['notices'] = notices
 
     # Add summary information

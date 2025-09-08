@@ -76,7 +76,9 @@ def STAR_result_from_abifmodel(abifmodel):
     retval['round1winners'] = retval['ranklist'][0:2]
 
     candcount = len(abifmodel['candidates'])
-    if abifmodel.get('metadata', {}).get('is_ranking_to_rating'):
+    from abiflib.util import find_ballot_type
+    bt = find_ballot_type(abifmodel)
+    if abifmodel.get('metadata', {}).get('is_ranking_to_rating') and bt == 'ranked':
         notice = {
             "notice_type": "note",
             "short": ("STAR ratings estimated from ranked ballots "
@@ -90,6 +92,17 @@ def STAR_result_from_abifmodel(abifmodel):
                       "are then used as STAR ratings for tabulation by STAR." )
         }
         retval['notices'] = [notice]
+    elif bt == 'choose_one':
+        # Attach a method-appropriate disclaimer for choose_one ballots
+        note = {
+            "notice_type": "note",
+            "short": "STAR interpretation from choose_one ballots",
+            "long": (
+                "Choose_one ballots provide only each voter\'s top choice and no ratings. "
+                "STAR results shown here are computed without true ratings and should be interpreted cautiously."
+            )
+        }
+        retval['notices'] = list(retval.get('notices', [])) + [note]
     # Optimization: Only compute the pairwise result for the top two if possible
     finalists = retval['ranklist'][0:2]
     copecount = None

@@ -74,7 +74,52 @@ def convert_sfjson_to_jabmod(container_path, contestid=None):
             contestindex = 0
             contestid = contestmanblob['List'][contestindex]['Id']
 
-        title = f"{contestmanblob['List'][contestindex]['Description']} ({eventdesc})"
+        # Determine ballot_type from ContestManifest fields, with robust fallback
+        contest_entry = contestmanblob['List'][contestindex]
+        num_ranks = contest_entry.get('NumOfRanks', None)
+        vote_for = contest_entry.get('VoteFor', None)
+
+        bt = None
+        try:
+            if num_ranks is not None and int(num_ranks) > 0:
+                bt = 'ranked'
+            elif vote_for is not None and int(vote_for) == 1:
+                bt = 'choose_one'
+            elif vote_for is not None and int(vote_for) > 1:
+                bt = 'choose_many'
+        except Exception:
+            bt = None
+
+        if bt is None:
+            # Fallback: infer from CVR marks if manifest lacks clear fields
+            inferred_ranked = False
+            for filename in zf.namelist():
+                if filename.startswith('CvrExport_') and filename.endswith('.json'):
+                    with zf.open(filename) as f:
+                        blob = json.load(f)
+                    sessions = blob.get('Sessions', [])
+                    for sess in sessions:
+                        for card in sess.get('Original', {}).get('Cards', []):
+                            for c in card.get('Contests', []):
+                                if c.get('Id') == contestid:
+                                    for m in c.get('Marks', []):
+                                        try:
+                                            if int(m.get('Rank', 0)) > 1:
+                                                inferred_ranked = True
+                                                break
+                                        except Exception:
+                                            pass
+                            if inferred_ranked:
+                                break
+                        if inferred_ranked:
+                            break
+                if inferred_ranked:
+                    break
+            bt = 'ranked' if inferred_ranked else 'choose_one'
+
+        abifmodel['metadata']['ballot_type'] = bt
+
+        title = f"{contest_entry['Description']} ({eventdesc})"
         abifmodel['metadata']['title'] = title
 
         # Create a lookup map from candidate ID to token and description

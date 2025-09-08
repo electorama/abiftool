@@ -52,11 +52,30 @@ def approval_result_from_abifmodel(abifmodel):
     """Calculate approval voting results from jabmod (main entry point)."""
     ballot_type = find_ballot_type(abifmodel)
 
+    notices = []
     if ballot_type == 'choose_many':
-        # Handle native approval ballots directly
-        return _calculate_approval_from_jabmod(abifmodel)
+        # Native approval/choose_many: tally directly
+        result = _calculate_approval_from_jabmod(abifmodel)
+        return result
+    elif ballot_type == 'choose_one':
+        # For choose_one, treat the single top choice as an approval with no conversion
+        # (rank==1 already suffices for _calculate_approval_from_jabmod)
+        result = _calculate_approval_from_jabmod(abifmodel)
+        # Attach a method-appropriate notice for choose_one
+        note = {
+            'notice_type': 'note',
+            'short': 'Approvals inferred from choose_one ballots',
+            'long': (
+                'Approval results are derived by treating each voter\'s single top choice '
+                'as their only approval. Lower preferences are not available on choose_one ballots.'
+            )
+        }
+        existing = list(result.get('notices', []))
+        existing.append(note)
+        result['notices'] = existing
+        return result
     else:
-        # Convert to approval format first, then calculate
+        # Ranked/rated (or others): convert via strategic method with notice
         approval_jabmod = convert_to_approval_favorite_viable_half(abifmodel)
         return _calculate_approval_from_jabmod(approval_jabmod)
 
@@ -231,8 +250,8 @@ def get_approval_report(abifmodel):
 
     ballot_type = results['ballot_type']
 
-    if ballot_type == 'approval':
-        report = "Approval Voting Results (Native Approval Ballots):\n"
+    if ballot_type == 'choose_many':
+        report = "Approval Voting Results (Native Approval/Choose-Many Ballots):\n"
     else:
         # This was converted from another ballot type
         notices = results.get('notices', [])
