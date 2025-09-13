@@ -9,8 +9,69 @@
       "metaurls": [
         "https://vote.nyc/page/election-results-summary"
       ],
-      "desc": "2025 NYC Primary Election - RCV Results",
-      "abifloc": "nyc2025-primary-rcv.abif"
+      "desc": "2025 NYC Primary Election - DEM Borough President",
+      "abifloc": "nyc2025-primary-dem-borough-president.abif",
+      "contest_string": "DEM Borough President"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Comptroller",
+      "abifloc": "nyc2025-primary-dem-comptroller.abif",
+      "contest_string": "DEM Comptroller"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member",
+      "abifloc": "nyc2025-primary-dem-council-member.abif",
+      "contest_string": "DEM Council Member"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Mayor",
+      "abifloc": "nyc2025-primary-dem-mayor-citywide.abif",
+      "contest_string": "DEM Mayor"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Public Advocate",
+      "abifloc": "nyc2025-primary-dem-public-advocate.abif",
+      "contest_string": "DEM Public Advocate"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Comptroller",
+      "abifloc": "nyc2025-primary-rep-comptroller.abif",
+      "contest_string": "REP Comptroller"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member",
+      "abifloc": "nyc2025-primary-rep-council-member.abif",
+      "contest_string": "REP Council Member"
     }
   ]
 }

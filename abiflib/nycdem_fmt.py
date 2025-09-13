@@ -23,24 +23,24 @@ import io
 from abiflib.core import get_emptyish_abifmodel
 from abiflib.debvote_fmt import _short_token
 
-def convert_nycdem_to_jabmod(srcfile, contestid=None, fetchspec=None):
-    """Convert NYC CVR Excel file(s) to ABIF jabmod, focusing on Mayor's race."""
+def convert_nycdem_to_jabmod(srcfile, contestid=None, fetchspec=None, contest_string="Mayor"):
+    """Convert NYC CVR Excel file(s) to ABIF jabmod, focusing on a given contest."""
     print(f"[nycdem_fmt] Reading: {srcfile}")
     
     # Check if srcfile is a ZIP file
     if srcfile.endswith('.zip'):
-        return _process_zip_file(srcfile, contestid)
+        return _process_zip_file(srcfile, contestid, contest_string=contest_string)
     else:
-        return _process_excel_file(srcfile, contestid)
+        return _process_excel_file(srcfile, contestid, contest_string=contest_string)
 
-def _process_zip_file(zip_path, contestid=None):
+def _process_zip_file(zip_path, contestid=None, contest_string="Mayor"):
     """Process a ZIP file containing multiple Excel CVR files."""
     print(f"[nycdem_fmt] Processing ZIP file: {zip_path}")
     
     # Create ABIF model
     abifmodel = get_emptyish_abifmodel()
-    abifmodel['metadata']['title'] = "NYC 2025 Democratic Primary - Mayor's Race"
-    abifmodel['metadata']['description'] = "Ranked-choice voting data for NYC 2025 Democratic Primary Mayor's race"
+    abifmodel['metadata']['title'] = f"NYC 2025 Democratic Primary - {contest_string}"
+    abifmodel['metadata']['description'] = f"Ranked-choice voting data for NYC 2025 Democratic Primary {contest_string}"
     if contestid:
         abifmodel['metadata']['contestid'] = contestid
     
@@ -92,12 +92,12 @@ def _process_zip_file(zip_path, contestid=None):
             except Exception as e:
                 print(f"[nycdem_fmt] Error loading candidacy file: {e}")
         
-        # First, scan files to find which ones have Mayor data (limit to first few from each primary)
-        mayor_files = []
+        # First, scan files to find which ones have contest data (limit to first few from each primary)
+        contest_files = []
         tested_files = []
         
-        # Check one file from each primary (P1, P2, P3, P4, P5) to find Mayor data
-        for primary in ['P2', 'P3', 'P4', 'P5']:  # Skip P1 since we know it doesn't have Mayor data
+        # Check one file from each primary (P1, P2, P3, P4, P5) to find contest data
+        for primary in ['P2', 'P3', 'P4', 'P5']:  # Skip P1 since we know it doesn't have contest data
             test_file = f"2025{primary}V1_ELE1.xlsx"
             if test_file in excel_files:
                 tested_files.append(test_file)
@@ -108,45 +108,39 @@ def _process_zip_file(zip_path, contestid=None):
                     
                     print(f"[nycdem_fmt] {test_file} columns (first 10): {list(df.columns)[:10]}")
                     
-                    # Check for Mayor columns with different patterns
-                    mayor_cols_old = [col for col in df.columns if col.startswith("Mayor_Rank")]
-                    mayor_cols_nyc = [col for col in df.columns if "DEM Mayor Choice" in str(col)]
-                    mayor_cols = mayor_cols_old + mayor_cols_nyc
+                    # Check for contest columns with different patterns
+                    contest_cols = [col for col in df.columns if contest_string.lower() in str(col).lower()]
                     
-                    mayor_like_cols = [col for col in df.columns if 'mayor' in str(col).lower()]
+                    print(f"[nycdem_fmt] {test_file}: {len(contest_cols)} {contest_string} columns")
                     
-                    print(f"[nycdem_fmt] {test_file}: {len(mayor_cols)} Mayor columns ({len(mayor_cols_old)} old format, {len(mayor_cols_nyc)} NYC format)")
-                    if mayor_like_cols:
-                        print(f"[nycdem_fmt] Mayor-like columns: {[str(c)[:40] + '...' if len(str(c)) > 40 else str(c) for c in mayor_like_cols[:3]]}")
-                    
-                    if mayor_cols:
-                        print(f"[nycdem_fmt] Found Mayor data in primary {primary}: {test_file} ({len(mayor_cols)} columns)")
+                    if contest_cols:
+                        print(f"[nycdem_fmt] Found {contest_string} data in primary {primary}: {test_file} ({len(contest_cols)} columns)")
                         # Add all files from this primary
                         primary_files = [f for f in excel_files if f.startswith(f"2025{primary}") and 'candidacy' not in f.lower()]
-                        mayor_files.extend(primary_files)
+                        contest_files.extend(primary_files)
                     else:
-                        print(f"[nycdem_fmt] No Mayor ranking data in primary {primary}: {test_file}")
+                        print(f"[nycdem_fmt] No {contest_string} ranking data in primary {primary}: {test_file}")
                 except Exception as e:
                     print(f"[nycdem_fmt] Error scanning {test_file}: {e}")
                     continue
         
-        if not mayor_files:
-            print("[nycdem_fmt] No files with Mayor data found!")
+        if not contest_files:
+            print(f"[nycdem_fmt] No files with {contest_string} data found!")
             abifmodel['metadata']['ballotcount'] = 0
             abifmodel['metadata']['emptyballotcount'] = 0
             return abifmodel
         
-        print(f"[nycdem_fmt] Processing {len(mayor_files)} files with Mayor data")
+        print(f"[nycdem_fmt] Processing {len(contest_files)} files with {contest_string} data")
         
-        # Now process all files that contain Mayor data
-        for excel_file in mayor_files:
+        # Now process all files that contain contest data
+        for excel_file in contest_files:
             print(f"[nycdem_fmt] Processing: {excel_file}")
             try:
                 with zf.open(excel_file) as f:
                     df = pd.read_excel(io.BytesIO(f.read()), engine="openpyxl")
                 
                 # Process this Excel file, passing the candidate name mapping
-                patterns, candidates, valid, empty = _process_dataframe(df, candidate_tokens, candidate_id_to_name)
+                patterns, candidates, valid, empty = _process_dataframe(df, candidate_tokens, candidate_id_to_name, contest_string=contest_string)
                 
                 # Merge results
                 for pattern, count in patterns.items():
@@ -190,7 +184,7 @@ def _process_zip_file(zip_path, contestid=None):
     
     return abifmodel
 
-def _process_excel_file(excel_path, contestid=None):
+def _process_excel_file(excel_path, contestid=None, contest_string="Mayor"):
     """Process a single Excel CVR file."""
     # Read the Excel file
     df = pd.read_excel(excel_path, engine="openpyxl")
@@ -199,13 +193,13 @@ def _process_excel_file(excel_path, contestid=None):
     
     # Create ABIF model
     abifmodel = get_emptyish_abifmodel()
-    abifmodel['metadata']['title'] = "NYC 2025 Democratic Primary - Mayor's Race"
-    abifmodel['metadata']['description'] = "Ranked-choice voting data for NYC 2025 Democratic Primary Mayor's race"
+    abifmodel['metadata']['title'] = f"NYC 2025 Democratic Primary - {contest_string}"
+    abifmodel['metadata']['description'] = f"Ranked-choice voting data for NYC 2025 Democratic Primary {contest_string}"
     if contestid:
         abifmodel['metadata']['contestid'] = contestid
     
     candidate_tokens = {}
-    patterns, candidates, valid, empty = _process_dataframe(df, candidate_tokens, {})  # No candidate name mapping for single file
+    patterns, candidates, valid, empty = _process_dataframe(df, candidate_tokens, {}, contest_string=contest_string)  # No candidate name mapping for single file
     
     # Set up candidates in abifmodel
     for token, cand_name in candidate_tokens.items():
@@ -268,43 +262,37 @@ def _create_readable_token(candidate_name, candidate_id):
     token = f"{initials}{candidate_id}"
     return token
 
-def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None):
-    """Process a pandas DataFrame to extract mayor's race voting patterns."""
+def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None, contest_string="Mayor"):
+    """Process a pandas DataFrame to extract voting patterns for a given contest."""
     if candidate_id_to_name is None:
         candidate_id_to_name = {}
     
-    # Find Mayor ranking columns - NYC uses pattern like "DEM Mayor Choice X of Y"
-    mayor_rank_cols = []
+    # Find contest ranking columns
+    contest_rank_cols = [col for col in df.columns if contest_string.lower() in str(col).lower()]
     
-    # Look for both patterns: "Mayor_Rank" and "DEM Mayor Choice"
-    for col in df.columns:
-        col_str = str(col)
-        if col_str.startswith("Mayor_Rank") or ("DEM Mayor Choice" in col_str and "Mayor" in col_str):
-            mayor_rank_cols.append(col)
-    
-    if not mayor_rank_cols:
-        print("[nycdem_fmt] No Mayor ranking columns found in this file")
+    if not contest_rank_cols:
+        print(f"[nycdem_fmt] No {contest_string} ranking columns found in this file")
         return {}, {}, 0, len(df)
     
     # Sort ranking columns by choice number for NYC format
     def extract_choice_number(col_name):
         try:
             if "Choice" in str(col_name):
-                # Extract number from "DEM Mayor Choice 1 of 5"
+                # Extract number from "DEM {contest_string} Choice 1 of 5"
                 parts = str(col_name).split("Choice")[1].split("of")[0].strip()
                 return int(parts)
             else:
-                # Extract from "Mayor_Rank1" format
-                return int(str(col_name).replace("Mayor_Rank", ""))
+                # Extract from "{contest_string}_Rank1" format
+                return int(str(col_name).replace(f"{contest_string}_Rank", ""))
         except:
             return 999  # Put unparseable columns at the end
     
-    mayor_rank_cols = sorted(mayor_rank_cols, key=extract_choice_number)
-    print(f"[nycdem_fmt] Mayor ranking columns: {[str(c)[:50] + '...' if len(str(c)) > 50 else str(c) for c in mayor_rank_cols]}")
+    contest_rank_cols = sorted(contest_rank_cols, key=extract_choice_number)
+    print(f"[nycdem_fmt] {contest_string} ranking columns: {[str(c)[:50] + '...' if len(str(c)) > 50 else str(c) for c in contest_rank_cols]}")
     
     # Build candidate list from all unique values in ranking columns
     all_candidate_ids = set()
-    for col in mayor_rank_cols:
+    for col in contest_rank_cols:
         candidates_in_col = df[col].dropna().astype(str).str.strip()
         # Filter out non-candidate values
         candidates_in_col = candidates_in_col[
@@ -312,7 +300,7 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None):
         ]
         all_candidate_ids.update(candidates_in_col)
     
-    print(f"[nycdem_fmt] Found {len(all_candidate_ids)} unique candidate IDs: {sorted(all_candidate_ids)}")
+    print(f"Found {len(all_candidate_ids)} unique candidate IDs: {sorted(all_candidate_ids)}")
     
     # Create candidate mapping with readable tokens
     id_to_token = {}
@@ -343,7 +331,7 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None):
     for idx, row in df.iterrows():
         # Extract rankings for this ballot
         rankings = []
-        for col in mayor_rank_cols:
+        for col in contest_rank_cols:
             val = row[col]
             if pd.isna(val):
                 continue

@@ -212,8 +212,9 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             outfile = os.path.join(abifsubdir, extfile['abifloc'])
             infilestr = " ".join(infiles)
             contestid = int(extfile.get('contestid')) if extfile.get('contestid') else None
-            sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile}\n")
-            jabmod = abiflib.nycdem_fmt.convert_nycdem_to_jabmod(infiles[0], contestid=contestid)
+            contest_string = extfile.get('contest_string') or "Mayor"
+            sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile} for contest {contest_string}\n")
+            jabmod = abiflib.nycdem_fmt.convert_nycdem_to_jabmod(infiles[0], contestid=contestid, contest_string=contest_string)
             jabmod = abiflib.consolidate_jabmod_voteline_objects(jabmod)
             abifstr = abiflib.convert_jabmod_to_abif(jabmod)
             with open(outfile, 'w') as f:
