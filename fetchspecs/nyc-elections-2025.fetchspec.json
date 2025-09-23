@@ -9,36 +9,6 @@
       "metaurls": [
         "https://vote.nyc/page/election-results-summary"
       ],
-      "desc": "2025 NYC Primary Election - DEM Borough President",
-      "abifloc": "nyc2025-primary-dem-borough-president.abif",
-      "contest_string": "DEM Borough President"
-    },
-    {
-      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
-      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
-      "metaurls": [
-        "https://vote.nyc/page/election-results-summary"
-      ],
-      "desc": "2025 NYC Primary Election - DEM Comptroller",
-      "abifloc": "nyc2025-primary-dem-comptroller.abif",
-      "contest_string": "DEM Comptroller"
-    },
-    {
-      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
-      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
-      "metaurls": [
-        "https://vote.nyc/page/election-results-summary"
-      ],
-      "desc": "2025 NYC Primary Election - DEM Council Member",
-      "abifloc": "nyc2025-primary-dem-council-member.abif",
-      "contest_string": "DEM Council Member"
-    },
-    {
-      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
-      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
-      "metaurls": [
-        "https://vote.nyc/page/election-results-summary"
-      ],
       "desc": "2025 NYC Primary Election - DEM Mayor",
       "abifloc": "nyc2025-primary-dem-mayor-citywide.abif",
       "contest_string": "DEM Mayor"
@@ -59,6 +29,576 @@
       "metaurls": [
         "https://vote.nyc/page/election-results-summary"
       ],
+      "desc": "2025 NYC Primary Election - DEM Comptroller",
+      "abifloc": "nyc2025-primary-dem-comptroller.abif",
+      "contest_string": "DEM Comptroller"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Manhattan Borough President",
+      "abifloc": "nyc2025-primary-dem-manhattan-borough-president.abif",
+      "contest_string": "DEM Manhattan Borough President"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Bronx Borough President",
+      "abifloc": "nyc2025-primary-dem-bronx-borough-president.abif",
+      "contest_string": "DEM Bronx Borough President"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Brooklyn Borough President",
+      "abifloc": "nyc2025-primary-dem-brooklyn-borough-president.abif",
+      "contest_string": "DEM Brooklyn Borough President"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Queens Borough President",
+      "abifloc": "nyc2025-primary-dem-queens-borough-president.abif",
+      "contest_string": "DEM Queens Borough President"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Staten Island Borough President",
+      "abifloc": "nyc2025-primary-dem-staten-island-borough-president.abif",
+      "contest_string": "DEM Staten Island Borough President"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 01",
+      "abifloc": "nyc2025-primary-dem-council-member-d01.abif",
+      "contest_string": "DEM Council Member District 01"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 02",
+      "abifloc": "nyc2025-primary-dem-council-member-d02.abif",
+      "contest_string": "DEM Council Member District 02"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 03",
+      "abifloc": "nyc2025-primary-dem-council-member-d03.abif",
+      "contest_string": "DEM Council Member District 03"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 04",
+      "abifloc": "nyc2025-primary-dem-council-member-d04.abif",
+      "contest_string": "DEM Council Member District 04"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 05",
+      "abifloc": "nyc2025-primary-dem-council-member-d05.abif",
+      "contest_string": "DEM Council Member District 05"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 06",
+      "abifloc": "nyc2025-primary-dem-council-member-d06.abif",
+      "contest_string": "DEM Council Member District 06"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 07",
+      "abifloc": "nyc2025-primary-dem-council-member-d07.abif",
+      "contest_string": "DEM Council Member District 07"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 08",
+      "abifloc": "nyc2025-primary-dem-council-member-d08.abif",
+      "contest_string": "DEM Council Member District 08"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 09",
+      "abifloc": "nyc2025-primary-dem-council-member-d09.abif",
+      "contest_string": "DEM Council Member District 09"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 10",
+      "abifloc": "nyc2025-primary-dem-council-member-d10.abif",
+      "contest_string": "DEM Council Member District 10"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 11",
+      "abifloc": "nyc2025-primary-dem-council-member-d11.abif",
+      "contest_string": "DEM Council Member District 11"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 12",
+      "abifloc": "nyc2025-primary-dem-council-member-d12.abif",
+      "contest_string": "DEM Council Member District 12"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 13",
+      "abifloc": "nyc2025-primary-dem-council-member-d13.abif",
+      "contest_string": "DEM Council Member District 13"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 14",
+      "abifloc": "nyc2025-primary-dem-council-member-d14.abif",
+      "contest_string": "DEM Council Member District 14"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 15",
+      "abifloc": "nyc2025-primary-dem-council-member-d15.abif",
+      "contest_string": "DEM Council Member District 15"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 16",
+      "abifloc": "nyc2025-primary-dem-council-member-d16.abif",
+      "contest_string": "DEM Council Member District 16"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 17",
+      "abifloc": "nyc2025-primary-dem-council-member-d17.abif",
+      "contest_string": "DEM Council Member District 17"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 18",
+      "abifloc": "nyc2025-primary-dem-council-member-d18.abif",
+      "contest_string": "DEM Council Member District 18"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 19",
+      "abifloc": "nyc2025-primary-dem-council-member-d19.abif",
+      "contest_string": "DEM Council Member District 19"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 20",
+      "abifloc": "nyc2025-primary-dem-council-member-d20.abif",
+      "contest_string": "DEM Council Member District 20"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 21",
+      "abifloc": "nyc2025-primary-dem-council-member-d21.abif",
+      "contest_string": "DEM Council Member District 21"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 22",
+      "abifloc": "nyc2025-primary-dem-council-member-d22.abif",
+      "contest_string": "DEM Council Member District 22"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 23",
+      "abifloc": "nyc2025-primary-dem-council-member-d23.abif",
+      "contest_string": "DEM Council Member District 23"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 24",
+      "abifloc": "nyc2025-primary-dem-council-member-d24.abif",
+      "contest_string": "DEM Council Member District 24"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 25",
+      "abifloc": "nyc2025-primary-dem-council-member-d25.abif",
+      "contest_string": "DEM Council Member District 25"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 26",
+      "abifloc": "nyc2025-primary-dem-council-member-d26.abif",
+      "contest_string": "DEM Council Member District 26"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 27",
+      "abifloc": "nyc2025-primary-dem-council-member-d27.abif",
+      "contest_string": "DEM Council Member District 27"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 28",
+      "abifloc": "nyc2025-primary-dem-council-member-d28.abif",
+      "contest_string": "DEM Council Member District 28"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 29",
+      "abifloc": "nyc2025-primary-dem-council-member-d29.abif",
+      "contest_string": "DEM Council Member District 29"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 30",
+      "abifloc": "nyc2025-primary-dem-council-member-d30.abif",
+      "contest_string": "DEM Council Member District 30"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 31",
+      "abifloc": "nyc2025-primary-dem-council-member-d31.abif",
+      "contest_string": "DEM Council Member District 31"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 32",
+      "abifloc": "nyc2025-primary-dem-council-member-d32.abif",
+      "contest_string": "DEM Council Member District 32"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 33",
+      "abifloc": "nyc2025-primary-dem-council-member-d33.abif",
+      "contest_string": "DEM Council Member District 33"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 34",
+      "abifloc": "nyc2025-primary-dem-council-member-d34.abif",
+      "contest_string": "DEM Council Member District 34"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 35",
+      "abifloc": "nyc2025-primary-dem-council-member-d35.abif",
+      "contest_string": "DEM Council Member District 35"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 36",
+      "abifloc": "nyc2025-primary-dem-council-member-d36.abif",
+      "contest_string": "DEM Council Member District 36"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 37",
+      "abifloc": "nyc2025-primary-dem-council-member-d37.abif",
+      "contest_string": "DEM Council Member District 37"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 38",
+      "abifloc": "nyc2025-primary-dem-council-member-d38.abif",
+      "contest_string": "DEM Council Member District 38"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 39",
+      "abifloc": "nyc2025-primary-dem-council-member-d39.abif",
+      "contest_string": "DEM Council Member District 39"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 40",
+      "abifloc": "nyc2025-primary-dem-council-member-d40.abif",
+      "contest_string": "DEM Council Member District 40"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 41",
+      "abifloc": "nyc2025-primary-dem-council-member-d41.abif",
+      "contest_string": "DEM Council Member District 41"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 42",
+      "abifloc": "nyc2025-primary-dem-council-member-d42.abif",
+      "contest_string": "DEM Council Member District 42"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 43",
+      "abifloc": "nyc2025-primary-dem-council-member-d43.abif",
+      "contest_string": "DEM Council Member District 43"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 44",
+      "abifloc": "nyc2025-primary-dem-council-member-d44.abif",
+      "contest_string": "DEM Council Member District 44"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 45",
+      "abifloc": "nyc2025-primary-dem-council-member-d45.abif",
+      "contest_string": "DEM Council Member District 45"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 46",
+      "abifloc": "nyc2025-primary-dem-council-member-d46.abif",
+      "contest_string": "DEM Council Member District 46"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 47",
+      "abifloc": "nyc2025-primary-dem-council-member-d47.abif",
+      "contest_string": "DEM Council Member District 47"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 48",
+      "abifloc": "nyc2025-primary-dem-council-member-d48.abif",
+      "contest_string": "DEM Council Member District 48"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 49",
+      "abifloc": "nyc2025-primary-dem-council-member-d49.abif",
+      "contest_string": "DEM Council Member District 49"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 50",
+      "abifloc": "nyc2025-primary-dem-council-member-d50.abif",
+      "contest_string": "DEM Council Member District 50"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - DEM Council Member District 51",
+      "abifloc": "nyc2025-primary-dem-council-member-d51.abif",
+      "contest_string": "DEM Council Member District 51"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
       "desc": "2025 NYC Primary Election - REP Comptroller",
       "abifloc": "nyc2025-primary-rep-comptroller.abif",
       "contest_string": "REP Comptroller"
@@ -69,9 +609,509 @@
       "metaurls": [
         "https://vote.nyc/page/election-results-summary"
       ],
-      "desc": "2025 NYC Primary Election - REP Council Member",
-      "abifloc": "nyc2025-primary-rep-council-member.abif",
-      "contest_string": "REP Council Member"
+      "desc": "2025 NYC Primary Election - REP Council Member District 01",
+      "abifloc": "nyc2025-primary-rep-council-member-d01.abif",
+      "contest_string": "REP Council Member District 01"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 02",
+      "abifloc": "nyc2025-primary-rep-council-member-d02.abif",
+      "contest_string": "REP Council Member District 02"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 03",
+      "abifloc": "nyc2025-primary-rep-council-member-d03.abif",
+      "contest_string": "REP Council Member District 03"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 04",
+      "abifloc": "nyc2025-primary-rep-council-member-d04.abif",
+      "contest_string": "REP Council Member District 04"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 05",
+      "abifloc": "nyc2025-primary-rep-council-member-d05.abif",
+      "contest_string": "REP Council Member District 05"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 06",
+      "abifloc": "nyc2025-primary-rep-council-member-d06.abif",
+      "contest_string": "REP Council Member District 06"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 07",
+      "abifloc": "nyc2025-primary-rep-council-member-d07.abif",
+      "contest_string": "REP Council Member District 07"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 08",
+      "abifloc": "nyc2025-primary-rep-council-member-d08.abif",
+      "contest_string": "REP Council Member District 08"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 09",
+      "abifloc": "nyc2025-primary-rep-council-member-d09.abif",
+      "contest_string": "REP Council Member District 09"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 10",
+      "abifloc": "nyc2025-primary-rep-council-member-d10.abif",
+      "contest_string": "REP Council Member District 10"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 11",
+      "abifloc": "nyc2025-primary-rep-council-member-d11.abif",
+      "contest_string": "REP Council Member District 11"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 12",
+      "abifloc": "nyc2025-primary-rep-council-member-d12.abif",
+      "contest_string": "REP Council Member District 12"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 13",
+      "abifloc": "nyc2025-primary-rep-council-member-d13.abif",
+      "contest_string": "REP Council Member District 13"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 14",
+      "abifloc": "nyc2025-primary-rep-council-member-d14.abif",
+      "contest_string": "REP Council Member District 14"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 15",
+      "abifloc": "nyc2025-primary-rep-council-member-d15.abif",
+      "contest_string": "REP Council Member District 15"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 16",
+      "abifloc": "nyc2025-primary-rep-council-member-d16.abif",
+      "contest_string": "REP Council Member District 16"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 17",
+      "abifloc": "nyc2025-primary-rep-council-member-d17.abif",
+      "contest_string": "REP Council Member District 17"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 18",
+      "abifloc": "nyc2025-primary-rep-council-member-d18.abif",
+      "contest_string": "REP Council Member District 18"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 19",
+      "abifloc": "nyc2025-primary-rep-council-member-d19.abif",
+      "contest_string": "REP Council Member District 19"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 20",
+      "abifloc": "nyc2025-primary-rep-council-member-d20.abif",
+      "contest_string": "REP Council Member District 20"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 21",
+      "abifloc": "nyc2025-primary-rep-council-member-d21.abif",
+      "contest_string": "REP Council Member District 21"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 22",
+      "abifloc": "nyc2025-primary-rep-council-member-d22.abif",
+      "contest_string": "REP Council Member District 22"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 23",
+      "abifloc": "nyc2025-primary-rep-council-member-d23.abif",
+      "contest_string": "REP Council Member District 23"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 24",
+      "abifloc": "nyc2025-primary-rep-council-member-d24.abif",
+      "contest_string": "REP Council Member District 24"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 25",
+      "abifloc": "nyc2025-primary-rep-council-member-d25.abif",
+      "contest_string": "REP Council Member District 25"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 26",
+      "abifloc": "nyc2025-primary-rep-council-member-d26.abif",
+      "contest_string": "REP Council Member District 26"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 27",
+      "abifloc": "nyc2025-primary-rep-council-member-d27.abif",
+      "contest_string": "REP Council Member District 27"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 28",
+      "abifloc": "nyc2025-primary-rep-council-member-d28.abif",
+      "contest_string": "REP Council Member District 28"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 29",
+      "abifloc": "nyc2025-primary-rep-council-member-d29.abif",
+      "contest_string": "REP Council Member District 29"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 30",
+      "abifloc": "nyc2025-primary-rep-council-member-d30.abif",
+      "contest_string": "REP Council Member District 30"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 31",
+      "abifloc": "nyc2025-primary-rep-council-member-d31.abif",
+      "contest_string": "REP Council Member District 31"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 32",
+      "abifloc": "nyc2025-primary-rep-council-member-d32.abif",
+      "contest_string": "REP Council Member District 32"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 33",
+      "abifloc": "nyc2025-primary-rep-council-member-d33.abif",
+      "contest_string": "REP Council Member District 33"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 34",
+      "abifloc": "nyc2025-primary-rep-council-member-d34.abif",
+      "contest_string": "REP Council Member District 34"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 35",
+      "abifloc": "nyc2025-primary-rep-council-member-d35.abif",
+      "contest_string": "REP Council Member District 35"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 36",
+      "abifloc": "nyc2025-primary-rep-council-member-d36.abif",
+      "contest_string": "REP Council Member District 36"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 37",
+      "abifloc": "nyc2025-primary-rep-council-member-d37.abif",
+      "contest_string": "REP Council Member District 37"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 38",
+      "abifloc": "nyc2025-primary-rep-council-member-d38.abif",
+      "contest_string": "REP Council Member District 38"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 39",
+      "abifloc": "nyc2025-primary-rep-council-member-d39.abif",
+      "contest_string": "REP Council Member District 39"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 40",
+      "abifloc": "nyc2025-primary-rep-council-member-d40.abif",
+      "contest_string": "REP Council Member District 40"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 41",
+      "abifloc": "nyc2025-primary-rep-council-member-d41.abif",
+      "contest_string": "REP Council Member District 41"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 42",
+      "abifloc": "nyc2025-primary-rep-council-member-d42.abif",
+      "contest_string": "REP Council Member District 42"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 43",
+      "abifloc": "nyc2025-primary-rep-council-member-d43.abif",
+      "contest_string": "REP Council Member District 43"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 44",
+      "abifloc": "nyc2025-primary-rep-council-member-d44.abif",
+      "contest_string": "REP Council Member District 44"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 45",
+      "abifloc": "nyc2025-primary-rep-council-member-d45.abif",
+      "contest_string": "REP Council Member District 45"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 46",
+      "abifloc": "nyc2025-primary-rep-council-member-d46.abif",
+      "contest_string": "REP Council Member District 46"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 47",
+      "abifloc": "nyc2025-primary-rep-council-member-d47.abif",
+      "contest_string": "REP Council Member District 47"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 48",
+      "abifloc": "nyc2025-primary-rep-council-member-d48.abif",
+      "contest_string": "REP Council Member District 48"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 49",
+      "abifloc": "nyc2025-primary-rep-council-member-d49.abif",
+      "contest_string": "REP Council Member District 49"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 50",
+      "abifloc": "nyc2025-primary-rep-council-member-d50.abif",
+      "contest_string": "REP Council Member District 50"
+    },
+    {
+      "url": "https://www.vote.nyc/sites/default/files/pdf/election_results/2025/20250624Primary%20Election/rcv/2025_Primary_CVR_2025-07-17.zip",
+      "localcopy": "2025_Primary_CVR_2025-07-17.zip",
+      "metaurls": [
+        "https://vote.nyc/page/election-results-summary"
+      ],
+      "desc": "2025 NYC Primary Election - REP Council Member District 51",
+      "abifloc": "nyc2025-primary-rep-council-member-d51.abif",
+      "contest_string": "REP Council Member District 51"
     }
   ]
 }

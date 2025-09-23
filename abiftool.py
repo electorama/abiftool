@@ -134,6 +134,9 @@ def main():
     )
 
     parser.add_argument('--profile-output', help='Write cProfile output to this file')
+    parser.add_argument('--analyze-zip', help='Analyze a NYC CVR ZIP (nycdems) and write a header report')
+    parser.add_argument('--report-out', help='Path to write analysis report', default='docs/nyc-2025-cvr-columns.txt')
+    parser.add_argument('--debug-headers', action='store_true', help='Enable verbose NYC header diagnostics')
 
     validinfmts = get_keys_from_dict_list(INPUT_FORMATS)
     validoutfmts = get_keys_from_dict_list(OUTPUT_FORMATS)
@@ -166,6 +169,13 @@ def main():
                         help='List contests as JSON and exit')
 
     args = parser.parse_args()
+    if args.debug_headers:
+        try:
+            import abiflib.nycdem_fmt as nyc_fmt
+
+            nyc_fmt.set_debug_headers(True)
+        except Exception as exc:
+            print(f"Warning: unable to enable NYC header debugging ({exc})")
     abiflib_test_log(f"cmd: {' '.join(sys.argv)}")
     pr = None
     profile_filename = None
@@ -182,6 +192,18 @@ def main():
                 profile_filename = os.path.join(cprof_dir, f'c{timestamp}.cprof')
         pr = cProfile.Profile()
         pr.enable()
+
+    # Special analysis mode for NYC CVR ZIPs (format-agnostic entry)
+    if args.analyze_zip:
+        try:
+            from abiflib.nycdem_fmt import discover_headers_in_zip, save_header_report
+        except Exception as e:
+            print(f"Error: NYC analysis dependencies not available: {e}")
+            sys.exit(1)
+        report = discover_headers_in_zip(args.analyze_zip, sample_rows=5)
+        save_header_report(args.report_out, report)
+        print(f"Wrote header report to {args.report_out}")
+        return
 
     if not args.input_file and not args.list_contests and not args.list_contests_json and not args.container:
         parser.error("Missing input file.  Please specify an input file or "

@@ -388,10 +388,14 @@ def get_Copeland_winners(copecount):
 
 def Copeland_report(canddict, copecount):
     retval = ""
-    # retval += f"{canddict=}\n"
     copescores = calc_Copeland_scores(copecount)
-    # retval += f"odlWinner: {copescores[0][0]=} {copescores[0][1]=}\n"
-    retval += f"Copeland Winner: {canddict[copescores[0][0]]} (score: {copescores[0][1]})\n"
+    if not copescores:
+        return "No Copeland result: no candidates or ballots.\n"
+    try:
+        retval += f"Copeland Winner: {canddict[copescores[0][0]]} (score: {copescores[0][1]})\n"
+    except Exception:
+        # Fallback to token if name lookup fails
+        retval += f"Copeland Winner: {copescores[0][0]} (score: {copescores[0][1]})\n"
     return retval
 
 

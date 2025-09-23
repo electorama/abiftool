@@ -2,6 +2,7 @@ import json
 import os
 import re
 from typing import List
+import argparse
 
 
 ZIP_URL = (
@@ -38,7 +39,9 @@ def council_items_for_party(party: str, districts: List[int]) -> List[dict]:
         d2 = f"{d:02d}"
         contest = f"{party} Council Member District {d2}"
         abif_suffix = slugify(f"{party} council member d{d2}")
-        items.append(make_item(contest, abif_suffix))
+        item = make_item(contest, abif_suffix)
+        item['district'] = d
+        items.append(item)
     return items
 
 
@@ -131,7 +134,55 @@ def build_web_urls() -> List[dict]:
 
 
 def main():
-    web_urls = build_web_urls()
+    parser = argparse.ArgumentParser(description="Generate NYC fetchspecs")
+    parser.add_argument("--single-contest-string", help="Exact contest string to include (e.g., 'DEM Council Member District 08')")
+    parser.add_argument("--party", choices=["DEM", "REP"], help="Party for structured single mode")
+    parser.add_argument("--office", help="Office title for structured single mode (e.g., 'Council Member', 'Mayor', 'Comptroller', 'Public Advocate', '<Borough> Borough President')")
+    parser.add_argument("--district", type=int, help="District number for Council Member contests")
+    parser.add_argument("--borough", help="Borough for Borough President contests")
+    parser.add_argument("--fanout", choices=["byfile", "precinct"], help="Write many raw ABIFs per ZIP (to a directory) instead of one file")
+    parser.add_argument("--outfile", default="fetchspecs/nyc-elections-2025.fetchspec.json", help="Output fetchspec path")
+    args = parser.parse_args()
+
+    # Build web_urls either default (all) or single per args
+    if args.single_contest_string or args.office or args.party:
+        if args.single_contest_string:
+            contest = args.single_contest_string
+        else:
+            parts = []
+            if not args.party or not args.office:
+                parser.error("Structured single requires --party and --office")
+            parts.append(args.party)
+            # Normalize some common office terms
+            office = args.office.strip()
+            if office.lower() == 'borough president' and args.borough:
+                parts.append(args.borough)
+                parts.append('Borough President')
+            else:
+                parts.append(office)
+            if office.lower().startswith('council member') and args.district:
+                parts.append(f"District {args.district:02d}")
+            contest = " ".join(parts)
+
+        suffix = slugify(contest)
+        item = make_item(contest, suffix)
+        # Ensure district field is present if Council Member + number
+        m = re.search(r"district\s*(\d+)", contest, flags=re.IGNORECASE)
+        if m:
+            try:
+                item['district'] = int(m.group(1))
+            except Exception:
+                pass
+        web_urls = [item]
+        # If fanout is requested, adapt to directory-based outputs
+        if args.fanout:
+            web_urls[0]['fanout'] = 'precinct' if args.fanout == 'precinct' else 'byfile'
+            web_urls[0]['abifloc_dir'] = f"nyc2025-primary-{suffix}"
+            # Keep abifloc too for compatibility if some tools expect it
+            web_urls[0]['abifloc'] = f"{web_urls[0]['abifloc_dir']}.abif"
+    else:
+        web_urls = build_web_urls()
+
     fetchspec = {
         "download_subdir": DOWNLOAD_SUBDIR,
         "abifloc_subdir": ABIFLOC_SUBDIR,
@@ -139,7 +190,7 @@ def main():
         "web_urls": web_urls,
     }
 
-    outpath = "fetchspecs/nyc-elections-2025.fetchspec.json"
+    outpath = args.outfile
     os.makedirs(os.path.dirname(outpath), exist_ok=True)
     with open(outpath, "w") as f:
         json.dump(fetchspec, f, indent=2)

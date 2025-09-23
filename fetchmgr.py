@@ -213,12 +213,36 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
             infilestr = " ".join(infiles)
             contestid = int(extfile.get('contestid')) if extfile.get('contestid') else None
             contest_string = extfile.get('contest_string') or "Mayor"
-            sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile} for contest {contest_string}\n")
-            jabmod = abiflib.nycdem_fmt.convert_nycdem_to_jabmod(infiles[0], contestid=contestid, contest_string=contest_string)
-            jabmod = abiflib.consolidate_jabmod_voteline_objects(jabmod)
-            abifstr = abiflib.convert_jabmod_to_abif(jabmod)
-            with open(outfile, 'w') as f:
-                f.write(abifstr)
+            # Optional district filter: explicit field or infer from contest string like '... District 08'
+            district = extfile.get('district')
+            if isinstance(district, str) and district.isdigit():
+                district = int(district)
+            if not district and isinstance(contest_string, str):
+                import re as _re
+                m = _re.search(r"district\s*(\d+)", contest_string, flags=_re.IGNORECASE)
+                if m:
+                    try:
+                        district = int(m.group(1))
+                    except Exception:
+                        district = None
+
+            fanout = extfile.get('fanout')
+            if fanout:
+                outdir = os.path.join(abifsubdir, extfile.get('abifloc_dir', os.path.splitext(extfile.get('abifloc', 'nyc2025-primary'))[0]))
+                sys.stderr.write(f"Fanout conversion {infilestr} ({srcfmt}) -> {outdir} for contest {contest_string} (fanout={fanout})\n")
+                group_by = 'precinct' if fanout.lower() == 'precinct' else None
+                try:
+                    abiflib.nycdem_fmt.fanout_zip_to_abif_files(infiles[0], outdir, contest_string=contest_string, district=district, group_by=group_by)
+                except Exception as e:
+                    sys.stderr.write(f"Fanout conversion failed: {e}\n")
+            else:
+                sys.stderr.write(f"Converting {infilestr} ({srcfmt}) to {outfile} for contest {contest_string}\n")
+                jabmod = abiflib.nycdem_fmt.convert_nycdem_to_jabmod(
+                    infiles[0], contestid=contestid, contest_string=contest_string, district=district)
+                jabmod = abiflib.consolidate_jabmod_voteline_objects(jabmod)
+                abifstr = abiflib.convert_jabmod_to_abif(jabmod)
+                with open(outfile, 'w') as f:
+                    f.write(abifstr)
         elif srcfmt == 'stlcvr':
             # St. Louis Hart Verity XML CVR: perform conversion via abiflib if available
             outfile = os.path.join(abifsubdir, extfile['abifloc'])
@@ -346,8 +370,20 @@ def main():
         default=None,
         help="JSON file(s) describing fetch locations and mappings to local dirs",
     )
+    parser.add_argument(
+        "--debug-headers",
+        action="store_true",
+        help="Enable verbose NYC header diagnostics during conversions",
+    )
 
     args = parser.parse_args()
+    if args.debug_headers:
+        try:
+            from abiflib import nycdem_fmt as _nyc_fmt
+
+            _nyc_fmt.set_debug_headers(True)
+        except Exception as exc:
+            print(f"Warning: unable to enable NYC header debugging ({exc})")
     if len(args.fetchspec) < 1:
         print("Please provide at least one fetchspec (see fetchspecs/*)")
         sys.exit(1)
