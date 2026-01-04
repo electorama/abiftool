@@ -52,9 +52,17 @@ class LogfileSingleton:
                     cls.devtoolmsgs.append(err)
                     raise ValueError(err)
                 if not os.path.exists(logdir):
-                    err = f"Dir in ABIFLIB_LOG path doesn't exist: {logdir}"
-                    cls.devtoolmsgs.append(err)
-                    raise FileNotFoundError(err)
+                    if force_log:
+                        os.makedirs(logdir, exist_ok=True)
+                    else:
+                        friendly_err = (
+                            f"The directory '{logdir}' specified in the ABIFLIB_LOG "
+                            f"environment variable does not exist. Please create this "
+                            f"directory, or use the --force option if you want it to "
+                            f"be created automatically."
+                        )
+                        cls.devtoolmsgs.append(friendly_err)
+                        raise ValueError(friendly_err)
                 cls._filehandle = open(filename, "a")
                 msg = f"ABIFLIB_LOG set to {filename}.  "
                 msg += "Amending additional debugging output there."
