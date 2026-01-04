@@ -658,7 +658,7 @@ def _slugify(s: str) -> str:
 def fanout_zip_to_abif_files(zip_path, outdir, contest_string="Mayor", district=None, group_by=None):
     """Write multiple ABIF files from a NYC ZIP, segmented by Excel file or a grouping column.
 
-    - If group_by == 'precinct', attempts to split each Excel by a column matching /precinct/i or /election\s*district/i.
+    - If group_by == 'precinct', attempts to split each Excel by a column matching /precinct/i or /election\\s*district/i.
     - Otherwise, writes one ABIF per Excel file that contains matching contest columns.
     """
     os.makedirs(outdir, exist_ok=True)

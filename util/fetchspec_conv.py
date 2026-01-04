@@ -209,10 +209,10 @@ def make_awt_entry(
     entry["id"] = slug_from_text(id_source)
 
     base_title = (
-        item.get("title")
-        or item.get("contest_string")
-        or item.get("desc")
-        or entry["id"]
+        item.get("title") or
+        item.get("contest_string") or
+        item.get("desc") or
+        entry["id"]
     )
     entry["title"] = f"{prefix}{base_title}" if prefix else base_title
 
