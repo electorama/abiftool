@@ -6,6 +6,7 @@ from subprocess import run, PIPE
 
 LOGOBJ = abiflib.LogfileSingleton()
 
+
 @pytest.mark.parametrize(
     'cmd_args, inputfiles, pattern',
     [
@@ -16,7 +17,6 @@ LOGOBJ = abiflib.LogfileSingleton()
     ],
     ids=['sftxt_001']
 )
-
 def test_grep_output_for_regexp(cmd_args, inputfiles, pattern):
     """Testing text output from abiftool.py for regexp"""
     for inf in inputfiles:

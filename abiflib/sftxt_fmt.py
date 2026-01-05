@@ -21,6 +21,16 @@ Parse the ballot image files provided by the City of San Francisco:
 https://sfelections.sfgov.org/results
 """
 
+import urllib.parse
+import sys
+import re
+import json
+from io import StringIO
+import fileinput
+import csv
+from collections import OrderedDict
+import argparse
+from abiflib import *
 BALLOTIMAGE_FIELDSPEC = """fieldname,lastchar,length
 Contest_Id,7,7
 Pref_Voter_Id,16,9
@@ -42,19 +52,6 @@ Candidates_Contest_Id,81,7
 Is_WriteIn,82,1
 Is_Provisional,83,1
 """
-
-
-from abiflib import *
-import argparse
-from collections import OrderedDict
- 
-import csv
-import fileinput
-from io import StringIO
-import json
-import re
-import sys
-import urllib.parse
 
 
 def sftxt_read_fieldspec(fieldspec_string):
@@ -87,7 +84,7 @@ def sftxt_read_fieldspec(fieldspec_string):
         if (int(lastchar) - pos) == int(field['length']):
             raise ValueError(
                 "Length mismatch in {1}".format(field['fieldname']))
-    return(regex, fieldnames)
+    return (regex, fieldnames)
 
 
 def read_sftxt_file(fieldspec, datafile=None, datastr=None):
@@ -111,9 +108,10 @@ def read_sftxt_file(fieldspec, datafile=None, datastr=None):
             rowdict = OrderedDict()
             for i, field in enumerate(fields):
                 rowdict[field] = regmatch.group(i + 1)
-            yield(rowdict)
+            yield (rowdict)
         else:
             raise ValueError('generated regex does not match datafile')
+
 
 def read_sftxt_blob(fieldspec, datablob):
     """
@@ -129,7 +127,7 @@ def read_sftxt_blob(fieldspec, datablob):
             rowdict = OrderedDict()
             for i, field in enumerate(fields):
                 rowdict[field] = regmatch.group(i + 1)
-            yield(rowdict)
+            yield (rowdict)
         else:
             raise ValueError('generated regex does not match datablob')
 
@@ -186,12 +184,12 @@ def _sftxt_convert_to_ballots(imagelines, candpool, contestid=None):
         # each ballot may result in 3 image lines (one for each
         # preference the voter marks).  See if this line is the same
         # voter/ballot as the previous line
-        if(thisballot['Pref_Voter_Id'] != imageline['Pref_Voter_Id']):
+        if (thisballot['Pref_Voter_Id'] != imageline['Pref_Voter_Id']):
             # if the Prev_Voter_Id doesn't line up, that means we're
             # done with a ballot.  yield it from this function, then
             # start building a new ballot from this line.
             if thisballot['Pref_Voter_Id'] != None:
-                yield(thisballot)
+                yield (thisballot)
             lastballot = thisballot
             thisballot = emptyballot.copy()
             for field in ballotfields:
@@ -204,15 +202,15 @@ def _sftxt_convert_to_ballots(imagelines, candpool, contestid=None):
         thisvote['candidate'] = candpool[imageline['Candidate_Id']]
         overvote = (imageline['Over_Vote'] == '1')
         undervote = (imageline['Under_Vote'] == '1')
-        if(overvote and undervote):
+        if (overvote and undervote):
             raise ValueError('both overvote and undervote flagged')
-        elif(overvote):
+        elif (overvote):
             thisvote['exception'] = 'overvote'
-        elif(undervote):
+        elif (undervote):
             thisvote['exception'] = 'undervote'
         thisballot['votes'].append(thisvote)
     # now that we're out of the loop, yield the last ballot
-    yield(thisballot)
+    yield (thisballot)
 
 
 def _sftxt_dump_url_encoded(outputrecords, outfh):
@@ -232,35 +230,35 @@ def _sftxt_dump_csv1996fmt(candpool, outputrecords, outfh):
     """
     This was the format used by my old 1996 Perl script
     """
-    candnum=0
-    revcand={}
+    candnum = 0
+    revcand = {}
     for candid, candname in candpool.items():
         if candname:
             print("{:d}, {}".format(candnum, candname), file=outfh)
-        revcand[candname]=candnum
-        candnum+=1
+        revcand[candname] = candnum
+        candnum += 1
     for rec in outputrecords:
         outrec = {}
-        outstr=""
+        outstr = ""
         # populate the higher ranked duplicates take priority over
         # the lower rank
-        candname=rec['votes'][0]['candidate']
+        candname = rec['votes'][0]['candidate']
         outrec[candname] = rec['votes'][0]['rank']
-        outstr=str(revcand[candname])
+        outstr = str(revcand[candname])
 
-        candname=rec['votes'][1]['candidate']
-        candrank=rec['votes'][1]['rank']
+        candname = rec['votes'][1]['candidate']
+        candrank = rec['votes'][1]['rank']
         if candname and not candname in outrec:
             outrec[candname] = candrank
-            outstr+=">"
-            outstr+=str(revcand[candname])
+            outstr += ">"
+            outstr += str(revcand[candname])
 
-        candname=rec['votes'][2]['candidate']
-        candrank=rec['votes'][2]['rank']
+        candname = rec['votes'][2]['candidate']
+        candrank = rec['votes'][2]['rank']
         if candname and not candname in outrec:
             outrec[candname] = candrank
-            outstr+=">"
-            outstr+=str(revcand[candname])
+            outstr += ">"
+            outstr += str(revcand[candname])
 
         print(outstr, file=outfh)
 
@@ -288,15 +286,15 @@ def convert_sftxt_to_jabmod(sftxt_master_blob, sftxt_ballot_blob, verbose=False)
 
     lookuplines = list(read_sftxt_blob(MASTERLOOKUP_FIELDSPEC, sftxt_master_blob))
 
-    (candpool, contestid)=_sftxt_lookuplines2candpool(lookuplines)
+    (candpool, contestid) = _sftxt_lookuplines2candpool(lookuplines)
     retval['metadata']['contestid'] = contestid
 
     imagelines = read_sftxt_file(BALLOTIMAGE_FIELDSPEC, datastr=sftxt_ballot_blob)
 
     outputrecords = _sftxt_convert_to_ballots(imagelines, candpool,
                                               contestid=contestid)
-    candnum=0
-    revcand={}
+    candnum = 0
+    revcand = {}
     for candid, candname in candpool.items():
         if candname:
             candtok = _short_token(candname)
@@ -304,16 +302,16 @@ def convert_sftxt_to_jabmod(sftxt_master_blob, sftxt_ballot_blob, verbose=False)
             candtok = f"cand{candnum}"
         revcand[candname] = candtok
         retval['candidates'][candtok] = candname
-        candnum+=1
+        candnum += 1
     for rec in outputrecords:
         outrec = {}
         vljson = {}
         if verbose:
-            vljson['comment'] = ( f"Contest: {rec['Contest_Id']}; " +
-                                  f"Voter: {rec['Pref_Voter_Id']}; " +
-                                  f"SerialNum: {rec['Serial_Number']}; " +
-                                  f"TalType: {rec['Tally_Type_Id']}; " +
-                                  f"Precinct: {rec['Precinct_Id']};")
+            vljson['comment'] = (f"Contest: {rec['Contest_Id']}; " +
+                                 f"Voter: {rec['Pref_Voter_Id']}; " +
+                                 f"SerialNum: {rec['Serial_Number']}; " +
+                                 f"TalType: {rec['Tally_Type_Id']}; " +
+                                 f"Precinct: {rec['Precinct_Id']};")
         vljson['prefs'] = {}
         vljson['qty'] = 1
         for p in rec['votes']:
@@ -362,9 +360,9 @@ def main(argv=None):
 
     imagelines = read_sftxt_file(BALLOTIMAGE_FIELDSPEC, args.imagefile)
 
-    (candpool, contestid)=_sftxt_lookuplines2candpool(lookuplines, contestid=args.contestid)
+    (candpool, contestid) = _sftxt_lookuplines2candpool(lookuplines, contestid=args.contestid)
 
-    if(args.imagelines):
+    if (args.imagelines):
         # TODO: filter imagelines by args.contestid
         outputrecords = imagelines
     else:

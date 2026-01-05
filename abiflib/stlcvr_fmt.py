@@ -110,6 +110,7 @@ def list_contests(zip_path: str, sample_limit: int = 200):
     for c in contests:
         print(f"Contest {c['pos']}: {c['name']} (slug: {c.get('slug')})")
 
+
 def get_contest_list(zip_path: str, sample_limit: int = 200):
     """Return a list of contest dicts for JSON listing and selection.
 

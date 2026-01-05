@@ -1,6 +1,8 @@
 from abiftestfuncs import *
 import pytest
 from subprocess import run, PIPE
+
+
 @pytest.mark.parametrize(
     'input_file, command_line_args, expected_output_length',
     [
@@ -10,9 +12,8 @@ from subprocess import run, PIPE
     ],
     ids=['linecount_001', 'linecount_002', 'linecount_003']
 )
-
 def test_abiftool_linecount(input_file, command_line_args, expected_output_length):
-    cmd_args = command_line_args + [ input_file ]
+    cmd_args = command_line_args + [input_file]
     output_lines = get_abiftool_output_as_array(cmd_args)
     if 'text' == command_line_args[1] and not has_lib("texttable"):
         pytest.skip("Skipping test because 'texttable' is not installed.")

@@ -11,14 +11,13 @@ import unittest
 from pathlib import Path
 import subprocess
 
+
 class TestAbiftoolPEP8Compliance(unittest.TestCase):
     """Test that abiftool Python files follow PEP8 style guidelines."""
 
     IGNORED_ERRORS = [
-        'E501', 'E302', 'E303', 'E305', 'E402', 'E265', 'E713', 'E275', 'E225', 'E231',
-        'E201', 'E202', 'E111', 'E251', 'E124', 'E261', 'E304', 'E306', 'E722', 'W291',
-        'W293', 'W391', 'E222', 'E226', 'E711', 'W504', 'E121', 'E122', 'E126', 'E721',
-        'E131'
+        'E501', 'E302', 'E303', 'E305', 'E402', 'E713', 'E111', 'E124', 'E304', 'E306',
+        'E722', 'E711', 'W504', 'E121', 'E122', 'E126', 'E721', 'E131'
     ]  # Ignore all baseline errors for now
 
     def setUp(self):
@@ -115,6 +114,6 @@ class TestAbiftoolPEP8Compliance(unittest.TestCase):
             self.assertTrue(file_path.is_file(),
                             f"{file_path} should be a readable file")
 
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
-

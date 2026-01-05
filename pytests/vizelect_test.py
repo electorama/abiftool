@@ -7,17 +7,17 @@ import sys
 
 testdicts = [
     {
-        "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
-        "filename":"testdata/burl2009/burl2009.abif",
-        "pattern":r"Montroll[^\d]+4067",
-        "outfmt":"svg",
+        "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
+        "filename": "testdata/burl2009/burl2009.abif",
+        "pattern": r"Montroll[^\d]+4067",
+        "outfmt": "svg",
         "id": "vizelect_001"
     },
     {
-        "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
-        "filename":"testdata/burl2009/burl2009.abif",
-        "pattern":r"\(5 wins, 0 losses, 0 ties\)",
-        "outfmt":"dot",
+        "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
+        "filename": "testdata/burl2009/burl2009.abif",
+        "pattern": r"\(5 wins, 0 losses, 0 ties\)",
+        "outfmt": "dot",
         "id": "vizelect_002"
     }
 ]

@@ -54,6 +54,7 @@ testlist = [
     ),
 ]
 
+
 @pytest.mark.parametrize(
     'cmd_args, inputfile, testtype, keylist, value', testlist
 )

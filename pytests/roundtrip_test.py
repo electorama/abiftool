@@ -54,4 +54,3 @@ def test_roundtrip_conversion(filename, abif_line):
     abiflib_test_log(f"roundtrip_abif_content:")
     abiflib_test_log(pformat(roundtrip_abif_content))
     assert abif_line in roundtrip_abif_content
-

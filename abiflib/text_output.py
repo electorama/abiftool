@@ -69,19 +69,18 @@ def textgrid_for_2D_dict(twodimdict, tablelabel='   Loser ->\nv Winner', width=1
 
 def texttable_pairwise_and_winlosstie(abifmodel):
     def wltstr(cand):
-        retval=f"{wltdict[cand]['wins']}" + "-"
-        retval+=f"{wltdict[cand]['losses']}" + "-"
-        retval+=f"{wltdict[cand]['ties']}"
+        retval = f"{wltdict[cand]['wins']}" + "-"
+        retval += f"{wltdict[cand]['losses']}" + "-"
+        retval += f"{wltdict[cand]['ties']}"
         return retval
 
     pairdict = pairwise_count_dict(abifmodel)
     wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
-    tablelabel='   Loser ->\nv Winner'
+    tablelabel = '   Loser ->\nv Winner'
     retval = ""
 
     table = Texttable()
     ctok = list(pairdict.keys())
-
 
     candkeys = sorted(pairdict.keys(),
                       key=lambda x: wltdict[x]['wins'],
@@ -99,18 +98,17 @@ def texttable_pairwise_and_winlosstie(abifmodel):
             invals = []
             for ik in candkeys:
                 invals.append(pairdict[ck][ik])
-            #candkeys = sorted(pairdict.keys(),
+            # candkeys = sorted(pairdict.keys(),
             #          key=lambda x: wltdict[x]['wins'],
             #          reverse=True)
-
 
             if dbg:
                 print(f"{mykeys=}")
                 print(f"{candkeys=}")
                 print(f"{myvals=}")
                 print(f"{invals=}")
-            rowlabel=f"{ck} ({wltstr(ck)})"
-            #table.add_row([rowlabel] + myvals)
+            rowlabel = f"{ck} ({wltstr(ck)})"
+            # table.add_row([rowlabel] + myvals)
             table.add_row([rowlabel] + invals)
         except AttributeError:
             print(inner_dict)

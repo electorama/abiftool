@@ -18,6 +18,7 @@
 from abiflib import *
 from abiflib.html_output import *
 
+
 def get_abif_title(abifmodel):
     '''Title (or filename) from the abifmodel metadata'''
     metadata = abifmodel.get('metadata', None)
@@ -55,5 +56,3 @@ def validate_abifmodel(abifmodel):
     err = f"Model size {modsize} exceeds modlimit {modlimit}"
     if modsize > modlimit:
         raise Exception(err)
-
-

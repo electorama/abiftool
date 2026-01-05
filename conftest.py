@@ -13,7 +13,9 @@ def pytest_addoption(parser):
         "--force", action="store_true", default=False, help="Force actions like creating directories."
     )
 
+
 _original_logfile_singleton_new = abiflib.devtools.LogfileSingleton.__new__
+
 
 def pytest_configure(config):
     """Monkeypatch LogfileSingleton if --force is used."""
@@ -22,6 +24,7 @@ def pytest_configure(config):
             kwargs['force_log'] = True
             return _original_logfile_singleton_new(cls, *args, **kwargs)
         abiflib.devtools.LogfileSingleton.__new__ = new_forced
+
 
 def pytest_unconfigure(config):
     """Restore original LogfileSingleton.__new__."""

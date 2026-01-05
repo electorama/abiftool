@@ -13,37 +13,37 @@ from abiftestfuncs import *
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
     [
-        #irv test001
+        # irv test001
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-scores.abif',
             r"Chat: 15",
             id='irv_textout_001'),
-        #irv test002
+        # irv test002
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-STAR.abif',
             r'The IRV winner is Knox',
             id='irv_textout_002'),
-        #irv test003
+        # irv test003
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-STAR-score-difference.abif',
             r"Knox: 17",
             id='irv_textout_003'),
-        #irv test004
+        # irv test004
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
             'testdata/commasep/tn-example-scores-and-commas.abif',
             r"Knox: 58",
             id='irv_textout_004'),
-        #irv test005
+        # irv test005
         pytest.param(
             ['-t', 'text', '-m', 'IRV'],
             'testdata/burl2009/burl2009.abif',
             r'The IRV winner is Kiss',
             id='irv_textout_005'),
-        #irv test006
+        # irv test006
         # FIXME - There are a number of interpretations of this
         # example.  The abiftool implmementation of IRV/RCV may need
         # to be tweaked to match the popular usage of IRV/RCV.
@@ -52,62 +52,62 @@ from abiftestfuncs import *
             'testdata/commasep/jman722-example.abif',
             r'The IRV winner is Georgie',
             id='irv_textout_006'),
-        #irv test007
+        # irv test007
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r"Memph: 42",
             id='irv_textout_007'),
-        #irv test008
+        # irv test008
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r"Total starting votes: 100",
             id='irv_textout_008'),
-        #irv test009
+        # irv test009
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r"Total counted votes: 83",
             id='irv_textout_009'),
-        #irv test010
+        # irv test010
         pytest.param(
-        ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
-         'testdata/mock-elections/tennessee-example-overvote-02.abif',
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r'Overvotes: 17',
             id='irv_textout_010'),
-        #irv test011
+        # irv test011
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-overvote-02.abif',
             r'Eliminated this round: Chat, Knox, Nash',
             id='irv_textout_011'),
-        #irv test012
+        # irv test012
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
             'testdata/commasep/jman722-example.abif',
             r'Total starting votes: 24',
             id='irv_textout_012'),
-        #irv test013
+        # irv test013
         pytest.param(
-        ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
+            ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
             'testdata/mock-elections/tennessee-example-irv-tie.abif',
             r'The IRV winners are Knox and Memph',
             id='irv_textout_013'),
-        #irv test014
+        # irv test014
         pytest.param(
             ['-f', 'abif', '-t', 'irvjson'],
             'testdata/mock-elections/tennessee-example-irv-tie.abif',
             r'Knoxville, TN and Memphis, TN',
             id='irv_textout_014'),
-        #irv test015
+        # irv test015
         pytest.param(
             ['-f', 'abif', '-t', 'irvjson'],
             'testdata/burl2009/burl2009.abif',
             r'Bob Kiss \(Progressive\)',
             id='irv_textout_015'
         ),
-        #irv test016 - Test that countedqty equals sum of candidate votes in final round
+        # irv test016 - Test that countedqty equals sum of candidate votes in final round
         pytest.param(
             ['-f', 'abif', '-t', 'text', '-m', 'IRV'],
             'testdata/burl2009/burl2009.abif',
@@ -225,6 +225,7 @@ irv_json_testlist = [
                  "Knox",
                  id='irv_json_017'),
 ]
+
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, testtype, keylist, value', irv_json_testlist

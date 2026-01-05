@@ -3,6 +3,7 @@ import re
 from subprocess import run, PIPE
 from abiftestfuncs import *
 
+
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
     [

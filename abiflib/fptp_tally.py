@@ -24,6 +24,7 @@ import re
 import sys
 import urllib.parse
 
+
 def FPTP_result_from_abifmodel(abifmodel):
     """Calculate the First Past the Post (FPTP/Plurality) result from the ABIF model."""
     toppicks = {}
@@ -131,7 +132,7 @@ def get_FPTP_report(abifmodel):
     else:
         report += f"  Tied winners each with {pctreport}:\n"
         for w in results['winners']:
-           report += f"   * {w}\n"
+            report += f"   * {w}\n"
     return report
 
 

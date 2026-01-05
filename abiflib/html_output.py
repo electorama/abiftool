@@ -20,5 +20,3 @@ from abiflib import *
 from abiflib.html_output_common import *
 from abiflib.html_output_pairwise import *
 from abiflib.html_output_scorestar import *
-
-

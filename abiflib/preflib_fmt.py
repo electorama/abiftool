@@ -33,6 +33,7 @@ import re
 '''
 # See https://preflib.org for more
 
+
 def _extract_alt_names_from_preflib_str(preflib_str):
     lines = preflib_str.splitlines()
 
@@ -43,6 +44,7 @@ def _extract_alt_names_from_preflib_str(preflib_str):
             alt_names.append(match.group(2))
 
     return alt_names
+
 
 def _extract_rankings_from_preflib_str(preflib_str, shortnames=None):
     # 840: 5,{1,2,3,4,6}
@@ -60,7 +62,7 @@ def _extract_rankings_from_preflib_str(preflib_str, shortnames=None):
         if match := re.search(regex, line):
             qty = match.group(1)
             rankpart = match.group(2)
-            i=0
+            i = 0
             tierarray = []
             for part in re.split(r'({[^}]*}|,)', rankpart):
                 if not part or part == ',' or part.isspace():
@@ -80,6 +82,7 @@ def _extract_rankings_from_preflib_str(preflib_str, shortnames=None):
 
     return retval
 
+
 def convert_preflib_str_to_abif(preflib_str):
     retval = ""
     alt_names = _extract_alt_names_from_preflib_str(preflib_str)
@@ -94,8 +97,8 @@ def convert_preflib_str_to_abif(preflib_str):
     retval += str(
         _extract_rankings_from_preflib_str(preflib_str,
                                            shortnames=shortnames)
-                  )
- 
+    )
+
     return retval
 
 

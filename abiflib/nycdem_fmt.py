@@ -83,6 +83,7 @@ def _match_contest_rank_columns(columns, contest_string):
 
     return matches
 
+
 def discover_headers_in_zip(zip_path, sample_rows=5):
     """Scan all non-candidacy Excel files in a NYC CVR ZIP and return a
     structured report of headers and likely matching keys.
@@ -193,6 +194,7 @@ def save_header_report(path, report):
     with open(path, 'w') as outf:
         outf.write("\n".join(lines))
 
+
 def convert_nycdem_to_jabmod(srcfile, contestid=None, fetchspec=None, contest_string="Mayor", district=None):
     """Convert NYC CVR Excel file(s) to ABIF jabmod, focusing on a given contest.
 
@@ -214,17 +216,18 @@ def convert_nycdem_to_jabmod(srcfile, contestid=None, fetchspec=None, contest_st
                 _log(f"[nycdem_fmt] Inferred district filter from contest_string: {district}")
             except Exception:
                 district = None
-    
+
     # Check if srcfile is a ZIP file
     if srcfile.endswith('.zip'):
         return _process_zip_file(srcfile, contestid, contest_string=contest_string, district=district)
     else:
         return _process_excel_file(srcfile, contestid, contest_string=contest_string, district=district)
 
+
 def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district=None):
     """Process a ZIP file containing multiple Excel CVR files."""
     _log(f"[nycdem_fmt] Processing ZIP file: {zip_path}")
-    
+
     # Create ABIF model
     abifmodel = get_emptyish_abifmodel()
     title = f"NYC 2025 Democratic Primary - {contest_string}"
@@ -234,17 +237,17 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
     abifmodel['metadata']['description'] = f"Ranked-choice voting data for NYC 2025 Democratic Primary {contest_string}"
     if contestid:
         abifmodel['metadata']['contestid'] = contestid
-    
+
     candidate_tokens = {}
     candidate_id_to_name = {}  # Map candidate IDs to real names
     all_ballot_patterns = {}
     total_valid_ballots = 0
     total_empty_ballots = 0
-    
+
     with zipfile.ZipFile(zip_path, 'r') as zf:
         excel_files = [f for f in zf.namelist() if f.endswith('.xlsx')]
         _log(f"[nycdem_fmt] Found {len(excel_files)} Excel files in ZIP")
-        
+
         # First, load the candidacy mapping file
         candidacy_files = [f for f in excel_files if 'candidacy' in f.lower() or 'CandidacyID_To_Name' in f]
         if candidacy_files:
@@ -253,9 +256,9 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
             try:
                 with zf.open(candidacy_file) as f:
                     candidacy_df = pd.read_excel(io.BytesIO(f.read()), engine="openpyxl")
-                
+
                 _log(f"[nycdem_fmt] Candidacy file columns: {list(candidacy_df.columns)}", debug=True)
-                
+
                 # Look for ID and name columns
                 id_col = None
                 name_col = None
@@ -265,7 +268,7 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
                         id_col = col
                     if ('name' in col_lower or 'candidate' in col_lower) and name_col is None:
                         name_col = col
-                
+
                 if id_col and name_col:
                     _log(f"[nycdem_fmt] Using ID column '{id_col}' and name column '{name_col}'")
                     for _, row in candidacy_df.iterrows():
@@ -282,7 +285,7 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
                     _log(f"[nycdem_fmt] Could not identify ID/name columns in candidacy file")
             except Exception as e:
                 _log(f"[nycdem_fmt] Error loading candidacy file: {e}")
-        
+
         contest_files = []
         for excel_file in sorted(excel_files):
             if 'candidacy' in excel_file.lower():
@@ -318,16 +321,16 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
             abifmodel['metadata']['ballotcount'] = 0
             abifmodel['metadata']['emptyballotcount'] = 0
             return abifmodel
-        
+
         _log(f"[nycdem_fmt] Processing {len(contest_files)} files with {contest_string} data")
-        
+
         # Now process all files that contain contest data
         for excel_file in contest_files:
             _log(f"[nycdem_fmt] Processing: {excel_file}")
             try:
                 with zf.open(excel_file) as f:
                     df = pd.read_excel(io.BytesIO(f.read()), engine="openpyxl")
-                
+
                 # Process this Excel file, passing the candidate name mapping
                 patterns, candidates, valid, empty = _process_dataframe(
                     df,
@@ -336,24 +339,24 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
                     contest_string=contest_string,
                     district=district,
                 )
-                
+
                 # Merge results
                 for pattern, count in patterns.items():
                     all_ballot_patterns[pattern] = all_ballot_patterns.get(pattern, 0) + count
-                
+
                 total_valid_ballots += valid
                 total_empty_ballots += empty
-                
+
                 _log(f"[nycdem_fmt] {excel_file}: {valid} valid ballots, {empty} empty ballots")
-                
+
             except Exception as e:
                 _log(f"[nycdem_fmt] Error processing {excel_file}: {e}")
                 continue
-    
+
     # Set up candidates in abifmodel
     for token, cand_name in candidate_tokens.items():
         abifmodel['candidates'][token] = cand_name
-    
+
     # Convert ballot patterns to votelines
     for pattern, count in sorted(all_ballot_patterns.items(), key=lambda x: x[1], reverse=True):
         voteline = {
@@ -361,23 +364,24 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
             'prefs': {},
             'orderedlist': True
         }
-        
+
         # Add preferences with ranks
         for rank, token in enumerate(pattern, 1):
             voteline['prefs'][token] = {'rank': rank}
-        
+
         abifmodel['votelines'].append(voteline)
-    
+
     # Update metadata
     abifmodel['metadata']['ballotcount'] = total_valid_ballots + total_empty_ballots
     abifmodel['metadata']['emptyballotcount'] = total_empty_ballots
-    
+
     _log(f"[nycdem_fmt] ZIP processing complete:")
     _log(f"[nycdem_fmt] - {len(abifmodel['candidates'])} candidates")
     _log(f"[nycdem_fmt] - {len(abifmodel['votelines'])} unique ballot patterns")
     _log(f"[nycdem_fmt] - {total_valid_ballots} valid ballots, {total_empty_ballots} empty ballots")
-    
+
     return abifmodel
+
 
 def _process_excel_file(excel_path, contestid=None, contest_string="Mayor", district=None):
     """Process a single Excel CVR file."""
@@ -385,7 +389,7 @@ def _process_excel_file(excel_path, contestid=None, contest_string="Mayor", dist
     df = pd.read_excel(excel_path, engine="openpyxl")
     _log(f"[nycdem_fmt] Columns: {list(df.columns)}")
     _log(f"[nycdem_fmt] Number of rows: {len(df)}")
-    
+
     # Create ABIF model
     abifmodel = get_emptyish_abifmodel()
     title = f"NYC 2025 Democratic Primary - {contest_string}"
@@ -395,7 +399,7 @@ def _process_excel_file(excel_path, contestid=None, contest_string="Mayor", dist
     abifmodel['metadata']['description'] = f"Ranked-choice voting data for NYC 2025 Democratic Primary {contest_string}"
     if contestid:
         abifmodel['metadata']['contestid'] = contestid
-    
+
     candidate_tokens = {}
     patterns, candidates, valid, empty = _process_dataframe(
         df,
@@ -404,11 +408,11 @@ def _process_excel_file(excel_path, contestid=None, contest_string="Mayor", dist
         contest_string=contest_string,
         district=district,
     )  # No candidate name mapping for single file
-    
+
     # Set up candidates in abifmodel
     for token, cand_name in candidate_tokens.items():
         abifmodel['candidates'][token] = cand_name
-    
+
     # Convert ballot patterns to votelines
     for pattern, count in sorted(patterns.items(), key=lambda x: x[1], reverse=True):
         voteline = {
@@ -416,55 +420,57 @@ def _process_excel_file(excel_path, contestid=None, contest_string="Mayor", dist
             'prefs': {},
             'orderedlist': True
         }
-        
+
         # Add preferences with ranks
         for rank, token in enumerate(pattern, 1):
             voteline['prefs'][token] = {'rank': rank}
-        
+
         abifmodel['votelines'].append(voteline)
-    
+
     # Update metadata
     abifmodel['metadata']['ballotcount'] = valid + empty
     abifmodel['metadata']['emptyballotcount'] = empty
-    
+
     _log(f"[nycdem_fmt] Excel processing complete:")
     _log(f"[nycdem_fmt] - {len(abifmodel['candidates'])} candidates")
     _log(f"[nycdem_fmt] - {len(abifmodel['votelines'])} unique ballot patterns")
     _log(f"[nycdem_fmt] - {valid} valid ballots, {empty} empty ballots")
-    
+
     return abifmodel
+
 
 def _create_readable_token(candidate_name, candidate_id):
     """Create a human-readable token from candidate name and ID."""
     # Extract initials from the candidate name
     words = candidate_name.split()
     initials = ""
-    
+
     for word in words:
         # Skip common prefixes and suffixes
         word_clean = word.strip('.,()[]')
         if word_clean.upper() not in ['JR', 'SR', 'III', 'IV', 'MD', 'ESQ', 'PHD']:
             if word_clean and word_clean[0].isalpha():
                 initials += word_clean[0].upper()
-    
+
     # Fallback: if we can't extract good initials, use first few chars
     if not initials or len(initials) < 2:
         # Remove common words and get first letters
         name_clean = candidate_name.replace(' Jr.', '').replace(' Sr.', '').replace(' III', '')
         words = [w for w in name_clean.split() if w.lower() not in ['the', 'of', 'for']]
         initials = ''.join(w[0].upper() for w in words[:3] if w and w[0].isalpha())
-    
+
     # Ensure we have at least 2 characters
     if len(initials) < 2:
         initials = candidate_name[:2].upper().replace(' ', '').replace('.', '')
-    
+
     # Limit to 3-4 initials max to keep tokens reasonable
     if len(initials) > 4:
         initials = initials[:4]
-    
+
     # Combine with candidate ID
     token = f"{initials}{candidate_id}"
     return token
+
 
 def _normalize_candidate_id(val):
     """Normalize candidate identifiers from ranking values or candidacy mapping.
@@ -560,7 +566,7 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None, contest_
         f"[nycdem_fmt] {contest_str} ranking columns: {[str(c)[:50] + '...' if len(str(c)) > 50 else str(c) for c in contest_rank_cols]}",
         debug=True,
     )
-    
+
     # Build candidate list from all unique values in ranking columns
     all_candidate_ids = set()
     for col in contest_rank_cols:
@@ -576,7 +582,7 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None, contest_
         f"[nycdem_fmt] Found {len(all_candidate_ids)} unique candidate IDs: {sorted(list(all_candidate_ids))[:10]}{'...' if len(all_candidate_ids)>10 else ''}",
         debug=True,
     )
-    
+
     # Create candidate mapping with readable tokens
     id_to_token = {}
     # Build a normalized mapping for candidate_id_to_name (keys normalized like ranking values)
@@ -593,7 +599,7 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None, contest_
         if cand_id not in id_to_token:
             # Get the candidate name if available
             cand_name = norm_map.get(cand_id, cand_id)
-            
+
             # Create readable token
             if cand_name != cand_id:  # We have a real name
                 token = _create_readable_token(cand_name, cand_id)
@@ -602,20 +608,20 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None, contest_
                 token = f"CAND{cand_id}"
                 cand_name = f"Candidate {cand_id}"
                 _log(f"[nycdem_fmt] {cand_id} -> {token} (no name mapping)", debug=True)
-            
+
             id_to_token[cand_id] = token
             candidate_tokens[token] = cand_name
-    
+
     _log(
         f"[nycdem_fmt] Final candidate mapping (first 5): {dict(list(candidate_tokens.items())[:5])}",
         debug=True,
     )
-    
+
     # Process ballots - count identical rankings to create votelines
     ballot_patterns = {}
     valid_ballots = 0
     empty_ballots = 0
-    
+
     for idx, row in df.iterrows():
         # Extract rankings for this ballot
         rankings = []
@@ -628,7 +634,7 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None, contest_
             tok = id_to_token.get(nv)
             if tok:
                 rankings.append(tok)
-        
+
         # Create pattern key from rankings
         if rankings:
             pattern = tuple(rankings)
@@ -636,7 +642,7 @@ def _process_dataframe(df, candidate_tokens, candidate_id_to_name=None, contest_
             valid_ballots += 1
         else:
             empty_ballots += 1
-    
+
     # Diagnostics when nothing valid
     if not ballot_patterns and valid_ballots == 0:
         for col in contest_rank_cols[:3]:
@@ -745,6 +751,7 @@ def fanout_zip_to_abif_files(zip_path, outdir, contest_string="Mayor", district=
                     adcol, edcol = ad_cols[0], ed_cols[0]
                     pairs = df[[adcol, edcol]].dropna().drop_duplicates().values.tolist()
                     # Normalize and sort pairs for deterministic output
+
                     def _nz(v):
                         try:
                             if pd.isna(v):
@@ -755,7 +762,7 @@ def fanout_zip_to_abif_files(zip_path, outdir, contest_string="Mayor", district=
                             return int(str(v).strip())
                         except Exception:
                             return str(v).strip()
-                    norm_pairs = sorted([( _nz(a), _nz(e) ) for a, e in pairs], key=lambda x: (str(x[0]), str(x[1])))
+                    norm_pairs = sorted([(_nz(a), _nz(e)) for a, e in pairs], key=lambda x: (str(x[0]), str(x[1])))
                     for adval, edval in norm_pairs:
                         try:
                             mask = (df[adcol].astype(str).str.strip() == str(adval)) & (df[edcol].astype(str).str.strip() == str(edval))
@@ -784,6 +791,7 @@ def fanout_zip_to_abif_files(zip_path, outdir, contest_string="Mayor", district=
                             abifmodel['metadata']['ballotcount'] = valid + empty
                             abifmodel['metadata']['emptyballotcount'] = empty
                             # Zero-pad AD/ED when numeric: AD=2 -> 02, ED=45 -> 045
+
                             def _pad(v, width):
                                 try:
                                     return str(int(v)).zfill(width)

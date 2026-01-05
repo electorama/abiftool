@@ -10,51 +10,51 @@ import sys
 import pytest
 
 
-testdicts=[
+testdicts = [
     {
-        "fetchspec":"debian-elections.fetchspec.json",
-        'outformat':"jabmod",
-        'filename':"downloads/debian-elections/2022/vote_002_tally.txt",
-        'key1':"metadata",
-        'subkey1':"ballotcount",
-        'val1':354,
-        'id':'debvote_json_001'
+        "fetchspec": "debian-elections.fetchspec.json",
+        'outformat': "jabmod",
+        'filename': "downloads/debian-elections/2022/vote_002_tally.txt",
+        'key1': "metadata",
+        'subkey1': "ballotcount",
+        'val1': 354,
+        'id': 'debvote_json_001'
     },
     {
-        "fetchspec":"debian-elections.fetchspec.json",
-        'outformat':"paircountjson",
-        'filename':"downloads/debian-elections/2003/leader2003_tally.txt",
-        'key1':"MartinMichlmayr",
-        'subkey1':"BdaleGarbee",
-        'val1':228,
-        'id':'debvote_json_002'
+        "fetchspec": "debian-elections.fetchspec.json",
+        'outformat': "paircountjson",
+        'filename': "downloads/debian-elections/2003/leader2003_tally.txt",
+        'key1': "MartinMichlmayr",
+        'subkey1': "BdaleGarbee",
+        'val1': 228,
+        'id': 'debvote_json_002'
     },
     {
-        "fetchspec":"debian-elections.fetchspec.json",
-        'outformat':"paircountjson",
-        'filename':"downloads/debian-elections/2003/leader2003_tally.txt",
-        'key1':"BdaleGarbee",
-        'subkey1':"MartinMichlmayr",
-        'val1':224,
-        'id':'debvote_json_003'
+        "fetchspec": "debian-elections.fetchspec.json",
+        'outformat': "paircountjson",
+        'filename': "downloads/debian-elections/2003/leader2003_tally.txt",
+        'key1': "BdaleGarbee",
+        'subkey1': "MartinMichlmayr",
+        'val1': 224,
+        'id': 'debvote_json_003'
     },
     {
-        "fetchspec":"debian-elections.fetchspec.json",
-        'outformat':"jabmod",
-        'filename':"downloads/debian-elections/2021/vote_002_tally.txt",
-        'key1':"metadata",
-        'subkey1':"ballotcount",
-        'val1':420,
-        'id':'debvote_json_004'
+        "fetchspec": "debian-elections.fetchspec.json",
+        'outformat': "jabmod",
+        'filename': "downloads/debian-elections/2021/vote_002_tally.txt",
+        'key1': "metadata",
+        'subkey1': "ballotcount",
+        'val1': 420,
+        'id': 'debvote_json_004'
     },
     {
-        "fetchspec":"debian-elections.fetchspec.json",
-        'outformat':"paircountjson",
-        'filename':"downloads/debian-elections/2006/vote_002_tally.txt",
-        'key1':"JeroenvanWolffelaar",
-        'subkey1':"AriPollak",
-        'val1':310,
-        'id':'debvote_json_005'
+        "fetchspec": "debian-elections.fetchspec.json",
+        'outformat': "paircountjson",
+        'filename': "downloads/debian-elections/2006/vote_002_tally.txt",
+        'key1': "JeroenvanWolffelaar",
+        'subkey1': "AriPollak",
+        'val1': 310,
+        'id': 'debvote_json_005'
     }
 ]
 
@@ -66,6 +66,7 @@ for testdict in testdicts:
     pytestlist.append(myparam)
 
 LOGOBJ = abiflib.LogfileSingleton()
+
 
 @pytest.mark.parametrize(mycols, pytestlist)
 def test_debtally_cli_json(outformat, filename, key1, subkey1, val1, id):

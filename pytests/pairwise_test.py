@@ -68,6 +68,7 @@ testlist = [
                  id='pairwise_006'),
 ]
 
+
 @pytest.mark.parametrize(
     'cmd_args, inputfile, testtype, keylist, value', testlist
 )

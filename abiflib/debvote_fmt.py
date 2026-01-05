@@ -41,14 +41,14 @@ def _extract_vline_rankings_from_tally_sheet(tally_sheet):
     for line in lines:
         if mg := re.search(regex, line):
             voterid = mg.group(2)
-            rankarray = [ voterid ]
+            rankarray = [voterid]
             rankarray.extend(list(mg.group(1)))
             votelines.extend([rankarray])
-        #else:
+        # else:
         #    voterid = None
-        #abiflib_test_log(f"LINE: {line}")
-        #abiflib_test_log(f"{votelines=}")
-        #abiflib_test_log(f"{voterid=}")
+        # abiflib_test_log(f"LINE: {line}")
+        # abiflib_test_log(f"{votelines=}")
+        # abiflib_test_log(f"{voterid=}")
     return votelines
 
 
@@ -68,7 +68,7 @@ def _short_token(longstring, max_length=20, add_sha1=False):
         wordlist.append(re.sub('[^A-Za-z0-9]+', '', word))
 
     if add_sha1:
-        base_string = ''.join(wordlist)[:max_length-4]
+        base_string = ''.join(wordlist)[:max_length - 4]
         retval = base_string + _trunc_sha_str(longstring)
     else:
         retval = ''.join(wordlist)[:max_length]

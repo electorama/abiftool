@@ -6,6 +6,7 @@ from abiftestfuncs import *
 
 LOGOBJ = abiflib.LogfileSingleton()
 
+
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern',
     [
@@ -83,7 +84,7 @@ LOGOBJ = abiflib.LogfileSingleton()
         pytest.param(['-t', 'text', '-m', 'STAR', '--add-scores'],
                      'testdata/burl2009/burl2009.abif',
                      r"26,167 stars \(25\.6%\) from 6,706 voters \(74\.7%\) -- Andy Montroll",
-                     #r"0 stars \(from 0 voters\) -- Andy Montroll",
+                     # r"0 stars \(from 0 voters\) -- Andy Montroll",
                      id='scorestar_015'),
         # TEST 016:
         # Test whether a one-candidate election is handled by STAR
@@ -114,7 +115,6 @@ LOGOBJ = abiflib.LogfileSingleton()
                      marks=pytest.mark.xfail(reason="Score voting doesn't properly declare ties - uses alphabetical tiebreaker")),
     ]
 )
-
 def test_grep_output_for_regexp(cmd_args, inputfile, pattern):
     """Testing text output from abiftool.py for regexp"""
     # TODO: merge this with the version in debtally_test.py
@@ -180,6 +180,7 @@ scorestar_json_testlist = [
                  'Nashville, TN',
                  id='scorestar_024'),
 ]
+
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, testtype, keylist, value', scorestar_json_testlist

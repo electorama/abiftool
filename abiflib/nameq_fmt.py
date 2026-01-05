@@ -43,7 +43,7 @@ def convert_nameq_to_jabmod(inputstr):
                 key = "null"
             vl["prefs"][key] = {}
             vl["prefs"][key]["rank"] = int(value[0])
-            abifmodel["candidates"][key] = key 
+            abifmodel["candidates"][key] = key
         nameq_votelines.append(vl)
 
     abifmodel["votelines"] = nameq_votelines

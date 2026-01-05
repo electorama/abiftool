@@ -83,13 +83,13 @@ def STAR_result_from_abifmodel(abifmodel):
             "notice_type": "note",
             "short": ("STAR ratings estimated from ranked ballots "
                       "using Borda scoring method"),
-            "long": ( "The ranked ballots have been converted to STAR ratings "
-                      "using Borda scoring: each candidate receives points "
-                      "equal to (number_of_candidates - their_rank). In this "
-                      f"election, we have {candcount} candidates, so the 1st "
-                      f"choice gets {candcount - 1} points, the 2nd choice "
-                      f"gets {candcount - 2} points, etc. These Borda scores "
-                      "are then used as STAR ratings for tabulation by STAR." )
+            "long": ("The ranked ballots have been converted to STAR ratings "
+                     "using Borda scoring: each candidate receives points "
+                     "equal to (number_of_candidates - their_rank). In this "
+                     f"election, we have {candcount} candidates, so the 1st "
+                     f"choice gets {candcount - 1} points, the 2nd choice "
+                     f"gets {candcount - 2} points, etc. These Borda scores "
+                     "are then used as STAR ratings for tabulation by STAR.")
         }
         retval['notices'] = [notice]
     elif bt == 'choose_one':
@@ -284,7 +284,7 @@ def abifmodel_has_ratings(abifmodel):
     first voteline and hopes that's good enough.
     '''
     has_rating = bool(list(abifmodel['votelines'][0]['prefs'].values())[0].get('rating'))
-    return(has_rating)
+    return (has_rating)
 
 
 def main():

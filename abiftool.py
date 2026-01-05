@@ -216,14 +216,14 @@ def main():
         if args.fromfmt == 'sfjson':
             if args.list_contests_json:
                 contests = get_sfjson_contests(args.container)
-                payload = { 'format': 'sfjson', 'container': args.container, 'contests': contests }
+                payload = {'format': 'sfjson', 'container': args.container, 'contests': contests}
                 print(json.dumps(payload, indent=2))
             else:
                 list_sfjson_contests(args.container)
         elif args.fromfmt == 'stlcvr':
             if args.list_contests_json:
                 contests = get_stlcvr_contests(args.container)
-                payload = { 'format': 'stlcvr', 'container': args.container, 'contests': contests }
+                payload = {'format': 'stlcvr', 'container': args.container, 'contests': contests}
                 print(json.dumps(payload, indent=2))
             else:
                 list_stlcvr_contests(args.container)

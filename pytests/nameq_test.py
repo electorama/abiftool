@@ -16,6 +16,7 @@ import sys
 ########################################
 # 1. nameq_json tests
 
+
 @pytest.mark.parametrize(
     'cmd_args, inputfile, testtype, keylist, value',
     [
@@ -64,6 +65,7 @@ def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
     else:
         assert testtype in ['is_equal', 'contains']
 
+
 ########################################
 # 2. nameq_text tests
 texttestlist = [
@@ -89,6 +91,7 @@ texttestlist = [
      'testdata/bolson-nameq/nullcand.nameq',
      r'1:null'),
 ]
+
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, pattern', texttestlist,

@@ -22,11 +22,13 @@ import zipfile
 from abiflib.core import get_emptyish_abifmodel
 from abiflib.util import utf8_string_to_abif_token as _short_token
 
+
 def list_contests(container_path):
     """Lists the contests in a San Francisco JSON CVR zip file."""
     contests = get_contest_list(container_path)
     for i, c in enumerate(contests, start=1):
         print(f"Contest {i}: {c['name']} (native_id: {c['native_id']})")
+
 
 def get_contest_list(container_path):
     """Return a list of contest dicts for JSON listing and selection.
@@ -45,6 +47,7 @@ def get_contest_list(container_path):
         })
     return contests
 
+
 def convert_sfjson_to_jabmod(container_path, contestid=None):
     """Converts a zip file of San Francisco JSON CVRs to a jabmod."""
     abifmodel = get_emptyish_abifmodel()
@@ -62,6 +65,7 @@ def convert_sfjson_to_jabmod(container_path, contestid=None):
         eventdesc = eventmanblob['List'][0]['Description']
 
         abifmodel['metadata']['contestid'] = contestid
+
         def _contest_index_lookup(targ, cmb):
             try:
                 return next((i for i, contest in enumerate(cmb["List"]) if contest["Id"] == targ))

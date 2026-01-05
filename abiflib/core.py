@@ -16,6 +16,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+from abiflib.abifregex import COMMENT_REGEX, METADATA_REGEX, CANDLINE_REGEX, VOTELINE_REGEX, VOTERID_REGEX
 from abiflib import *
 from pprint import pprint, pformat
 import copy
@@ -38,6 +39,7 @@ class ABIFVotelineException(Exception):
         self.debugarray = DEBUGARRAY
         super().__init__(self.message)
 
+
 def corefunc_init(tag="unmarked"):
     '''Initialization for all abiflib/core.py functions
 
@@ -45,7 +47,7 @@ def corefunc_init(tag="unmarked"):
     functionality for all functions in abiflib/core.py
 
     '''
-    #abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
+    # abiflib_test_log(f"{tag}: {abiflib_callstackstr(start=2, end=6)}")
     return {'tag': tag}
 
 
@@ -76,10 +78,7 @@ def _process_abif_metadata(mkey, mvalue, abifmodel, linecomment=None):
     return abifmodel
 
 
-
-
 # Compile all regexes at module scope for performance
-from abiflib.abifregex import COMMENT_REGEX, METADATA_REGEX, CANDLINE_REGEX, VOTELINE_REGEX, VOTERID_REGEX
 commentregexp = re.compile(COMMENT_REGEX, re.VERBOSE)
 metadataregexp = re.compile(METADATA_REGEX, re.VERBOSE)
 candlineregexp = re.compile(CANDLINE_REGEX, re.VERBOSE)
@@ -89,6 +88,8 @@ voteridregexp = re.compile(VOTERID_REGEX, re.VERBOSE)
 CANDPREF_PATTERN = re.compile(r'\[([^\]]+)\](?:/(\d+))?|"([^\"]+)"(?:/(\d+))?|([^\[\]",=>/]+)(?:/(\d+))?')
 
 # Fast-path ballot parsing for simple cases (no brackets, quotes, or ratings)
+
+
 def _extract_candprefs_from_prefstr(prefstr):
     '''Extract candidate tokens from prefstr portion of line'''
     # Fast path: no brackets, quotes, or ratings
@@ -136,6 +137,8 @@ def _process_abif_comment_line(abifmodel=None,
             abifmodel['metadata']['comments'] = []
         abifmodel['metadata']['comments'].append(commenttuple)
     return abifmodel
+
+
 @profile
 def convert_abif_to_jabmod(inputstr,
                            cleanws=False,
@@ -593,13 +596,13 @@ def _prefstr_from_ranked_line(sortedprefs):
             if data['rating'] != 0 and data['rating'] != '0':
                 prefstrfromranks += f"/{data['rating']}"
         if i < len(sortedprefs) - 1:
-            nextrank = sortedprefs[i+1][1]['rank']
+            nextrank = sortedprefs[i + 1][1]['rank']
             if rank < nextrank:
                 delim = '>'
             elif rank == nextrank:
                 delim = '='
             else:
-                raise(ValueError(f"Ranks don't make sense: {sortedprefs=}"))
+                raise (ValueError(f"Ranks don't make sense: {sortedprefs=}"))
             prefstrfromranks += delim
         lastrank = rank
     return prefstrfromranks
@@ -672,7 +675,7 @@ def _get_votelinestr_from_jabvoteline(jabvoteline):
         prefstr = _prefstr_from_ranked_line(sorted(prefitems,
                                                    key=lambda x: x[1]['rank']))
     local_abif_str += f"{jabvoteline['qty']}:{prefstr}\n"
-    #abiflib_test_log(f"func13: {local_abif_str=}")
+    # abiflib_test_log(f"func13: {local_abif_str=}")
     return local_abif_str
 
 

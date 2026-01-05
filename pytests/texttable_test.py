@@ -7,23 +7,23 @@ import sys
 
 testdicts = [
     {
-        "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
-        "filename":"testdata/burl2009/burl2009.abif",
-        "pattern":r"Copeland Winner: Andy Montroll",
+        "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
+        "filename": "testdata/burl2009/burl2009.abif",
+        "pattern": r"Copeland Winner: Andy Montroll",
         "options": ["-t", "text"],
         "id": "texttable_001"
     },
     {
-        "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
-        "filename":"testdata/burl2009/burl2009.abif",
-        "pattern":r"Montroll",
+        "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
+        "filename": "testdata/burl2009/burl2009.abif",
+        "pattern": r"Montroll",
         "options": ["-t", "text", "-m", "winlosstie", "-m", "score"],
         "id": "texttable_002"
     },
     {
-        "fetchspec":"vt-burl-2009.preflib.fetchspec.json",
-        "filename":"testdata/burl2009/burl2009.abif",
-        "pattern":r"Montroll \(5-0-0\)",
+        "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
+        "filename": "testdata/burl2009/burl2009.abif",
+        "pattern": r"Montroll \(5-0-0\)",
         "options": ["-t", "text"],
         "id": "texttable_003"
     }

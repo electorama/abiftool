@@ -3,7 +3,7 @@
 # This test file focuses on core parsing functionality and data format handling.
 # Method-specific tests have been moved to specialized files:
 #   - IRV tests: irv_test.py
-#   - FPTP tests: fptp_test.py  
+#   - FPTP tests: fptp_test.py
 #   - Pairwise tests: pairwise_test.py
 #   - STAR tests: scorestar_test.py
 #
@@ -159,7 +159,7 @@ testlist = [
          '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
          '--contestid', '1',
          '-t', 'jabmod'
-        ],
+         ],
         None,
         'is_equal',
         ["metadata", "ballotcount"],
@@ -173,7 +173,7 @@ testlist = [
          '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
          '--contestid', '1',
          '-t', 'jabmod'
-        ],
+         ],
         None,
         'is_equal',
         ["votelines", 0, "prefs", "Memph", "rank"],
@@ -187,7 +187,7 @@ testlist = [
          '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
          '--contestid', '2',
          '-t', 'jabmod'
-        ],
+         ],
         None,
         'is_equal',
         ["metadata", "ballotcount"],
@@ -201,7 +201,7 @@ testlist = [
          '--container', 'testdata/mock-elections/tennessee-example-sfjson-cvr.zip',
          '--contestid', '2',
          '-t', 'jabmod'
-        ],
+         ],
         None,
         'is_equal',
         ["votelines", 0, "prefs", "Jackson", "rank"],
@@ -216,7 +216,7 @@ testlist = [
          '--contestid', '1',
          '-t', 'jabmod',
          '-m', 'consolidate'
-        ],
+         ],
         None,
         'is_equal',
         ["votelines", 0, "qty"],
@@ -231,7 +231,7 @@ testlist = [
          '--contestid', '2',
          '-t', 'jabmod',
          '-m', 'consolidate'
-        ],
+         ],
         None,
         'is_equal',
         ["votelines", 1, "qty"],
@@ -240,7 +240,7 @@ testlist = [
     ),
     # TEST 019:
     # Test that trailing spaces in candidate definitions don't truncate names
-    # FIXME: ABIF parser currently fails to handle trailing spaces correctly 
+    # FIXME: ABIF parser currently fails to handle trailing spaces correctly
     pytest.param(['-f', 'abif', '-t', 'jabmod'],
                  'testdata/questionable/trailingspace-tenn.abif',
                  'is_equal',
@@ -292,6 +292,7 @@ testlist = [
                  42,
                  id='core_024'),
 ]
+
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, testtype, keylist, value', testlist

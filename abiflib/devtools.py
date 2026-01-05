@@ -32,6 +32,7 @@ ABIF_MODEL_LIMIT = 2500
 # printed if there's an exception or other debugging situations
 DEBUGARRAY = []
 
+
 class LogfileSingleton:
     """Either append msgs to ABIFLIB_LOG or quietly munch"""
     _instance = None
@@ -117,7 +118,6 @@ class LogfileSingleton:
         if cls._filehandle:
             cls._filehandle.close()
             cls._filehandle = None
-
 
 
 def abiflib_test_log(msg=None, newline=True, showframeinfo=True,

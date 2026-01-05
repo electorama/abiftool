@@ -25,6 +25,7 @@ import re
 import sys
 import urllib.parse
 
+
 def find_ballot_type(abifmodel):
     """
     Find the type of ballots in a jabmod structure.

@@ -159,7 +159,6 @@ def convert_nameq_tarball_to_abif_files(tarball_fn, archive_subfiles, abifsubdir
         consmodel = abiflib.consolidate_jabmod_voteline_objects(abifmodel)
         abifstr = abiflib.convert_jabmod_to_abif(consmodel)
 
-
         abifpath = Path(file_to_fetch['abifloc'])
         abifpath.parent.mkdir(parents=True, exist_ok=True)
         abifpath.write_text(abifstr)
@@ -343,7 +342,6 @@ def process_fetchspec(fn):
         raise Exception(f"Invalid fetchspec: {fetchspec.keys()=}")
     sys.stderr.write(f"Processing {fn}....\n")
 
-
     dlsubdir = fetchspec['download_subdir']
     abifsubdir = fetchspec.get('abifloc_subdir')
     extfilelist = fetchspec.get('web_urls') or fetchspec.get('extfiles')
@@ -390,6 +388,7 @@ def main():
     for fetchspec_fn in args.fetchspec:
         process_fetchspec(fetchspec_fn)
     sys.stderr.write(f"Done\n")
+
 
 if __name__ == "__main__":
     main()

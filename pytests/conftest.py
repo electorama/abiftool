@@ -2,6 +2,7 @@ import atexit
 from abiflib import LogfileSingleton
 from abiftestfuncs import *
 
+
 def postmortem(session=None, terminalreporter=None, exitstatus=None, config=None):
     '''postmortem is based on a hack documented on StackOverflow
     https://stackoverflow.com/a/38806934/362951'''
@@ -19,7 +20,7 @@ def postmortem(session=None, terminalreporter=None, exitstatus=None, config=None
         print(msg)
 
 
-#def pytest_sessionfinish(session, exitstatus):
+# def pytest_sessionfinish(session, exitstatus):
 #    atexit.register(postmortem, session=session, exitstatus=exitstatus)
 #    print("Hello from `pytest_sessionfinish` hook!")
 #    print(f"Exit status: {exitstatus}")

@@ -66,10 +66,10 @@ def get_pytest_param_for_file(testdict):
 def get_pytest_abif_testsubkey(testdict, cols=None):
     if not cols:
         raise
-    this_list=[]
+    this_list = []
     for k in cols:
         this_list.append(testdict[k])
-    if 'testdir' in testdict.keys(): 
+    if 'testdir' in testdict.keys():
         dbgmsg = f"{testdict['testdir']=}"
         dbgmsg += f"#{testdict['filename']=}"
         this_file = os.path.join(testdict['testdir'],
@@ -104,6 +104,7 @@ def check_regex_in_output(cmd_args, inputfile, pattern):
                                                 log_post=' (check_regex)')
     print(output_lines)
     return check_regex_in_textarray(pattern, output_lines)
+
 
 def has_lib(library):
     '''Check that the given module is importable'''
@@ -146,7 +147,7 @@ def run_json_output_test_from_abif(cmd_args, inputfile, testtype, keylist, value
     """Test equality of subkey to a value - generic version for reuse across test files"""
     import json
     import pytest
-    
+
     if inputfile:
         try:
             fh = open(inputfile, 'rb')

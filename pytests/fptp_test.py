@@ -1,6 +1,8 @@
+from abiftestfuncs import *
 import pytest
 from abiflib.core import convert_abif_to_jabmod
 from abiflib.fptp_tally import FPTP_result_from_abifmodel
+
 
 def test_fptp_overvote_handling():
     # ABIF string with an overvoted ballot (multiple rank 1s)
@@ -64,10 +66,9 @@ def test_fptp_undervote_handling():
     assert result['toppicks'][None] == 1
 
 
-# Additional FPTP tests moved from core_test.py  
+# Additional FPTP tests moved from core_test.py
 # These tests use JSON output format to verify FPTP calculation logic
 
-from abiftestfuncs import *
 
 fptp_json_testlist = [
     # TEST FPTP_018:
@@ -95,6 +96,7 @@ fptp_json_testlist = [
                  [],
                  id='fptp_json_024'),
 ]
+
 
 @pytest.mark.parametrize(
     'cmd_args, inputfile, testtype, keylist, value', fptp_json_testlist
