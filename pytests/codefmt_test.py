@@ -16,8 +16,7 @@ class TestAbiftoolPEP8Compliance(unittest.TestCase):
     """Test that abiftool Python files follow PEP8 style guidelines."""
 
     IGNORED_ERRORS = [
-        'E501', 'E302', 'E303', 'E305', 'E402', 'E713', 'E111', 'E124', 'E304', 'E306',
-        'E722', 'E711', 'W504', 'E121', 'E122', 'E126', 'E721', 'E131'
+        'E402', 'E501', 'W504', 'E711', 'E713', 'E722'
     ]  # Ignore all baseline errors for now
 
     def setUp(self):
