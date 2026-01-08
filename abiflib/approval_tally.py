@@ -26,17 +26,10 @@ if __package__ is None or __package__ == "":
 
 from abiflib.core import convert_abif_to_jabmod
 from abiflib.util import clean_dict, candlist_text_from_abif, find_ballot_type
-from abiflib.fptp_tally import FPTP_result_from_abifmodel
 from abiflib.text_output import format_notices_for_text_output
 import argparse
-import copy
 import json
-from pprint import pprint
-import re
-import sys
-import urllib.parse
 import pathlib
-import textwrap
 
 
 def convert_to_approval_favorite_viable_half(abifmodel):
@@ -265,7 +258,7 @@ def get_approval_report(abifmodel):
         report = f"Approval Voting Results (Converted from {ballot_type} ballots using {conversion_method} method):\n"
         report += "\n"
 
-    report += f"  Approval counts:\n"
+    report += "  Approval counts:\n"
 
     # Sort candidates by approval count
     sorted_candidates = sorted(
@@ -313,7 +306,7 @@ def get_approval_report(abifmodel):
                 display_name = w
             report += f"   * {display_name}\n"
     else:
-        report += f"\n  No winner determined\n"
+        report += "\n  No winner determined\n"
 
     # Add notices section if present
     if results.get('notices'):

@@ -1,9 +1,6 @@
-import json
 import pytest
-import re
-from subprocess import run, PIPE
 from abiftestfuncs import *
-from abiflib.core import abiflib_test_log, abiflib_test_logblob, _process_abif_prefline
+from abiflib.core import abiflib_test_log, _process_abif_prefline
 
 
 prefline_test_entries = [

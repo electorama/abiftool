@@ -2,12 +2,6 @@
 """Tests for approval voting functionality in abiflib"""
 
 from abiftestfuncs import *
-import subprocess
-import json
-import os
-import re
-import glob
-import sys
 import pytest
 
 # Test data for approval voting tests

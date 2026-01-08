@@ -16,14 +16,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-import copy
 import json
 import os
 from pathlib import Path
-from pprint import pprint
 import re
 import sys
-import urllib.parse
 
 
 def find_ballot_type(abifmodel):
@@ -123,7 +120,7 @@ def _detect_ballot_type_from_data(abifmodel):
 
     # Priority 3: Use format analysis from prefstr when available
     if format_types:
-        if 'rate' in format_types and not ('rank' in format_types):
+        if 'rate' in format_types and 'rank' not in format_types:
             return 'choose_one'  # Comma-delimited without ratings
         elif 'rank' in format_types:
             if has_multiple_choices:

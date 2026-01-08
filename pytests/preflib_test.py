@@ -2,9 +2,6 @@ from abiftestfuncs import *
 import json
 import os
 import pytest
-import re
-import glob
-import subprocess
 import sys
 
 testdicts = [

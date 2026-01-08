@@ -1,6 +1,5 @@
 import sys
 import os
-import pytest
 import abiflib.devtools
 
 # Add the project directory to sys.path

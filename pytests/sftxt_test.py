@@ -1,8 +1,6 @@
 from abiftestfuncs import *
 import abiflib
 import pytest
-import re
-from subprocess import run, PIPE
 
 LOGOBJ = abiflib.LogfileSingleton()
 

@@ -17,13 +17,10 @@
 
 from abiflib import *
 from abiflib.pairwise_tally import pairwise_count_dict
-import re
 import datetime
 import argparse
 import pathlib
-from pprint import pprint, pformat
 import random
-import sys
 import os
 import time
 from datetime import timezone
@@ -585,7 +582,7 @@ def get_IRV_report(IRV_dict):
         output += f"  Exhausted votes: {thisroundmeta['exhaustedqty']}\n"
         output += f"  Overvotes: {thisroundmeta['overvoteqty']}\n"
         output += f"  Total counted votes: {thisroundmeta['countedqty']}\n"
-        output += f"  Votes by candidate:\n"
+        output += "  Votes by candidate:\n"
         for candidate, votes in round_results.items():
             output += f"    {candidate}: {votes}\n"
         output += f"  Eliminated this round: {', '.join(sorted(eliminated))}\n"
@@ -595,7 +592,7 @@ def get_IRV_report(IRV_dict):
     elif len(winner) == 1:
         output += f"The IRV winner is {winner[0]}\n"
     else:
-        output += f"No IRV winner due to blank preferences."
+        output += "No IRV winner due to blank preferences."
     return output
 
 

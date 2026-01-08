@@ -21,7 +21,6 @@ from abiflib import *
 from abiflib.html_output import *
 import argparse
 import json
-import sys
 try:
     from bs4 import BeautifulSoup
 except:

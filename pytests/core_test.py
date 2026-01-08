@@ -16,12 +16,6 @@
 #   - Error conditions and malformed input
 
 from abiftestfuncs import *
-import subprocess
-import json
-import os
-import re
-import glob
-import sys
 import pytest
 
 testlist = [

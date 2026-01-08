@@ -1,9 +1,7 @@
 from abiftestfuncs import *
-import os
 import pytest
 import re
 import subprocess
-import sys
 
 testdicts = [
     {

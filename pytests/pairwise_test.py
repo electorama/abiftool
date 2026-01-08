@@ -1,10 +1,4 @@
 from abiftestfuncs import *
-import subprocess
-import json
-import os
-import re
-import glob
-import sys
 import pytest
 
 # Tests for pairwise comparison logic (Copeland, Condorcet, etc.)

@@ -9,7 +9,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 try:
     import yaml  # type: ignore
-except ImportError as exc:  # pragma: no cover
+except ImportError:  # pragma: no cover
     sys.stderr.write("PyYAML is required to run fetchspec_conv.py\n")
     raise
 

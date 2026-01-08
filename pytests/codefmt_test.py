@@ -5,8 +5,6 @@ PEP8 compliance tests for abiftool Python files.
 This test uses pycodestyle to check code formatting for all .py files in abiftool.
 """
 
-import os
-import sys
 import unittest
 from pathlib import Path
 import subprocess

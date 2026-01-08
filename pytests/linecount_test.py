@@ -1,6 +1,5 @@
 from abiftestfuncs import *
 import pytest
-from subprocess import run, PIPE
 
 
 @pytest.mark.parametrize(

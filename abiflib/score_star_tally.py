@@ -18,9 +18,7 @@
 from abiflib import *
 import argparse
 import json
-import math
 import pathlib
-import re
 import sys
 import time
 
@@ -226,14 +224,14 @@ def STAR_report(jabmod):
     tvot = sr['totalvoters']
 
     retval += f"Total voters: {tvot:,}\n"
-    retval += f"Scores:\n"
+    retval += "Scores:\n"
     for candtok in sr['ranklist']:
         candinfo = sr['scores'][candtok]
         retval += f"- {candinfo['score']:,} stars ({candinfo['score_pct_str']})"
         retval += f" from {candinfo['votercount']:,} voters ({candinfo['voter_pct_str']})"
         retval += f" -- {candinfo['candname']}\n"
 
-    retval += f"Finalists: \n"
+    retval += "Finalists: \n"
     fin1n = sr.get('fin1n')
     fin2n = sr.get('fin2n')
     retval += f"- {fin1n} preferred by {sr.get('fin1votes', 0):,} of {tvot:,} voters ({sr.get('fin1votes_pct_str', '0.0%')})\n"

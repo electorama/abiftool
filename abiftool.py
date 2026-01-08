@@ -42,8 +42,6 @@ except ModuleNotFoundError as e:
 import argparse
 from datetime import datetime, timezone
 import json
-import re
-import urllib.parse
 
 
 INPUT_FORMATS = [
@@ -111,10 +109,10 @@ def gen_epilog():
     retval = ''
     retval += help_text(caption="Input formats", bullet="--from",
                         dictlist=INPUT_FORMATS)
-    retval += f"\n"
+    retval += "\n"
     retval += help_text(caption="Output formats", bullet="--to",
                         dictlist=OUTPUT_FORMATS)
-    retval += f"\n"
+    retval += "\n"
     retval += help_text(caption="Modifiers",
                         bullet="--modifier", dictlist=MODIFIERS)
     return retval

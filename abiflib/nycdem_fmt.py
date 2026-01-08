@@ -17,11 +17,9 @@
 
 import pandas as pd
 import os
-import json
 import zipfile
 import io
 from abiflib.core import get_emptyish_abifmodel
-from abiflib.debvote_fmt import _short_token
 import re
 import abiflib
 
@@ -153,7 +151,7 @@ def discover_headers_in_zip(zip_path, sample_rows=5):
 def save_header_report(path, report):
     """Write a human-friendly header report produced by discover_headers_in_zip()."""
     lines = []
-    lines.append(f"NYC CVR header discovery report")
+    lines.append("NYC CVR header discovery report")
     lines.append(f"ZIP: {report.get('zip_path')}")
     lines.append(f"Candidacy mapping present: {report.get('has_candidacy_mapping')}")
     gp = report.get('global_rank_prefixes') or []
@@ -277,12 +275,12 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
                             cand_name = str(row[name_col]).strip()
                             if cand_id and cand_name and cand_id != 'nan' and cand_name != 'nan':
                                 candidate_id_to_name[cand_id] = cand_name
-                        except Exception as e:
+                        except Exception:
                             continue
                     _log(f"[nycdem_fmt] Loaded {len(candidate_id_to_name)} candidate name mappings")
                     _log(f"[nycdem_fmt] Sample mappings: {dict(list(candidate_id_to_name.items())[:5])}", debug=True)
                 else:
-                    _log(f"[nycdem_fmt] Could not identify ID/name columns in candidacy file")
+                    _log("[nycdem_fmt] Could not identify ID/name columns in candidacy file")
             except Exception as e:
                 _log(f"[nycdem_fmt] Error loading candidacy file: {e}")
 
@@ -375,7 +373,7 @@ def _process_zip_file(zip_path, contestid=None, contest_string="Mayor", district
     abifmodel['metadata']['ballotcount'] = total_valid_ballots + total_empty_ballots
     abifmodel['metadata']['emptyballotcount'] = total_empty_ballots
 
-    _log(f"[nycdem_fmt] ZIP processing complete:")
+    _log("[nycdem_fmt] ZIP processing complete:")
     _log(f"[nycdem_fmt] - {len(abifmodel['candidates'])} candidates")
     _log(f"[nycdem_fmt] - {len(abifmodel['votelines'])} unique ballot patterns")
     _log(f"[nycdem_fmt] - {total_valid_ballots} valid ballots, {total_empty_ballots} empty ballots")
@@ -431,7 +429,7 @@ def _process_excel_file(excel_path, contestid=None, contest_string="Mayor", dist
     abifmodel['metadata']['ballotcount'] = valid + empty
     abifmodel['metadata']['emptyballotcount'] = empty
 
-    _log(f"[nycdem_fmt] Excel processing complete:")
+    _log("[nycdem_fmt] Excel processing complete:")
     _log(f"[nycdem_fmt] - {len(abifmodel['candidates'])} candidates")
     _log(f"[nycdem_fmt] - {len(abifmodel['votelines'])} unique ballot patterns")
     _log(f"[nycdem_fmt] - {valid} valid ballots, {empty} empty ballots")

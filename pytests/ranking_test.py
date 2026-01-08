@@ -1,6 +1,7 @@
 from abiflib import ranklist_from_jabmod_voteline
 from abiftestfuncs import *
 import json
+import pytest
 
 mycols = ['fetchspec', 'filename',
           'votelinenum', 'votelinecandnum', 'votelinecandtok',

@@ -17,12 +17,8 @@
 
 from abiflib import *
 import argparse
-import json
 import pathlib
-from pprint import pprint
-import re
 import sys
-import urllib.parse
 
 
 def pairwise_count_dict(abifmodel):

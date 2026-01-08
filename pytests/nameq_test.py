@@ -1,17 +1,6 @@
 from abiftestfuncs import *
-from abiflib import (
-    convert_abif_to_jabmod,
-    get_IRV_report,
-    IRV_dict_from_jabmod
-)
-import glob
 import json
-import os
-import pathlib
 import pytest
-import re
-import subprocess
-import sys
 
 ########################################
 # 1. nameq_json tests

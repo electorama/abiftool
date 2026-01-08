@@ -1,10 +1,6 @@
 from abiftestfuncs import *
-import subprocess
-import glob
-import os
 from pprint import pformat
 import pytest
-import sys
 
 mycols = ['filename', 'abif_line']
 
@@ -51,6 +47,6 @@ def test_roundtrip_conversion(filename, abif_line):
     cmd_args = ["-t", "abif", filename]
     roundtrip_abif_content = get_abiftool_output_as_array(cmd_args)
     abiflib_test_log(f"{abif_line=}")
-    abiflib_test_log(f"roundtrip_abif_content:")
+    abiflib_test_log("roundtrip_abif_content:")
     abiflib_test_log(pformat(roundtrip_abif_content))
     assert abif_line in roundtrip_abif_content

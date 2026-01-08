@@ -1,6 +1,5 @@
 import pytest
 import subprocess
-import os
 from pytests.abiftestfuncs import get_abiftool_scriptloc
 
 # TODO: This function largely duplicates get_abiftool_output_as_array in abiftestfuncs.py.

@@ -219,9 +219,9 @@ def _sftxt_dump_url_encoded(outputrecords, outfh):
         # populate the higher ranked duplicates take priority over
         # the lower rank
         outrec[rec['votes'][0]['candidate']] = rec['votes'][0]['rank']
-        if not rec['votes'][1]['candidate'] in outrec:
+        if rec['votes'][1]['candidate'] not in outrec:
             outrec[rec['votes'][1]['candidate']] = rec['votes'][1]['rank']
-        if not rec['votes'][2]['candidate'] in outrec:
+        if rec['votes'][2]['candidate'] not in outrec:
             outrec[rec['votes'][2]['candidate']] = rec['votes'][2]['rank']
         print(urllib.parse.urlencode(outrec), file=outfh)
 
@@ -248,14 +248,14 @@ def _sftxt_dump_csv1996fmt(candpool, outputrecords, outfh):
 
         candname = rec['votes'][1]['candidate']
         candrank = rec['votes'][1]['rank']
-        if candname and not candname in outrec:
+        if candname and candname not in outrec:
             outrec[candname] = candrank
             outstr += ">"
             outstr += str(revcand[candname])
 
         candname = rec['votes'][2]['candidate']
         candrank = rec['votes'][2]['rank']
-        if candname and not candname in outrec:
+        if candname and candname not in outrec:
             outrec[candname] = candrank
             outstr += ">"
             outstr += str(revcand[candname])

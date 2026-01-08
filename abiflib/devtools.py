@@ -16,14 +16,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from abiflib import *
-from pprint import pprint, pformat
-import copy
+from pprint import pformat
 import inspect
-import json
 import os
-import re
-import sys
-import urllib.parse
 
 ABIF_VERSION = "0.1"
 ABIF_MODEL_LIMIT = 2500
@@ -95,7 +90,7 @@ class LogfileSingleton:
                 self._filehandle.write(f"{function} ({filename}:{linenum}): ")
             self._filehandle.write(f"{msg}")
             if newline:
-                self._filehandle.write(f"\n")
+                self._filehandle.write("\n")
             self._filehandle.flush()
 
     def logblob(self, blob, blobmark="BLOB"):
@@ -107,7 +102,7 @@ class LogfileSingleton:
             if blobmark:
                 self._filehandle.write(f"--{blobmark}START--\n")
             self._filehandle.write(pformat(blob))
-            self._filehandle.write(f"\n")
+            self._filehandle.write("\n")
             if blobmark:
                 self._filehandle.write(f"--{blobmark}END--\n")
             self._filehandle.flush()

@@ -92,7 +92,7 @@ def convert_preflib_str_to_abif(preflib_str):
         shortnames.append(optname)
     for i, o in enumerate(alt_names):
         retval += f'={shortnames[i]}:[{o}]\n'
-    retval += f'# ---------------\n'
+    retval += '# ---------------\n'
 
     retval += str(
         _extract_rankings_from_preflib_str(preflib_str,

@@ -1,12 +1,10 @@
 from abiflib import (
     convert_abif_to_jabmod,
-    get_IRV_report,
-    IRV_dict_from_jabmod
+    IRV_dict_from_jabmod,
+    abiflib_test_log
 )
 import pathlib
 import pytest
-import re
-from subprocess import run, PIPE
 from abiftestfuncs import *
 
 

@@ -18,15 +18,11 @@
 
 from abiflib.abifregex import COMMENT_REGEX, METADATA_REGEX, CANDLINE_REGEX, VOTELINE_REGEX, VOTERID_REGEX
 from abiflib import *
-from pprint import pprint, pformat
-import copy
 import csv
-import inspect
 import io
 import json
 import os
 import re
-import sys
 import urllib.parse
 
 
@@ -133,7 +129,7 @@ def _process_abif_comment_line(abifmodel=None,
         abifmodel = get_emptyish_abifmodel()
     commenttuple = (linenum, linecomment)
     if linecomment and storecomments:
-        if not 'comments' in abifmodel['metadata']:
+        if 'comments' not in abifmodel['metadata']:
             abifmodel['metadata']['comments'] = []
         abifmodel['metadata']['comments'].append(commenttuple)
     return abifmodel
@@ -282,7 +278,7 @@ def convert_abif_to_jabmod(inputstr,
 def _process_abif_candline(candtoken, canddesc, abifmodel, linecomment=None):
     '''_process_abif_candline maps candtokens to full candidate names'''
     initval = corefunc_init(tag="f04")
-    if not 'candidates' in abifmodel:
+    if 'candidates' not in abifmodel:
         abifmodel['candidates'] = {candtoken: canddesc}
     else:
         abifmodel['candidates'][candtoken] = canddesc

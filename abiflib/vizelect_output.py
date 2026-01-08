@@ -22,9 +22,6 @@ except ImportError:
     # Make import failure late-binding, since this file frequently gets
     # imported when Digraph isn't even instantiated
     pass
-import json
-import os
-import sys
 
 
 def copecount_diagram(copecount, outformat='svg', is_inline=False):

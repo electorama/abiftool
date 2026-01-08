@@ -17,17 +17,12 @@
 
 from abiflib import *
 from abiflib.pairwise_tally import pairwise_count_dict, winlosstie_dict_from_pairdict
-import argparse
-import json
 import re
-import sys
 try:
-    import texttable
     from texttable import Texttable
 except:
     pass
 import textwrap
-import urllib.parse
 
 
 def textgrid_for_2D_dict(twodimdict, tablelabel='   Loser ->\nv Winner', width=160):
@@ -171,7 +166,7 @@ def format_notices_for_text_output(notices):
                     wrapped_paragraphs.append(wrapped)
 
             if wrapped_paragraphs:
-                result += f"\n" + "\n\n".join(wrapped_paragraphs) + "\n"
+                result += "\n" + "\n\n".join(wrapped_paragraphs) + "\n"
 
     return result
 

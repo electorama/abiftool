@@ -1,11 +1,6 @@
 import abiflib
 from abiftestfuncs import *
 import json
-import subprocess
-from subprocess import run, PIPE
-import os
-import re
-import glob
 import sys
 import pytest
 

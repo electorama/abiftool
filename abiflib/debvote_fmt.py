@@ -98,7 +98,7 @@ def convert_debtally_to_abif(debtallysheet, metadata={}):
 
     for i, o in enumerate(option_names):
         retval += f'={short_option_names[i]}:[{o}]\n'
-    retval += f'# ---------------\n'
+    retval += '# ---------------\n'
 
     votelist = _extract_vline_rankings_from_tally_sheet(debtallysheet)
 

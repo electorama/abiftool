@@ -2,7 +2,7 @@
 from abiftestfuncs import *
 
 import pytest
-import sys
+import re
 
 ###################################################################
 # fetchspec -> json file that shows where to download test data from

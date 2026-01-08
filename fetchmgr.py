@@ -23,12 +23,10 @@ import argparse
 import json
 import os
 import requests
-import shutil
 import subprocess
 import sys
 import tarfile
 from pathlib import Path
-from pprint import pprint
 
 
 def update_repository(gitrepo_url, subdir):
@@ -69,7 +67,7 @@ def fetch_url_to_subdir(url=None, subdir=None, localpath=None, metaurl=None, des
         raise BaseException(err)
     sys.stderr.write(f"Fetching {url} to {subdir}\n")
     sys.stderr.write(f"  {desc}\n")
-    sys.stderr.write(f"  See the following URL to learn more about this election:\n")
+    sys.stderr.write("  See the following URL to learn more about this election:\n")
     sys.stderr.write(f"  {metaurl}\n")
     try:
         response = requests.get(url)
@@ -387,7 +385,7 @@ def main():
         sys.exit(1)
     for fetchspec_fn in args.fetchspec:
         process_fetchspec(fetchspec_fn)
-    sys.stderr.write(f"Done\n")
+    sys.stderr.write("Done\n")
 
 
 if __name__ == "__main__":

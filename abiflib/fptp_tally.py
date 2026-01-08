@@ -17,12 +17,7 @@
 
 from abiflib import *
 from .util import find_ballot_type
-import copy
 import json
-from pprint import pprint
-import re
-import sys
-import urllib.parse
 
 
 def FPTP_result_from_abifmodel(abifmodel):
@@ -119,8 +114,8 @@ def FPTP_result_from_abifmodel(abifmodel):
 def get_FPTP_report(abifmodel):
     """Generate FPTP report from the ABIF model."""
     results = FPTP_result_from_abifmodel(abifmodel)
-    report = f"First-Past-The-Post (FPTP) Results:\n"
-    report += f"  Top prefs:\n"
+    report = "First-Past-The-Post (FPTP) Results:\n"
+    report += "  Top prefs:\n"
 
     for cand in results['toppicks']:
         report += f"   * {cand}: {results['toppicks'][cand]}\n"
