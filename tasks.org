@@ -1,0 +1,25 @@
+#+TITLE: Tasks
+
+* Tasks
+** TODO t0001 Rename examplelist.yml to abif_list.yml; rm symlink; update refs to file
+** TODO t0002 Integrate 2024 SF-mayoral IRV code
+** TODO t0003 Assign unique IDs (via @pytest.mark.id or similar) to every test in pytests/.
+** TODO t0004 Finalize FPTP Integration & SF Mayoral IRV
+** TODO t0005 Add a pytest for an FPTP edge case (e.g. single-ballot or tie).
+** TODO t0006 Add the “Include FPTP” checkbox.
+** TODO t0007 Wire the flag through your route logic.
+** TODO t0008 Insert the =<h3>/<pre>= FPTP block in results-index.html
+** TODO t0009 Better observability: need flamegraph to illustrate performance bottlenecks in debug mode
+** TODO t0010 Bump version in pyproject.toml (or setup.py) to 0.31.0.
+** TODO t0011 Generate/update CHANGELOG.md
+** TODO t0012 FPTP support
+** TODO t0013 Add a pytest for an FPTP edge case (e.g. single-ballot or tie).
+** TODO t0014 Create src directory and move most code to this directory
+** TODO t0015 Flesh out pyproject.toml
+*** TODO t0015.1 Potentially add [tool.setuptools] include-package-data = true
+**** TODO t0015.1.1 whitelist conduits.py, abif_list.yml, examples.yml, static/* and templates/*
+**** TODO t0015.1.2 Test "=python -m build="
+** TODO t0016 Remove the need for the RUNAWT.sh file and environment variables
+** TODO t0017 Test coverage
+*** TODO t0017.1 Create tests directory and add tests besides per-election smoketests
+*** TODO t0017.2 Move test_awt_routes.py to tests directory
