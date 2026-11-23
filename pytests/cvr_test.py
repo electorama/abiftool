@@ -4,8 +4,13 @@
 # associated metadata fields. Over time, sftxt/sfjson and other CVR
 # format tests can be merged here to avoid city-by-city test files.
 
-from abiftestfuncs import run_json_output_test_from_abif
+import json
+from zipfile import ZipFile
+
 import pytest
+from abiflib.core import convert_jabmod_to_abif
+from abiflib.sfjson_fmt import convert_sfjson_to_jabmod
+from abiftestfuncs import run_json_output_test_from_abif
 
 
 testlist = [
@@ -97,3 +102,35 @@ testlist = [
 def test_json_key_subkey_val(cmd_args, inputfile, testtype, keylist, value):
     """Test equality/containment of a subkey to a value for CVR-related cases"""
     run_json_output_test_from_abif(cmd_args, inputfile, testtype, keylist, value)
+
+
+def test_sfjson_redacted_ballots(tmp_path):
+    archive = tmp_path / 'cvr.zip'
+    cards = [
+        {'Contests': [{'Id': 1, 'Marks': '*** REDACTED ***'}]},
+        {'Contests': [{'Id': 2, 'Marks': '*** REDACTED ***'},
+                      {'Id': 1, 'Marks': []}]},
+        {'Contests': [{'Id': 1, 'Marks': [{'CandidateId': 10, 'Rank': 2}]}]},
+    ]
+    with ZipFile(archive, 'w') as zf:
+        zf.writestr('ContestManifest.json', json.dumps({
+            'List': [{'Id': 1, 'Description': 'Supervisor'}],
+        }))
+        zf.writestr('CandidateManifest.json', json.dumps({
+            'List': [{'Id': 10, 'ContestId': 1, 'Description': 'Candidate'}],
+        }))
+        zf.writestr('ElectionEventManifest.json', json.dumps({
+            'List': [{'Description': 'Test election'}],
+        }))
+        zf.writestr('CvrExport_1.json', json.dumps({
+            'Sessions': [{'Original': {'Cards': cards}}],
+        }))
+
+    model = convert_sfjson_to_jabmod(archive, contestid=1)
+    assert model['metadata']['ballot_type'] == 'ranked'
+    assert model['metadata']['ballotcount'] == 2
+    assert model['metadata']['emptyballotcount'] == 1
+    assert model['metadata']['redactedballotcount'] == 1
+    assert len(model['votelines']) == 2
+    assert sum(not line['prefs'] for line in model['votelines']) == 1
+    assert '{redactedballotcount: 1}' in convert_jabmod_to_abif(model)

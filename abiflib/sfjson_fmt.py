@@ -22,6 +22,9 @@ from abiflib.core import get_emptyish_abifmodel
 from abiflib.util import utf8_string_to_abif_token as _short_token
 
 
+REDACTED_MARKS = '*** REDACTED ***'
+
+
 def list_contests(container_path):
     """Lists the contests in a San Francisco JSON CVR zip file."""
     contests = get_contest_list(container_path)
@@ -104,8 +107,9 @@ def convert_sfjson_to_jabmod(container_path, contestid=None):
                     for sess in sessions:
                         for card in sess.get('Original', {}).get('Cards', []):
                             for c in card.get('Contests', []):
-                                if c.get('Id') == contestid:
-                                    for m in c.get('Marks', []):
+                                marks = c.get('Marks', [])
+                                if c.get('Id') == contestid and marks != REDACTED_MARKS:
+                                    for m in marks:
                                         try:
                                             if int(m.get('Rank', 0)) > 1:
                                                 inferred_ranked = True
@@ -137,32 +141,32 @@ def convert_sfjson_to_jabmod(container_path, contestid=None):
 
         # Add the votelines section
         abifmodel['votelines'] = []
+        redacted_count = 0
         for filename in zf.namelist():
             if filename.startswith('CvrExport_') and filename.endswith('.json'):
                 with zf.open(filename) as f:
                     jsoncvr_blob = json.load(f)
                 for sess in jsoncvr_blob['Sessions']:
                     for card in sess['Original']['Cards']:
-                        # Check if the card has the target contest
-                        has_target_contest = False
-                        for contest in card['Contests']:
-                            if contest['Id'] == contestid:
-                                has_target_contest = True
-                                break
+                        contest_marks = [contest['Marks'] for contest in card['Contests']
+                                         if contest['Id'] == contestid]
+                        if not contest_marks:
+                            continue
+                        if REDACTED_MARKS in contest_marks:
+                            redacted_count += 1
+                            continue
 
-                        if has_target_contest:
-                            i = len(abifmodel['votelines'])
-                            abifmodel['metadata']['ballotcount'] += 1
-                            abifmodel['votelines'].append({})
-                            abifmodel['votelines'][i]['prefs'] = {}
-                            abifmodel['votelines'][i]['qty'] = 1
-                            for contest in card['Contests']:
-                                if contest['Id'] == contestid:
-                                    for m in contest['Marks']:
-                                        candtok = cand_map[m['CandidateId']]['tok']
-                                        abifmodel['votelines'][i]['prefs'][candtok] = {}
-                                        abifmodel['votelines'][i]['prefs'][candtok]['rank'] = m['Rank']
-                            if abifmodel['votelines'][i]['prefs'] == {}:
-                                abifmodel['metadata']['emptyballotcount'] += 1
+                        prefs = {}
+                        for marks in contest_marks:
+                            for mark in marks:
+                                candtok = cand_map[mark['CandidateId']]['tok']
+                                prefs[candtok] = {'rank': mark['Rank']}
+                        abifmodel['votelines'].append({'prefs': prefs, 'qty': 1})
+                        abifmodel['metadata']['ballotcount'] += 1
+                        if not prefs:
+                            abifmodel['metadata']['emptyballotcount'] += 1
+
+        if redacted_count:
+            abifmodel['metadata']['redactedballotcount'] = redacted_count
 
     return abifmodel

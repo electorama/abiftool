@@ -24,6 +24,7 @@ An alphabetical list of metadata fields that one may see in an ABIF file.
 - **`wikidata_url`**: Link to the Wikidata entity for this contest
 - **`ballotpedia_url`**: Link to the Ballotpedia page for this contest
 - **`official_results_url`**: Canonical official results page or PDF for this contest
+- **`redactedballotcount`**: Number of ballot records with withheld marks for this contest (see below)
 - **`electowiki_url`**: Link to the Electowiki page for this contest
 - **`ext_url_01`** .. **`ext_url_09`**: Ordered external reference links (see guidance below)
 - **`tally_method`**: The method used to determine the winner(s) of the election.
@@ -48,6 +49,12 @@ Describes the type of ballot format used:
 Note: abiflib will auto-detect `ballot_type` from the data, but some
 converters may set it explicitly (e.g., approval-style datasets set
 `ballot_type: choose_many` and `max_rating: 1`).
+
+### `redactedballotcount`
+
+The SF JSON CVR converter records this count when the source withholds marks
+for the contest. It omits the field when the count is zero. Redacted records
+are excluded from votelines, `ballotcount`, and `emptyballotcount`.
 
 ### `tally_method` 
 Specifies how ballots are counted/tallied:
