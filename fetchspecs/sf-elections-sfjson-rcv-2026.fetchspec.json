@@ -1,0 +1,14 @@
+{
+  "download_subdir": "downloads/california",
+  "srcfmt": "sfjson",
+  "web_urls": [
+    {
+      "url": "https://www.sfelections.org/results/20261103/data/20261108/CVR_Export_20261108134505.zip",
+      "localcopy": "CVR_Export_20261108134505.zip",
+      "metaurls": [
+        "https://www.sfelections.org/results/20261103w/index.html"
+      ],
+      "desc": "November 3, 2026 San Francisco election CVR (November 8 preliminary release)"
+    }
+  ]
+}
