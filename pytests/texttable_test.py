@@ -24,6 +24,13 @@ testdicts = [
         "pattern": r"Montroll \(5-0-0\)",
         "options": ["-t", "text"],
         "id": "texttable_003"
+    },
+    {
+        "fetchspec": "vt-burl-2009.preflib.fetchspec.json",
+        "filename": "testdata/burl2009/burl2009.abif",
+        "pattern": r"[|+]\s+4067\s+\|",
+        "options": ["-m", "pairwise"],
+        "id": "texttable_004"
     }
 ]
 
@@ -37,14 +44,10 @@ for testdict in testdicts:
 
 @pytest.mark.parametrize(mycols, pytestlist)
 def test_pattern_match(filename, pattern, options):
-    if not has_lib("texttable"):
-        pytest.skip("Skipping test because 'texttable' is not installed.")
-
-    fh = open(filename, 'rb')
-
     texttable_content = \
         subprocess.run([get_abiftool_scriptloc(), *options, filename],
                        capture_output=True,
+                       check=True,
                        text=True).stdout
 
     if not re.search(pattern, texttable_content):

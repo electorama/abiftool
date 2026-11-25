@@ -17,115 +17,76 @@
 
 from abiflib import *
 from abiflib.pairwise_tally import pairwise_count_dict, winlosstie_dict_from_pairdict
+from itertools import zip_longest
 import re
+import textwrap
+
 try:
     from texttable import Texttable
-except:
-    pass
-import textwrap
+except ModuleNotFoundError as exc:
+    if exc.name != 'texttable':
+        raise
+    Texttable = None
+
+
+def _plain_text_table(rows, width):
+    cells = [[str(value).split('\n') for value in row] for row in rows]
+    widths = [max(1, max(len(line) for cell in column for line in cell))
+              for column in zip(*cells)]
+    padding = 3 * len(widths) + 1
+    if width and sum(widths) + padding > width:
+        limit = max(1, (width - padding) // len(widths))
+        widths = [min(size, limit) for size in widths]
+
+    separator = '+' + '+'.join('-' * (size + 2) for size in widths) + '+'
+    lines = [separator]
+    for index, row in enumerate(cells):
+        wrapped = [
+            [part for line in cell for part in (textwrap.wrap(line, size) or [''])]
+            for cell, size in zip(row, widths)
+        ]
+        for parts in zip_longest(*wrapped, fillvalue=''):
+            values = [part.ljust(size) for part, size in zip(parts, widths)]
+            lines.append('| ' + ' | '.join(values) + ' |')
+        lines.append(separator if index else separator.replace('-', '='))
+    return '\n'.join(lines) + '\n\n'
+
+
+def _render_text_table(rows, width=None):
+    if Texttable is None:
+        return _plain_text_table(rows, width)
+
+    table = Texttable() if width is None else Texttable(max_width=width)
+    for row in rows:
+        table.add_row(row)
+
+    lines = table.draw().splitlines()
+    # Distinguish the header separator and the row-label column.
+    lines[3] = lines[3].replace('-', '=')
+    for index, line in enumerate(lines):
+        formatted, count = re.subn(r'\|', '+', line, count=2)
+        if count > 1:
+            lines[index] = formatted
+    return '\n'.join(lines) + '\n\n'
 
 
 def textgrid_for_2D_dict(twodimdict, tablelabel='   Loser ->\nv Winner', width=160):
-    # The first level of dict keys becomes row labels
-    # The second level of dict keys becomes column labels
-
-    retval = ""
-
-    table = Texttable(max_width=width)
-    ctok = list(twodimdict.keys())
-    table.add_row([tablelabel] + ctok)
-
+    rows = [[tablelabel, *twodimdict]]
     for cand, inner_dict in twodimdict.items():
-        try:
-            mylist = list(inner_dict.values())
-            table.add_row([cand] + mylist)
-        except AttributeError:
-            print(inner_dict)
-            raise
-
-    tabletext = table.draw()
-    tabletextarray = tabletext.splitlines()
-
-    # kludge to put "====" instead of "---" between header row and body
-    header_break = tabletextarray[3]
-    equalsign_break = re.sub("-", "=", header_break)
-    tabletextarray[3] = equalsign_break
-
-    subarray = []
-    for i, ln in enumerate(tabletextarray):
-        newln, count = re.subn(r"\|", r"+", ln, count=2)
-        if count > 1:
-            tabletextarray[i] = newln
-
-    retval += "\n".join(tabletextarray)
-    retval += "\n\n"
-    return retval
+        rows.append([cand, *inner_dict.values()])
+    return _render_text_table(rows, width)
 
 
 def texttable_pairwise_and_winlosstie(abifmodel):
-    def wltstr(cand):
-        retval = f"{wltdict[cand]['wins']}" + "-"
-        retval += f"{wltdict[cand]['losses']}" + "-"
-        retval += f"{wltdict[cand]['ties']}"
-        return retval
-
     pairdict = pairwise_count_dict(abifmodel)
     wltdict = winlosstie_dict_from_pairdict(abifmodel['candidates'], pairdict)
-    tablelabel = '   Loser ->\nv Winner'
-    retval = ""
-
-    table = Texttable()
-    ctok = list(pairdict.keys())
-
-    candkeys = sorted(pairdict.keys(),
-                      key=lambda x: wltdict[x]['wins'],
-                      reverse=True)
-
-    toprow = [tablelabel] + candkeys
-    table.add_row(toprow)
-
-    dbg = False
-    for ck in candkeys:
-        inner_dict = pairdict[ck]
-        try:
-            mykeys = list(inner_dict.keys())
-            myvals = list(inner_dict.values())
-            invals = []
-            for ik in candkeys:
-                invals.append(pairdict[ck][ik])
-            # candkeys = sorted(pairdict.keys(),
-            #          key=lambda x: wltdict[x]['wins'],
-            #          reverse=True)
-
-            if dbg:
-                print(f"{mykeys=}")
-                print(f"{candkeys=}")
-                print(f"{myvals=}")
-                print(f"{invals=}")
-            rowlabel = f"{ck} ({wltstr(ck)})"
-            # table.add_row([rowlabel] + myvals)
-            table.add_row([rowlabel] + invals)
-        except AttributeError:
-            print(inner_dict)
-            raise
-
-    tabletext = table.draw()
-    tabletextarray = tabletext.splitlines()
-
-    # kludge to put "====" instead of "---" between header row and body
-    header_break = tabletextarray[3]
-    equalsign_break = re.sub("-", "=", header_break)
-    tabletextarray[3] = equalsign_break
-
-    subarray = []
-    for i, ln in enumerate(tabletextarray):
-        newln, count = re.subn(r"\|", r"+", ln, count=2)
-        if count > 1:
-            tabletextarray[i] = newln
-
-    retval += "\n".join(tabletextarray)
-    retval += "\n\n"
-    return retval
+    candkeys = sorted(pairdict, key=lambda key: wltdict[key]['wins'], reverse=True)
+    rows = [['   Loser ->\nv Winner', *candkeys]]
+    for key in candkeys:
+        result = wltdict[key]
+        record = f"{result['wins']}-{result['losses']}-{result['ties']}"
+        rows.append([f'{key} ({record})', *(pairdict[key][other] for other in candkeys)])
+    return _render_text_table(rows)
 
 
 def headerfy_text_file(filetext, filename="???"):
