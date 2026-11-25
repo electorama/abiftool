@@ -19,6 +19,7 @@ from abiflib import *
 from pprint import pformat
 import inspect
 import os
+import sys
 
 ABIF_VERSION = "0.1"
 ABIF_MODEL_LIMIT = 2500
@@ -36,41 +37,32 @@ class LogfileSingleton:
     devtoolmsgs = []
 
     def __new__(cls, force_log=False):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            # If ABIFLIB_LOG isn't set, silently eat all msgs
-            if filename := os.getenv('ABIFLIB_LOG'):
-                cls._filename = os.getenv('ABIFLIB_LOG')
-                if os.path.isabs(filename):
-                    logdir = os.path.dirname(filename)
-                else:
-                    err = f"ABIFLIB_LOG needs to be an absolute path: {filename}"
-                    cls.devtoolmsgs.append(err)
-                    raise ValueError(err)
-                if not os.path.exists(logdir):
-                    if force_log:
-                        os.makedirs(logdir, exist_ok=True)
-                    else:
-                        friendly_err = (
-                            f"The directory '{logdir}' specified in the ABIFLIB_LOG "
-                            f"environment variable does not exist. Please create this "
-                            f"directory, or use the --force option if you want it to "
-                            f"be created automatically."
-                        )
-                        cls.devtoolmsgs.append(friendly_err)
-                        raise ValueError(friendly_err)
+        if cls._instance is not None:
+            return cls._instance
+
+        if filename := os.getenv('ABIFLIB_LOG'):
+            try:
+                if not os.path.isabs(filename):
+                    raise ValueError(f"Expected an absolute log path, got {filename!r}")
+                if force_log:
+                    os.makedirs(os.path.dirname(filename), exist_ok=True)
                 cls._filehandle = open(filename, "a")
+            except (OSError, ValueError) as exc:
+                if force_log:
+                    raise
+                print(f"Warning: ABIFLIB_LOG disabled: {exc}", file=sys.stderr)
+            else:
+                cls._filename = filename
                 msg = f"ABIFLIB_LOG set to {filename}.  "
                 msg += "Amending additional debugging output there."
                 cls.devtoolmsgs.append(msg)
-            elif force_log:
-                msg = f"ABIFLIB_LOG isn't set, and {force_log=}"
-                raise ValueError(msg)
-            else:
-                msg = "ABIFLIB_LOG not set, so no extra logging will be done."
-                cls.devtoolmsgs.append(msg)
-                return cls._instance
+        elif force_log:
+            raise ValueError(f"ABIFLIB_LOG isn't set, and {force_log=}")
+        else:
+            msg = "ABIFLIB_LOG not set, so no extra logging will be done."
+            cls.devtoolmsgs.append(msg)
 
+        cls._instance = super().__new__(cls)
         return cls._instance
 
     def log(self, msg, newline=True, showframeinfo=True, maxfuncnamelen=10,
