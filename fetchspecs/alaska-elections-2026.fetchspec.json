@@ -9,9 +9,759 @@
       "metaurls": [
         "https://www.elections.alaska.gov/election-results/e/?id=26genr"
       ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - U.S. Senator",
+      "abifloc": "alaska-2026-us-senate.abif",
+      "contestid": 6
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
       "desc": "Alaska 2026 General Election (November 3, 2026) - U.S. Representative",
       "abifloc": "alaska-2026-us-house.abif",
       "contestid": 7
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Governor / Lieutenant Governor",
+      "abifloc": "alaska-2026-governor-lieutenant-governor.abif",
+      "contestid": 5
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District A",
+      "abifloc": "alaska-2026-senate-district-a.abif",
+      "contestid": 8
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District C",
+      "abifloc": "alaska-2026-senate-district-c.abif",
+      "contestid": 10
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District E",
+      "abifloc": "alaska-2026-senate-district-e.abif",
+      "contestid": 12
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District G",
+      "abifloc": "alaska-2026-senate-district-g.abif",
+      "contestid": 14
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District I",
+      "abifloc": "alaska-2026-senate-district-i.abif",
+      "contestid": 16
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District K",
+      "abifloc": "alaska-2026-senate-district-k.abif",
+      "contestid": 18
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District M",
+      "abifloc": "alaska-2026-senate-district-m.abif",
+      "contestid": 20
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District O",
+      "abifloc": "alaska-2026-senate-district-o.abif",
+      "contestid": 22
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District Q",
+      "abifloc": "alaska-2026-senate-district-q.abif",
+      "contestid": 24
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Senate District S",
+      "abifloc": "alaska-2026-senate-district-s.abif",
+      "contestid": 26
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 1",
+      "abifloc": "alaska-2026-house-district-1.abif",
+      "contestid": 28
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 2",
+      "abifloc": "alaska-2026-house-district-2.abif",
+      "contestid": 29
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 3",
+      "abifloc": "alaska-2026-house-district-3.abif",
+      "contestid": 30
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 4",
+      "abifloc": "alaska-2026-house-district-4.abif",
+      "contestid": 31
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 5",
+      "abifloc": "alaska-2026-house-district-5.abif",
+      "contestid": 32
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 6",
+      "abifloc": "alaska-2026-house-district-6.abif",
+      "contestid": 33
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 7",
+      "abifloc": "alaska-2026-house-district-7.abif",
+      "contestid": 34
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 8",
+      "abifloc": "alaska-2026-house-district-8.abif",
+      "contestid": 35
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 9",
+      "abifloc": "alaska-2026-house-district-9.abif",
+      "contestid": 36
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 10",
+      "abifloc": "alaska-2026-house-district-10.abif",
+      "contestid": 37
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 11",
+      "abifloc": "alaska-2026-house-district-11.abif",
+      "contestid": 38
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 12",
+      "abifloc": "alaska-2026-house-district-12.abif",
+      "contestid": 39
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 13",
+      "abifloc": "alaska-2026-house-district-13.abif",
+      "contestid": 40
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 14",
+      "abifloc": "alaska-2026-house-district-14.abif",
+      "contestid": 41
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 15",
+      "abifloc": "alaska-2026-house-district-15.abif",
+      "contestid": 42
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 16",
+      "abifloc": "alaska-2026-house-district-16.abif",
+      "contestid": 43
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 17",
+      "abifloc": "alaska-2026-house-district-17.abif",
+      "contestid": 44
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 18",
+      "abifloc": "alaska-2026-house-district-18.abif",
+      "contestid": 45
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 19",
+      "abifloc": "alaska-2026-house-district-19.abif",
+      "contestid": 46
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 20",
+      "abifloc": "alaska-2026-house-district-20.abif",
+      "contestid": 47
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 21",
+      "abifloc": "alaska-2026-house-district-21.abif",
+      "contestid": 48
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 22",
+      "abifloc": "alaska-2026-house-district-22.abif",
+      "contestid": 49
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 23",
+      "abifloc": "alaska-2026-house-district-23.abif",
+      "contestid": 50
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 24",
+      "abifloc": "alaska-2026-house-district-24.abif",
+      "contestid": 51
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 25",
+      "abifloc": "alaska-2026-house-district-25.abif",
+      "contestid": 52
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 26",
+      "abifloc": "alaska-2026-house-district-26.abif",
+      "contestid": 53
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 27",
+      "abifloc": "alaska-2026-house-district-27.abif",
+      "contestid": 54
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 28",
+      "abifloc": "alaska-2026-house-district-28.abif",
+      "contestid": 55
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 29",
+      "abifloc": "alaska-2026-house-district-29.abif",
+      "contestid": 56
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 30",
+      "abifloc": "alaska-2026-house-district-30.abif",
+      "contestid": 57
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 31",
+      "abifloc": "alaska-2026-house-district-31.abif",
+      "contestid": 58
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 32",
+      "abifloc": "alaska-2026-house-district-32.abif",
+      "contestid": 59
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 33",
+      "abifloc": "alaska-2026-house-district-33.abif",
+      "contestid": 60
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 34",
+      "abifloc": "alaska-2026-house-district-34.abif",
+      "contestid": 61
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 35",
+      "abifloc": "alaska-2026-house-district-35.abif",
+      "contestid": 62
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 36",
+      "abifloc": "alaska-2026-house-district-36.abif",
+      "contestid": 63
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 37",
+      "abifloc": "alaska-2026-house-district-37.abif",
+      "contestid": 64
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 38",
+      "abifloc": "alaska-2026-house-district-38.abif",
+      "contestid": 65
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 39",
+      "abifloc": "alaska-2026-house-district-39.abif",
+      "contestid": 66
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - House District 40",
+      "abifloc": "alaska-2026-house-district-40.abif",
+      "contestid": 67
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - BM#2 24ESEG",
+      "abifloc": "alaska-2026-bm-2-24eseg.abif",
+      "contestid": 68
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - BM#3 25USCV",
+      "abifloc": "alaska-2026-bm-3-25uscv.abif",
+      "contestid": 69
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Supreme Court - Pate",
+      "abifloc": "alaska-2026-supreme-court-pate.abif",
+      "contestid": 71
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD1 - Carpeneti",
+      "abifloc": "alaska-2026-superior-court-jd1-carpeneti.abif",
+      "contestid": 80
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD1 - Doty",
+      "abifloc": "alaska-2026-superior-court-jd1-doty.abif",
+      "contestid": 81
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD1 - Lybrand",
+      "abifloc": "alaska-2026-superior-court-jd1-lybrand.abif",
+      "contestid": 82
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD2 - Roghair",
+      "abifloc": "alaska-2026-superior-court-jd2-roghair.abif",
+      "contestid": 88
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Hartz",
+      "abifloc": "alaska-2026-superior-court-jd3-hartz.abif",
+      "contestid": 91
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Lamoureux",
+      "abifloc": "alaska-2026-superior-court-jd3-lamoureux.abif",
+      "contestid": 92
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Lawson",
+      "abifloc": "alaska-2026-superior-court-jd3-lawson.abif",
+      "contestid": 93
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - McKenna",
+      "abifloc": "alaska-2026-superior-court-jd3-mckenna.abif",
+      "contestid": 94
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Nesbett",
+      "abifloc": "alaska-2026-superior-court-jd3-nesbett.abif",
+      "contestid": 95
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Rankin",
+      "abifloc": "alaska-2026-superior-court-jd3-rankin.abif",
+      "contestid": 96
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Reigh",
+      "abifloc": "alaska-2026-superior-court-jd3-reigh.abif",
+      "contestid": 97
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Wheeles",
+      "abifloc": "alaska-2026-superior-court-jd3-wheeles.abif",
+      "contestid": 98
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD3 - Woodman",
+      "abifloc": "alaska-2026-superior-court-jd3-woodman.abif",
+      "contestid": 99
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - District Court JD3 - Darnall",
+      "abifloc": "alaska-2026-district-court-jd3-darnall.abif",
+      "contestid": 116
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - District Court JD3 - Fallon",
+      "abifloc": "alaska-2026-district-court-jd3-fallon.abif",
+      "contestid": 117
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - District Court JD3 - Traini",
+      "abifloc": "alaska-2026-district-court-jd3-traini.abif",
+      "contestid": 118
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD4 - Peters",
+      "abifloc": "alaska-2026-superior-court-jd4-peters.abif",
+      "contestid": 129
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD4 - Schwalm",
+      "abifloc": "alaska-2026-superior-court-jd4-schwalm.abif",
+      "contestid": 130
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - Superior Court JD4 - Welch",
+      "abifloc": "alaska-2026-superior-court-jd4-welch.abif",
+      "contestid": 131
+    },
+    {
+      "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
+      "localcopy": "CVR_Export.zip",
+      "metaurls": [
+        "https://www.elections.alaska.gov/election-results/e/?id=26genr"
+      ],
+      "desc": "Alaska 2026 General Election (November 3, 2026) - District Court JD4 - Seekins",
+      "abifloc": "alaska-2026-district-court-jd4-seekins.abif",
+      "contestid": 140
     }
   ]
 }
