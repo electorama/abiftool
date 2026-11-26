@@ -1,6 +1,7 @@
 {
   "download_subdir": "downloads/alaska/2026-11-03",
-  "srcfmt": "unknown",
+  "abifloc_subdir": "localabif/alaska/2026-11-03",
+  "srcfmt": "sfjson",
   "web_urls": [
     {
       "url": "https://www.elections.alaska.gov/enr/26GENR/results/CVR_Export.zip",
@@ -8,7 +9,9 @@
       "metaurls": [
         "https://www.elections.alaska.gov/election-results/e/?id=26genr"
       ],
-      "desc": "Alaska 2026 General Election (November 3, 2026) - official statewide cast vote record for scanned ballots"
+      "desc": "Alaska 2026 General Election (November 3, 2026) - U.S. Representative",
+      "abifloc": "alaska-2026-us-house.abif",
+      "contestid": 7
     }
   ]
 }
