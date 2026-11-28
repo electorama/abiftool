@@ -92,9 +92,9 @@ def fetch_url_to_subdir(url=None, subdir=None, localpath=None, metaurl=None, des
     return response
 
 
-def fetch_web_items(fetchspec):
+def fetch_web_items(fetchspec, *, local_only=False):
     subdir = fetchspec['download_subdir']
-    if not os.path.exists(subdir):
+    if not local_only and not os.path.exists(subdir):
         os.makedirs(subdir)
 
     for urldict in fetchspec['web_urls']:
@@ -110,7 +110,11 @@ def fetch_web_items(fetchspec):
 
         for i, url in enumerate(urls):
             localpath = localpaths[i]
-            if not os.path.exists(localpath):
+            exists = os.path.isfile(localpath) if local_only else os.path.exists(localpath)
+            if not exists:
+                if local_only:
+                    sys.stderr.write(f"--local-only: expected a file at {os.path.abspath(localpath)}\n")
+                    return False
                 response = fetch_url_to_subdir(url=url,
                                                subdir=subdir,
                                                localpath=localpath,
@@ -323,18 +327,31 @@ def process_extfilelist(dlsubdir=None, abifsubdir=None, extfilelist=None, srcfmt
     return True
 
 
-def process_fetchspec(fn):
+def process_fetchspec(fn, *, local_only=False):
     if not os.path.exists(fn):
         print(f"fetchspec '{fn}' not found.")
         raise
     with open(fn, "r") as fh:
         fetchspec = json.load(fh)
     if 'gitrepo_url' in fetchspec.keys():
-        checkout_repository(fetchspec['gitrepo_url'],
-                            fetchspec['download_subdir'])
+        subdir = fetchspec['download_subdir']
+        if local_only:
+            if not os.path.isdir(subdir):
+                sys.stderr.write(f"--local-only: expected a directory at {os.path.abspath(subdir)}\n")
+                return False
+            for entry in fetchspec.get('extfiles', []):
+                names = entry['localcopies'] if 'localcopies' in entry else [entry['localcopy']]
+                for name in names:
+                    path = os.path.join(subdir, name)
+                    if not os.path.isfile(path):
+                        sys.stderr.write(f"--local-only: expected a file at {os.path.abspath(path)}\n")
+                        return False
+        else:
+            checkout_repository(fetchspec['gitrepo_url'], subdir)
     elif 'web_urls' in fetchspec.keys():
-        if not fetch_web_items(fetchspec):
-            sys.stderr.write("Halting due to download failure.\n")
+        if not fetch_web_items(fetchspec, local_only=local_only):
+            if not local_only:
+                sys.stderr.write("Halting due to download failure.\n")
             return False
     else:
         raise Exception(f"Invalid fetchspec: {fetchspec.keys()=}")
@@ -367,6 +384,11 @@ def main():
         help="JSON file(s) describing fetch locations and mappings to local dirs",
     )
     parser.add_argument(
+        "--local-only",
+        action="store_true",
+        help="Use existing inputs without downloading files or updating repositories",
+    )
+    parser.add_argument(
         "--debug-headers",
         action="store_true",
         help="Enable verbose NYC header diagnostics during conversions",
@@ -383,10 +405,14 @@ def main():
     if len(args.fetchspec) < 1:
         print("Please provide at least one fetchspec (see fetchspecs/*)")
         sys.exit(1)
+    failed = False
     for fetchspec_fn in args.fetchspec:
-        process_fetchspec(fetchspec_fn)
+        if not process_fetchspec(fetchspec_fn, local_only=args.local_only):
+            failed = True
+    if args.local_only and failed:
+        return 1
     sys.stderr.write("Done\n")
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
